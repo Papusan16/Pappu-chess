@@ -1867,6 +1867,10 @@ button.ctrl:active{transform:scale(.93)}
 .ov-title{font-size:1rem;font-weight:800;color:#f3cd66}
 .closebtn{background:#2a3658;border:1px solid #c9a84c66;border-radius:8px;color:#f3cd66;font-size:1.1rem;width:38px;height:38px;cursor:pointer;font-weight:700}
 .sec-tabs{max-width:460px;margin:0 auto 10px;width:100%;display:flex;gap:5px;overflow-x:auto;padding-bottom:3px}
+.cat-row{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.cat-tab{padding:6px 13px;border-radius:8px;background:#141a2b;border:1px solid #2c3450;color:#c9a84c;font-weight:800;font-size:.8rem;cursor:pointer;white-space:nowrap}
+.cat-tab.active{background:#c9a84c;color:#1a1a2e;border-color:#c9a84c}
+.sub-row{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px}
 .sec-tab{flex:0 0 auto;font-size:.73rem;font-weight:700;padding:7px 12px;border-radius:16px;background:#1a2138;color:#9aa0b0;cursor:pointer;white-space:nowrap}
 .sec-tab.active{background:linear-gradient(180deg,#c9a84c,#a8852e);color:#1a1a2e}
 .ov-search{max-width:460px;margin:0 auto 10px;width:100%}
@@ -1895,14 +1899,6 @@ button.ctrl:active{transform:scale(.93)}
 #arrowLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .arrow-main{stroke:#2e9b5b;fill:#2e9b5b}
 .arrow-alt{stroke:#3a6ea5;fill:#3a6ea5}
-/* Roi en échec : fait de la position (pas une annotation du Fou), donc porté par
-   l'échiquier en continu tant que l'échec dure. Rouge = danger ; ne heurte ni le doré
-   (grelots/blancs), ni le bordeaux (noirs), ni le violet (voix du Fou). */
-@keyframes checkPulse{
-  0%,100%{box-shadow:inset 0 0 0 3px rgba(214,40,40,.95),inset 0 0 14px 2px rgba(214,40,40,.5)}
-  50%{box-shadow:inset 0 0 0 3px rgba(255,86,86,1),inset 0 0 22px 6px rgba(214,40,40,.82)}
-}
-.sq.in-check{animation:checkPulse 1.15s ease-in-out infinite}
 .toggle-arrows{display:flex;align-items:center;gap:6px;font-size:.72rem;color:#9aa0b0;margin-top:1px;cursor:pointer;user-select:none}
 .toggle-arrows input{accent-color:#c9a84c}
 /* Plaques de joueur autour de l'échiquier : savoir qui est en haut / en bas */
@@ -1922,6 +1918,9 @@ button.ctrl:active{transform:scale(.93)}
 .evalbar-num{position:absolute;left:0;right:0;text-align:center;font-size:.56rem;font-weight:800;font-family:ui-monospace,monospace;z-index:3;padding:1px 0}
 .evalbar-num.top{top:2px;color:#e8e8e8}
 .evalbar-num.bot{bottom:2px;color:#1a1a2e}
+.evalbar.flip .evalbar-white{top:0;bottom:auto}
+.evalbar.flip .evalbar-num.top{color:#1a1a2e}
+.evalbar.flip .evalbar-num.bot{color:#e8e8e8}
 .eval-caption{font-size:.68rem;color:#9aa0b0;text-align:center;margin-top:2px;font-weight:600}
 
 .moves-played .mv{cursor:pointer;padding:1px 3px;border-radius:4px}
@@ -2308,7 +2307,6 @@ const PIECES={K:'\u2654',Q:'\u2655',R:'\u2656',B:'\u2657',N:'\u2658',P:'\u2659',
 let game=new Chess(),flipped=false,sel=null,legal=[],lastFrom=null,lastTo=null,openDetail=null;
 let fullMoves=[],cursor=0,moveComments=[],pgnMode=false;
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
-let fouCircles=[]; // cases que le Fou entoure → cercles violets (case faible, pièce rayonnante, cadeau empoisonné…) ; format {s:'d5',col?:'#...'}
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
 let userElo=320; // niveau réel de l'utilisateur (Elo Chess.com ou FIDE) — le Fou calibre ses conseils dessus
 function setUserLevel(v){ var n=parseInt(v,10); if(!isNaN(n)&&n>0) userElo=n; }
@@ -2457,6 +2455,8 @@ function updatePlayerPlates(){
   var top=(bottom==='w')?'b':'w';
   fillPlate('playerTop',top);
   fillPlate('playerBottom',bottom);
+  var bar=document.getElementById('evalbar');   // la barre d'éval suit aussi le camp du bas
+  if(bar) bar.classList.toggle('flip', bottom!=='w');
 }
 function currentProfile(){ try{ return JSON.parse(localStorage.getItem('papu_profile')||'{}')||{}; }catch(e){ return {}; } }
 function persistProfile(p){ try{ localStorage.setItem('papu_profile', JSON.stringify(p)); }catch(e){} }
@@ -2853,10 +2853,8 @@ function bishopSVG(color){
 }
 function q(n){return document.querySelector('.sq[data-sq="'+n+'"]');}
 function render(animate){
-  var inChk=game.in_check(), chkColor=game.turn(); // échec = fait de la position, calculé une fois
   document.querySelectorAll('.sq').forEach(sq=>{sq.className='sq '+(sq.className.includes('light')?'light':'dark');sq.innerHTML='';
     const p=game.get(sq.dataset.sq);
-    if(inChk&&p&&p.type==='k'&&p.color===chkColor)sq.classList.add('in-check'); // roi du trait, en échec
     if(sq.dataset.sq===lastFrom)sq.classList.add('lm-from');if(sq.dataset.sq===lastTo)sq.classList.add('lm-to');if(sq.dataset.sq===sel)sq.classList.add('sel');
     if(p){
       const s=document.createElement('span');
@@ -3122,7 +3120,7 @@ function md(s){return s?s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'):'';}
 
 function identify(animate){
   const seq=getUciSeq();const sp=document.getElementById('speech');openDetail=null;
-  fouArrows=[]; fouCircles=[]; // par défaut le Fou ne pointe/n'entoure rien ; chaque branche pose ses marques si besoin
+  fouArrows=[]; // par défaut le Fou ne pointe rien ; chaque branche pose sa flèche si besoin
   if(typeof updatePlayerPlates==='function') updatePlayerPlates();
   // MODE ÉTEINT : le Fou ne dit rien du tout
   if(fouMode==='off'){ return; }
@@ -3465,7 +3463,7 @@ function announceImportedGame(){
 }
 
 
-var sfReady=false, engineReqId=0;
+var sfReady=false, engineReqId=0, _evalReqId=0;
 function setEngineStatus(s){var el=document.getElementById('engineStatus');if(el)el.textContent='Moteur : '+s; if(typeof fitBoard==='function') requestAnimationFrame(fitBoard);}
 
 /* ===== COUCHE MOTEUR UNIFIÉE =====
@@ -3561,7 +3559,12 @@ var Engine = (function(){
           updateModeAvailability(); drawArrows(); refreshEval();
         } else {
           mode=null; sfReady=false;
-          setEngineStatus('indisponible');
+          var fileMode = (location.protocol==='file:');
+          setEngineStatus(fileMode ? 'moteur bloqué — ouvre via un serveur local'
+                                    : 'moteur introuvable — dossier engine/ ?');
+          console.warn('[Papu_Chess] Moteur indisponible. ' + (fileMode
+            ? "La page est ouverte en file:// : les navigateurs bloquent le Web Worker du moteur. Sers le dossier via un petit serveur local — dans le dossier de Papu_Chess.html, lance : python3 -m http.server 8000  puis ouvre http://localhost:8000/Papu_Chess.html"
+            : "Vérifie que le dossier engine/ (stockfish-18-lite-single.js + stockfish-18-lite-single.wasm) est bien à côté de Papu_Chess.html."));
           updateModeAvailability();
         }
       });
@@ -3614,15 +3617,37 @@ function updateEvalBar(cp, mate, sideToMove){
   pct = Math.max(2, Math.min(98, pct));
   var wEl=document.getElementById('evalbarWhite');
   if(wEl) wEl.style.height = pct+'%';
-  // le chiffre s'affiche du côté qui gagne
+  // la barre suit le camp du joueur : si les Blancs ne sont pas en bas, on la retourne
+  var flip = (typeof currentPerspective==='function') && (currentPerspective()!=='w');
+  var bar=document.getElementById('evalbar');
+  if(bar) bar.classList.toggle('flip', !!flip);
+  // le chiffre s'affiche du côté (visuel) du gagnant
+  var whiteWinning = (white_cp>=0);
+  var showBottom = (whiteWinning !== !!flip); // bas si Blancs gagnants et plateau non retourné, etc.
   var top=document.getElementById('evalNumTop'), bot=document.getElementById('evalNumBot');
-  if(white_cp>=0){ if(bot){bot.textContent=label;bot.style.display='block';} if(top)top.style.display='none'; }
+  if(showBottom){ if(bot){bot.textContent=label;bot.style.display='block';} if(top)top.style.display='none'; }
   else { if(top){top.textContent=label;top.style.display='block';} if(bot)bot.style.display='none'; }
 }
 function refreshEval(){
+  // 1) Partie analysée : la barre lit l'éval PRÉ-CALCULÉE du coup courant.
+  //    → instantané, jamais bloqué, indépendant du moteur.
+  if(gameAnalysis && gameAnalysis.perMove){
+    if(cursor===0){ updateEvalBar(0, null, 'w'); return; }
+    var r = gameAnalysis.perMove[cursor-1];
+    if(r && typeof r.wcpAfter==='number'){
+      var wcp = r.wcpAfter;
+      if(wcp>=9000) updateEvalBar(null, 1, 'w');
+      else if(wcp<=-9000) updateEvalBar(null, -1, 'w');
+      else updateEvalBar(wcp, null, 'w');
+      return;
+    }
+  }
+  // 2) Position non analysée : éval en direct, en ignorant les demandes périmées (navigation rapide).
   if(!sfReady) return;
-  var stm = game.turn(); // 'w' ou 'b'
+  var stm = game.turn();
+  var myId = ++_evalReqId;
   Engine.analyse(game.fen(), analyseDepth, function(mv, cp, mate){
+    if(myId!==_evalReqId) return;
     updateEvalBar(cp, mate, stm);
   });
 }
@@ -3883,27 +3908,6 @@ function drawArrows(){
   }
   // 2) Flèches du Fou : les coups dont il parle (analyse / révision)
   drawFouArrows();
-  // 3) Cercles du Fou : les cases qu'il désigne (faiblesse, pièce rayonnante, piège…)
-  drawFouCircles();
-}
-function drawFouCircles(){
-  var layer=document.getElementById('arrowLayer'); if(!layer) return;
-  if(playMode) return; // pas d'indice concret en partie live
-  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
-  if(!fouCircles || !fouCircles.length) return;
-  var ns='http://www.w3.org/2000/svg';
-  fouCircles.forEach(function(o){
-    var s = (o && o.s) ? o.s : (typeof o==='string'?o:null);
-    if(!s || s.length<2) return;
-    var c=sqToXY(s);
-    var col=(o&&o.col)||'#8b5cf6'; // violet = la voix du Fou, comme ses flèches
-    var circ=document.createElementNS(ns,'circle');
-    circ.setAttribute('cx',c.x);circ.setAttribute('cy',c.y);circ.setAttribute('r',0.42);
-    circ.setAttribute('fill','none');
-    circ.setAttribute('stroke',col);circ.setAttribute('stroke-width',0.06);
-    circ.setAttribute('opacity',0.92);circ.setAttribute('stroke-dasharray','0.16 0.10'); // pointillé = signature du Fou
-    layer.appendChild(circ);
-  });
 }
 function drawFouArrows(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
