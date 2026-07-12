@@ -1895,6 +1895,14 @@ button.ctrl:active{transform:scale(.93)}
 #arrowLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .arrow-main{stroke:#2e9b5b;fill:#2e9b5b}
 .arrow-alt{stroke:#3a6ea5;fill:#3a6ea5}
+/* Roi en échec : fait de la position (pas une annotation du Fou), donc porté par
+   l'échiquier en continu tant que l'échec dure. Rouge = danger ; ne heurte ni le doré
+   (grelots/blancs), ni le bordeaux (noirs), ni le violet (voix du Fou). */
+@keyframes checkPulse{
+  0%,100%{box-shadow:inset 0 0 0 3px rgba(214,40,40,.95),inset 0 0 14px 2px rgba(214,40,40,.5)}
+  50%{box-shadow:inset 0 0 0 3px rgba(255,86,86,1),inset 0 0 22px 6px rgba(214,40,40,.82)}
+}
+.sq.in-check{animation:checkPulse 1.15s ease-in-out infinite}
 .toggle-arrows{display:flex;align-items:center;gap:6px;font-size:.72rem;color:#9aa0b0;margin-top:1px;cursor:pointer;user-select:none}
 .toggle-arrows input{accent-color:#c9a84c}
 /* Plaques de joueur autour de l'échiquier : savoir qui est en haut / en bas */
@@ -2300,6 +2308,7 @@ const PIECES={K:'\u2654',Q:'\u2655',R:'\u2656',B:'\u2657',N:'\u2658',P:'\u2659',
 let game=new Chess(),flipped=false,sel=null,legal=[],lastFrom=null,lastTo=null,openDetail=null;
 let fullMoves=[],cursor=0,moveComments=[],pgnMode=false;
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
+let fouCircles=[]; // cases que le Fou entoure → cercles violets (case faible, pièce rayonnante, cadeau empoisonné…) ; format {s:'d5',col?:'#...'}
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
 let userElo=320; // niveau réel de l'utilisateur (Elo Chess.com ou FIDE) — le Fou calibre ses conseils dessus
 function setUserLevel(v){ var n=parseInt(v,10); if(!isNaN(n)&&n>0) userElo=n; }
@@ -2844,8 +2853,10 @@ function bishopSVG(color){
 }
 function q(n){return document.querySelector('.sq[data-sq="'+n+'"]');}
 function render(animate){
+  var inChk=game.in_check(), chkColor=game.turn(); // échec = fait de la position, calculé une fois
   document.querySelectorAll('.sq').forEach(sq=>{sq.className='sq '+(sq.className.includes('light')?'light':'dark');sq.innerHTML='';
     const p=game.get(sq.dataset.sq);
+    if(inChk&&p&&p.type==='k'&&p.color===chkColor)sq.classList.add('in-check'); // roi du trait, en échec
     if(sq.dataset.sq===lastFrom)sq.classList.add('lm-from');if(sq.dataset.sq===lastTo)sq.classList.add('lm-to');if(sq.dataset.sq===sel)sq.classList.add('sel');
     if(p){
       const s=document.createElement('span');
@@ -3111,7 +3122,7 @@ function md(s){return s?s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'):'';}
 
 function identify(animate){
   const seq=getUciSeq();const sp=document.getElementById('speech');openDetail=null;
-  fouArrows=[]; // par défaut le Fou ne pointe rien ; chaque branche pose sa flèche si besoin
+  fouArrows=[]; fouCircles=[]; // par défaut le Fou ne pointe/n'entoure rien ; chaque branche pose ses marques si besoin
   if(typeof updatePlayerPlates==='function') updatePlayerPlates();
   // MODE ÉTEINT : le Fou ne dit rien du tout
   if(fouMode==='off'){ return; }
@@ -3872,6 +3883,27 @@ function drawArrows(){
   }
   // 2) Flèches du Fou : les coups dont il parle (analyse / révision)
   drawFouArrows();
+  // 3) Cercles du Fou : les cases qu'il désigne (faiblesse, pièce rayonnante, piège…)
+  drawFouCircles();
+}
+function drawFouCircles(){
+  var layer=document.getElementById('arrowLayer'); if(!layer) return;
+  if(playMode) return; // pas d'indice concret en partie live
+  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
+  if(!fouCircles || !fouCircles.length) return;
+  var ns='http://www.w3.org/2000/svg';
+  fouCircles.forEach(function(o){
+    var s = (o && o.s) ? o.s : (typeof o==='string'?o:null);
+    if(!s || s.length<2) return;
+    var c=sqToXY(s);
+    var col=(o&&o.col)||'#8b5cf6'; // violet = la voix du Fou, comme ses flèches
+    var circ=document.createElementNS(ns,'circle');
+    circ.setAttribute('cx',c.x);circ.setAttribute('cy',c.y);circ.setAttribute('r',0.42);
+    circ.setAttribute('fill','none');
+    circ.setAttribute('stroke',col);circ.setAttribute('stroke-width',0.06);
+    circ.setAttribute('opacity',0.92);circ.setAttribute('stroke-dasharray','0.16 0.10'); // pointillé = signature du Fou
+    layer.appendChild(circ);
+  });
 }
 function drawFouArrows(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
