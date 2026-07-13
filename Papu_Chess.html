@@ -2991,6 +2991,55 @@ function fouPedago(r, mi){
     return 'Position dure, mais coup juste. À ton niveau on ne lâche jamais : l\'adversaire gaffe aussi.';
   return '';
 }
+function fouHangingSquares(mi){
+  // Pièces du camp qui VIENT de jouer, désormais en prise (SEE 1 coup). Réflexe M1 : le scan Captures rendu visible.
+  try{
+    var VAL={p:1,n:3,b:3,r:5,q:9,k:0};
+    var g=new Chess();
+    for(var k=0;k<=mi;k++){ var fm=fullMoves[k]; if(!fm) return []; g.move({from:fm.from,to:fm.to,promotion:fm.promotion||'q'}); }
+    var caps=g.moves({verbose:true}).filter(function(m){return m.captured;});
+    var byT={};
+    caps.forEach(function(m){ (byT[m.to]=byT[m.to]||[]).push(m); });
+    var res=[];
+    Object.keys(byT).forEach(function(sq){
+      var arr=byT[sq];
+      var victim=VAL[arr[0].captured]||0;
+      var cheapest=Math.min.apply(null, arr.map(function(m){return VAL[m.piece]||0;}));
+      var opp=arr[0];
+      var g2=new Chess(g.fen()); g2.move({from:opp.from,to:opp.to,promotion:'q'});
+      var recap=g2.moves({verbose:true}).some(function(m){return m.to===sq && m.captured;});
+      var net = recap ? (victim-cheapest) : victim;
+      if(net>0) res.push({s:sq, net:net});
+    });
+    res.sort(function(a,b){return b.net-a.net;});
+    return res;
+  }catch(e){ return []; }
+}
+function fouOutpostSquares(mi){
+  // Avant-poste (réflexe M8, déséquilibre dominant) : cavalier en territoire avancé (rangs 4-6),
+  // protégé par un pion ami, et qu'aucun pion adverse ne peut venir attaquer.
+  try{
+    var g=new Chess();
+    for(var k=0;k<=mi;k++){ var fm=fullMoves[k]; if(!fm) return []; g.move({from:fm.from,to:fm.to,promotion:fm.promotion||'q'}); }
+    var board=g.board(), files='abcdefgh';
+    function pawnAt(f,rank,color){ if(f<0||f>7) return false; var p=board[8-rank][f]; return p&&p.type==='p'&&p.color===color; }
+    var res=[];
+    for(var row=0;row<8;row++)for(var c=0;c<8;c++){
+      var p=board[row][c]; if(!p||p.type!=='n') continue;
+      var rank=8-row, color=p.color, adv=(color==='w')?rank:(9-rank);
+      if(adv<4||adv>6) continue;
+      var defRank=(color==='w')?rank-1:rank+1;
+      if(!(pawnAt(c-1,defRank,color)||pawnAt(c+1,defRank,color))) continue;
+      var enemy=(color==='w')?'b':'w', attackable=false;
+      [c-1,c+1].forEach(function(f){ if(f<0||f>7) return;
+        for(var rr=1;rr<=8;rr++){ var ahead=(color==='w')?(rr>rank):(rr<rank); if(ahead&&pawnAt(f,rr,enemy)) attackable=true; } });
+      if(attackable) continue;
+      res.push({s:files[c]+rank, adv:adv, side:(color==='w')?'Blancs':'Noirs'});
+    }
+    res.sort(function(a,b){return b.adv-a.adv;});
+    return res;
+  }catch(e){ return []; }
+}
 function commentAnalyzedMove(mi){
   var r = gameAnalysis.perMove[mi];
   if(!r) return;
@@ -3020,7 +3069,21 @@ function commentAnalyzedMove(mi){
   var ped = (typeof fouPedago==='function') ? fouPedago(r,mi) : '';
   var pedHtml = ped ? ('<div class="stext" style="margin-top:7px;color:#7a4bd6;font-style:italic">🃏 '+ped+'</div>') : '';
   fouArrows = r.best ? [{m:r.best}] : []; // le Fou pointe le coup qu'il recommande
-  sp.innerHTML='<div class="stitle">'+who+' · coup '+(Math.floor(mi/2)+1)+'</div><div class="stext" style="line-height:1.45">'+msg+'</div>'+pedHtml;
+  // Cercle du Fou : sur une faute, entourer une pièce laissée en prise (réflexe M1, scan Captures)
+  fouCircles=[]; var circMsg='';
+  var isMistake = (r.cls.label==='Gaffe' || r.cls.label==='Erreur' || r.cls.label==='Imprécision');
+  var hang = (isMistake && typeof fouHangingSquares==='function') ? fouHangingSquares(mi) : [];
+  if(hang.length){
+    fouCircles=[{s:hang[0].s, col:'#8b5cf6'}];
+    circMsg='<div class="stext" style="margin-top:5px;color:#7a4bd6;font-style:italic">🃏 La pièce en <b>'+hang[0].s+'</b> reste en prise — le scan Captures l\'aurait vu.</div>';
+  } else {
+    var outs = (typeof fouOutpostSquares==='function') ? fouOutpostSquares(mi) : [];
+    if(outs.length){
+      fouCircles=[{s:outs[0].s, col:'#8b5cf6'}];
+      circMsg='<div class="stext" style="margin-top:5px;color:#7a4bd6;font-style:italic">🃏 Avant-poste en <b>'+outs[0].s+'</b> ('+outs[0].side+') : cavalier inattaquable par un pion, tenu par un pion. Le déséquilibre à exploiter.</div>';
+    }
+  }
+  sp.innerHTML='<div class="stitle">'+who+' · coup '+(Math.floor(mi/2)+1)+'</div><div class="stext" style="line-height:1.45">'+msg+'</div>'+pedHtml+circMsg;
   if(typeof flashJester==='function') flashJester();
 }
 function fmtEval(wcp){
