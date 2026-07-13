@@ -1786,6 +1786,8 @@ textarea{width:100%;height:64px;background:#0e1320;border:1px solid #2e3850;bord
 .files span{flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c9a84c;font-family:ui-monospace,monospace;font-weight:700}
 #board{grid-column:2;grid-row:1;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);aspect-ratio:1;width:var(--board-size,100%);max-width:100%;border:3px solid #2c3450;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.5)}
 .sq{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;cursor:pointer}
+.sq.in-check{animation:checkPulse 1s ease-in-out infinite;border-radius:2px;z-index:2}
+@keyframes checkPulse{0%,100%{box-shadow:inset 0 0 0 3px rgba(226,59,59,.85)}50%{box-shadow:inset 0 0 0 4px rgba(226,59,59,1),0 0 14px 3px rgba(226,59,59,.6)}}
 .light{background:linear-gradient(135deg,#f2ecdb,#e9e1cb)}.dark{background:linear-gradient(135deg,#8b96ad,#7d899f)}
 .pc{font-size:calc(var(--board-size, 320px) * 0.088);line-height:1;position:relative;z-index:2;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));pointer-events:none;transition:transform .25s}
 /* Pièces BLANCHES : glyphe blanche + contour noir épais (lisible sur toute case) */
@@ -2307,6 +2309,7 @@ const PIECES={K:'\u2654',Q:'\u2655',R:'\u2656',B:'\u2657',N:'\u2658',P:'\u2659',
 let game=new Chess(),flipped=false,sel=null,legal=[],lastFrom=null,lastTo=null,openDetail=null;
 let fullMoves=[],cursor=0,moveComments=[],pgnMode=false;
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
+let fouCircles=[]; // cases que le Fou entoure → cercles violets pointillés (pièce en prise, avant-poste…)
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
 let userElo=320; // niveau réel de l'utilisateur (Elo Chess.com ou FIDE) — le Fou calibre ses conseils dessus
 function setUserLevel(v){ var n=parseInt(v,10); if(!isNaN(n)&&n>0) userElo=n; }
@@ -2856,6 +2859,7 @@ function render(animate){
   document.querySelectorAll('.sq').forEach(sq=>{sq.className='sq '+(sq.className.includes('light')?'light':'dark');sq.innerHTML='';
     const p=game.get(sq.dataset.sq);
     if(sq.dataset.sq===lastFrom)sq.classList.add('lm-from');if(sq.dataset.sq===lastTo)sq.classList.add('lm-to');if(sq.dataset.sq===sel)sq.classList.add('sel');
+    if(p&&p.type==='k'&&p.color===game.turn()&&game.in_check())sq.classList.add('in-check'); // roi en échec : pulsation rouge
     if(p){
       const s=document.createElement('span');
       s.className='pc '+(p.color==='w'?'w':'b');
@@ -3184,6 +3188,7 @@ function md(s){return s?s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'):'';}
 function identify(animate){
   const seq=getUciSeq();const sp=document.getElementById('speech');openDetail=null;
   fouArrows=[]; // par défaut le Fou ne pointe rien ; chaque branche pose sa flèche si besoin
+  fouCircles=[]; // idem pour les cercles
   if(typeof updatePlayerPlates==='function') updatePlayerPlates();
   // MODE ÉTEINT : le Fou ne dit rien du tout
   if(fouMode==='off'){ return; }
@@ -3971,6 +3976,7 @@ function drawArrows(){
   }
   // 2) Flèches du Fou : les coups dont il parle (analyse / révision)
   drawFouArrows();
+  drawFouCircles();
 }
 function drawFouArrows(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
@@ -3995,6 +4001,24 @@ function drawFouArrows(){
     tri.setAttribute('points',b.x+','+b.y+' '+(b.x-hs*Math.cos(ang-0.42))+','+(b.y-hs*Math.sin(ang-0.42))+' '+(b.x-hs*Math.cos(ang+0.42))+','+(b.y-hs*Math.sin(ang+0.42)));
     tri.setAttribute('fill',col);tri.setAttribute('opacity',0.92);
     layer.appendChild(tri);
+  });
+}
+function drawFouCircles(){
+  var layer=document.getElementById('arrowLayer'); if(!layer) return;
+  if(playMode) return; // pas d'indice concret en partie live
+  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
+  if(!fouCircles || !fouCircles.length) return;
+  var ns='http://www.w3.org/2000/svg';
+  fouCircles.forEach(function(o){
+    if(!o || !o.s) return;
+    var c=sqToXY(o.s);
+    var col=o.col||'#8b5cf6'; // violet = la voix du Fou
+    var circ=document.createElementNS(ns,'circle');
+    circ.setAttribute('cx',c.x); circ.setAttribute('cy',c.y); circ.setAttribute('r',0.42);
+    circ.setAttribute('fill','none');
+    circ.setAttribute('stroke',col); circ.setAttribute('stroke-width',0.06);
+    circ.setAttribute('opacity',0.92); circ.setAttribute('stroke-dasharray','0.14 0.09'); // pointillé, comme les flèches
+    layer.appendChild(circ);
   });
 }
 function fitBoard(){
