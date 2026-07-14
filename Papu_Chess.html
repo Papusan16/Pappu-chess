@@ -1933,7 +1933,7 @@ button.ctrl:active{transform:scale(.93)}
 .nav-controls button:active{transform:scale(.92)}
 
 /* Disposition adaptative : côte à côte sur écran large, empilé sur mobile */
-@media (min-width: 640px) and (min-height: 540px){
+@media (min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape){
   .layout{
     max-width:1500px;
     display:grid;
@@ -2077,7 +2077,7 @@ button.ctrl:active{transform:scale(.93)}
 .jester-zone.fou-off{display:none !important}
 
 /* ===== DESKTOP COMPACT : l'échiquier est la star ===== */
-@media (min-width: 640px) and (min-height: 540px){
+@media (min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape){
   body{padding:6px 12px 4px}
   .topbar{max-width:none;margin-bottom:4px}
   h1{font-size:1rem}
@@ -2100,7 +2100,7 @@ button.ctrl:active{transform:scale(.93)}
   .color-pick button{padding:9px 6px;font-size:.78rem}
 }
 
-@media (min-width: 640px) and (min-height: 540px){
+@media (min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape){
   .topbar{display:none} /* remplacé par le titre compact dans .tabs */
   .tabs{grid-area:tabs;display:flex;align-items:center;gap:8px;justify-content:flex-end;padding:0}
   .mini-title{margin-right:auto;font-size:.95rem;font-weight:800;background:linear-gradient(90deg,#f3cd66,#c9a84c);-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
@@ -3933,7 +3933,7 @@ function updateModeAvailability(){
   var note=document.getElementById('offlineNote'); if(note) note.style.display=sfReady?'none':'block';
 }
 var _jesterAutoTimer=null;
-var _jesterIsWide=function(){ return window.matchMedia('(min-width: 640px) and (min-height: 540px)').matches; };
+var _jesterIsWide=function(){ return window.matchMedia('(min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape)').matches; };
 function toggleJester(){
   var z=document.getElementById('jesterZone');
   if(!z) return;
@@ -4077,7 +4077,7 @@ function fitBoard(){
     var wrap = document.querySelector('.board-eval-wrap');
     var layout = document.querySelector('.layout');
     if(!wrap || !layout) return;
-    var isWide = window.matchMedia('(min-width: 640px) and (min-height: 540px)').matches;
+    var isWide = window.matchMedia('(min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape)').matches;
     var vh = window.innerHeight;
     var vw = window.innerWidth;
     var size;
@@ -4098,7 +4098,9 @@ function fitBoard(){
       var availH = vh - wrapTop - navH - plates - 16;
       // largeur max pour l'échiquier : fenêtre - colonne droite (min 240) - barre d'éval - marges
       var colW = vw - 240 - 26 - 44;
-      size = Math.max(280, Math.min(availH, colW));
+      // écran court (paysage téléphone) : un plancher plus bas évite de forcer un débordement
+      var floor = vh < 480 ? 200 : 280;
+      size = Math.max(floor, Math.min(availH, colW));
     } else {
       // MOBILE : l'échiquier est dimensionné par la LARGEUR dispo, plafonné à une fraction
       // de la hauteur. Ainsi la page peut dépasser un écran et DÉFILER pour atteindre les
