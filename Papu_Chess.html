@@ -2313,6 +2313,7 @@ const ECO=[{"e":"C89","n":"Partie espagnole (Ruy López): Marshall attaque, lign
 const PIECES={K:'\u2654',Q:'\u2655',R:'\u2656',B:'\u2657',N:'\u2658',P:'\u2659',k:'\u265A',q:'\u265B',r:'\u265C',b:'\u265D',n:'\u265E',p:'\u265F'};
 let game=new Chess(),flipped=false,sel=null,legal=[],lastFrom=null,lastTo=null,openDetail=null;
 let fullMoves=[],cursor=0,moveComments=[],pgnMode=false;
+let moveAnnotations=[]; // annotations visuelles (%cal/%csl) par coup, pour dessiner les cercles/flèches de Marc
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
 let fouCircles=[]; // cases que le Fou entoure → cercles violets pointillés (pièce en prise, avant-poste…)
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
@@ -3149,7 +3150,7 @@ function undo(){
     render(false);
   }
 }
-function reset(){game=new Chess();fullMoves=[];cursor=0;moveComments=[];pgnMode=false;lastFrom=lastTo=null;sel=null;legal=[];render(false);}
+function reset(){game=new Chess();fullMoves=[];cursor=0;moveComments=[];moveAnnotations=[];pgnMode=false;lastFrom=lastTo=null;sel=null;legal=[];render(false);}
 function setFouMode(m,btn){
   fouMode=m;
   var row=document.getElementById('foumodeRow');
@@ -3226,20 +3227,28 @@ function identify(animate){
   // Il garde son message et n'affiche un conseil que si on le sollicite (Idée du prof).
   // Exception : le mode PGN commenté et l'analyse restent actifs (ce sont des demandes explicites).
   if(fouMode==='discret' && !pgnMode && !gameAnalysis){ return; }
-  // MODE PGN COMMENTÉ : le Fou lit le commentaire du coup courant
-  if(pgnMode && cursor>0 && moveComments[cursor-1]){
-    const cm=glyphExpand(moveComments[cursor-1]);
-    let mood='happy';
-    if(/‼|!!/.test(cm)) mood='wow';
-    else if(/\?\?/.test(cm)) mood='hmm';
-    else if(/!/.test(cm)) mood='joy';
-    else if(/\?/.test(cm)) mood='hmm';
-    setMood(mood,animate);
+  // MODE PGN COMMENTÉ : le Fou lit le commentaire du coup courant + dessine ses annotations visuelles
+  if(pgnMode && cursor>0 && (moveComments[cursor-1] || (moveAnnotations[cursor-1] && (moveAnnotations[cursor-1].arrows.length||moveAnnotations[cursor-1].circles.length)))){
+    var an = moveAnnotations[cursor-1] || {arrows:[],circles:[]};
+    // annotations visuelles (%cal/%csl, ex. celles de Marc) prioritaires ; sinon on pointe le coup joué
+    if(an.arrows.length || an.circles.length){
+      fouArrows = an.arrows.slice();
+      fouCircles = an.circles.slice();
+    } else if(fullMoves[cursor-1] && fullMoves[cursor-1].from){
+      fouArrows=[{m:fullMoves[cursor-1].from+fullMoves[cursor-1].to}];
+    }
     const moveSan = fullMoves[cursor-1] ? fullMoves[cursor-1].san : '';
-    if(fullMoves[cursor-1] && fullMoves[cursor-1].from) fouArrows=[{m:fullMoves[cursor-1].from+fullMoves[cursor-1].to}]; // le Fou pointe le coup annoté
     let html='<div class="stitle">🎭 '+moveSan+'</div>';
-    html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+cm+'</div>';
-    // petit rappel de l'ouverture si connue
+    var cm = moveComments[cursor-1] ? glyphExpand(moveComments[cursor-1]) : '';
+    if(cm){
+      let mood='happy';
+      if(/‼|!!/.test(cm)) mood='wow';
+      else if(/\?\?/.test(cm)) mood='hmm';
+      else if(/!/.test(cm)) mood='joy';
+      else if(/\?/.test(cm)) mood='hmm';
+      setMood(mood,animate);
+      html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+cm+'</div>';
+    }
     let best=null;for(const o of ECO){if(o.u.length<=seq.length){let ok=true;for(let i=0;i<o.u.length;i++)if(o.u[i]!==seq[i]){ok=false;break;}if(ok){best=o;break;}}}
     if(best)html+='<div class="fam" style="margin-top:6px">'+best.e+' · '+best.n+'</div>';
     sp.innerHTML=html;
@@ -3458,6 +3467,20 @@ function parsePgnHeaders(txt){
   while((m=re.exec(txt))!==null){ h[m[1]]=m[2]; }
   return h;
 }
+function extractVisuals(cm){
+  // Lit les annotations visuelles standard des PGN : %cal (flèches) et %csl (cercles).
+  // Format : [%cal Gd4e5,Rf1c4]  /  [%csl Re5,Gd4]  (G=vert, R=rouge, B=bleu, Y=or).
+  var arrows=[], circles=[];
+  var colMap={G:'#2e9b5b', R:'#d0433a', B:'#3a6fd0', Y:'#d4a52e'};
+  var mCal=cm.match(/\[%cal\s+([^\]]+)\]/i);
+  if(mCal){ mCal[1].split(',').forEach(function(e){ var m=e.trim().match(/^([GRYB])([a-h][1-8])([a-h][1-8])/i);
+    if(m) arrows.push({m:(m[2]+m[3]).toLowerCase(), col:colMap[m[1].toUpperCase()]||'#8b5cf6'}); }); }
+  var mCsl=cm.match(/\[%csl\s+([^\]]+)\]/i);
+  if(mCsl){ mCsl[1].split(',').forEach(function(e){ var m=e.trim().match(/^([GRYB])([a-h][1-8])/i);
+    if(m) circles.push({s:m[2].toLowerCase(), col:colMap[m[1].toUpperCase()]||'#8b5cf6'}); }); }
+  return {arrows:arrows, circles:circles};
+}
+function stripVisuals(cm){ return cm.replace(/\[%(cal|csl|clk|eval)\s+[^\]]*\]/gi,'').replace(/\s+/g,' ').trim(); }
 function glyphExpand(cm){
   if(!cm) return cm;
   var t=cm.trim();
@@ -3517,7 +3540,9 @@ function parsePgnWithComments(txt){
       }
     }
   }
-  return {game:g,comments:comments,count:moves.length};
+  var strippedComments = comments.map(function(c){ return c ? stripVisuals(c) : c; });
+  var annos = comments.map(function(c){ return c ? extractVisuals(c) : {arrows:[],circles:[]}; });
+  return {game:g,comments:strippedComments,annos:annos,count:moves.length};
 }
 function loadPgn(){
   const txt=document.getElementById('pgnInput').value.trim();
@@ -3529,6 +3554,7 @@ function loadPgn(){
     game=parsed.game;
     syncFull();
     moveComments=parsed.comments;
+    moveAnnotations=parsed.annos||[];
     pgnMode = moveComments.some(function(c){return c && c.length;});
     lastFrom=lastTo=null;sel=null;legal=[];
     switchTab('play');
@@ -4067,9 +4093,14 @@ function fitBoard(){
       // quel que soit le scroll), sinon un coup de molette agrandit l'échiquier en boucle.
       var scrollY = window.scrollY || window.pageYOffset || 0;
       var wrapTop = wrap.getBoundingClientRect().top + scrollY;
-      // la navigation est maintenant SOUS l'échiquier : réserver sa hauteur (~46px)
+      // la navigation est SOUS l'échiquier : réserver sa hauteur (~46px) ET celle des
+      // plaques de joueur (au-dessus/en-dessous du plateau), sinon l'ensemble déborde en paysage.
       var navH = 46;
-      var availH = vh - wrapTop - navH - 16;
+      var plates = 0;
+      var pt=document.getElementById('playerTop'), pb=document.getElementById('playerBottom');
+      if(pt) plates += pt.getBoundingClientRect().height;
+      if(pb) plates += pb.getBoundingClientRect().height;
+      var availH = vh - wrapTop - navH - plates - 16;
       // largeur max pour l'échiquier : fenêtre - colonne droite (min 240) - barre d'éval - marges
       var colW = vw - 240 - 26 - 44;
       size = Math.max(280, Math.min(availH, colW));
