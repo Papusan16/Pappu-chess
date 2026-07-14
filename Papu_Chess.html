@@ -2092,7 +2092,12 @@ button.ctrl:active{transform:scale(.93)}
   .jester-zone .jester-svg{width:52px;height:69px}
   /* boutons compacts partout dans la colonne droite */
   .controls .ctrl{padding:7px 6px;font-size:.78rem}
-  .nav-controls button{padding:6px 4px;font-size:14px}
+  .nav-controls button{padding:5px 4px;font-size:13px}
+  /* la barre de navigation remonte JUSTE sous l'échiquier (avant le panneau de réglages),
+     pour rester visible même quand l'échiquier est affiché en entier */
+  .board-eval-wrap{order:0}
+  .nav-controls{order:1}
+  .controls{order:2}
   .teach-btn{padding:8px 6px;font-size:.76rem}
   .settings-menu summary{padding:7px 11px;font-size:.76rem}
   .turn-ind{font-size:.76rem;margin:1px 0}
