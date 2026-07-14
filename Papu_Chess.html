@@ -2077,7 +2077,7 @@ button.ctrl:active{transform:scale(.93)}
 .jester-zone.fou-off{display:none !important}
 
 /* ===== DESKTOP COMPACT : l'échiquier est la star ===== */
-@media (min-width: 640px){
+@media (min-width: 640px) and (min-height: 540px){
   body{padding:6px 12px 4px}
   .topbar{max-width:none;margin-bottom:4px}
   h1{font-size:1rem}
@@ -2093,11 +2093,6 @@ button.ctrl:active{transform:scale(.93)}
   /* boutons compacts partout dans la colonne droite */
   .controls .ctrl{padding:7px 6px;font-size:.78rem}
   .nav-controls button{padding:5px 4px;font-size:13px}
-  /* la barre de navigation remonte JUSTE sous l'échiquier (avant le panneau de réglages),
-     pour rester visible même quand l'échiquier est affiché en entier */
-  .board-eval-wrap{order:0}
-  .nav-controls{order:1}
-  .controls{order:2}
   .teach-btn{padding:8px 6px;font-size:.76rem}
   .settings-menu summary{padding:7px 11px;font-size:.76rem}
   .turn-ind{font-size:.76rem;margin:1px 0}
@@ -2105,7 +2100,7 @@ button.ctrl:active{transform:scale(.93)}
   .color-pick button{padding:9px 6px;font-size:.78rem}
 }
 
-@media (min-width: 640px){
+@media (min-width: 640px) and (min-height: 540px){
   .topbar{display:none} /* remplacé par le titre compact dans .tabs */
   .tabs{grid-area:tabs;display:flex;align-items:center;gap:8px;justify-content:flex-end;padding:0}
   .mini-title{margin-right:auto;font-size:.95rem;font-weight:800;background:linear-gradient(90deg,#f3cd66,#c9a84c);-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
