@@ -5,6 +5,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
+<script>
+(function(){
+  try{
+    var pref='auto';
+    try{ pref = localStorage.getItem('papu_theme') || 'auto'; }catch(e){}
+    var resolved = pref==='light' ? 'light' : pref==='dark' ? 'dark' :
+      ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+    if(resolved==='light') document.documentElement.classList.add('theme-light');
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', resolved==='light' ? '#eef1f7' : '#0c1019');
+  }catch(e){}
+})();
+</script>
 
 <title>Échecs — Coach & Encyclopédie</title>
 <script>
@@ -1762,7 +1775,7 @@ if (typeof define !== 'undefined')
 </script>
 <style>
 :root{
-  /* --- decor (redefined by body.theme-light) --- */
+  /* --- decor (redefined by html.theme-light / body.theme-light) --- */
   --bg:#0c1019;--bg-grad-top:#243056;
   --text:#e8e8e8;--text-muted:#9aa0b0;--text-dim:#7e88a0;--text-faint:#8a90a6;
   --text-soft:#9fb0d0;--text-code:#bcc4d6;--text-summary:#c9d4e8;--text-input:#dfe6f5;
@@ -1788,6 +1801,9 @@ if (typeof define !== 'undefined')
   /* --- états plateau --- */
   --case-selection:rgba(127,201,127,.4);--case-dernier-depart:rgba(201,168,76,.28);
   --case-dernier-arrivee:rgba(201,168,76,.45);--case-coup-legal:rgba(0,0,0,.25);
+
+  /* --- texte sur surface qui bascule de fond (surface-active change de luminosité selon le thème) --- */
+  --text-on-active:var(--white);
 
   /* --- cible / focus encyclopédie --- */
   --cible-glow:rgba(243,205,102,.4);
@@ -1859,7 +1875,7 @@ if (typeof define !== 'undefined')
 /* Thème clair : ne redéfinit que le décor (fond/surfaces/texte/bordures).
    Les couleurs d'identité (--gold,--burgundy,--fou,--check,--arrow-*,etc.)
    restent inchangées entre les deux thèmes. */
-body.theme-light{
+html.theme-light,body.theme-light{
   --bg:#eef1f7;--bg-grad-top:#ffffff;
   --text:#232a3d;--text-muted:#5b6478;--text-dim:#6b7690;--text-faint:#748099;
   --text-soft:#45577a;--text-code:#3a4560;--text-summary:#33405e;--text-input:#1c2338;
@@ -1872,6 +1888,11 @@ body.theme-light{
   --border-a:#c7cede90;--border-a2:#c7cede44;
 
   --eval-black:#d7dbe4;
+
+  --text-on-active:var(--text-on-light);
+
+  --ombre-plateau:rgba(0,0,0,.12);--ombre-piece:rgba(0,0,0,.12);--ombre-piece-arlequin:rgba(0,0,0,.15);
+  --ombre-bulle:rgba(0,0,0,.15);--ombre-carte:rgba(0,0,0,.18);
 }
 body{background:radial-gradient(circle at 50% -10%,var(--bg-grad-top),var(--bg) 65%);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding:8px 8px 16px;display:flex;flex-direction:column;align-items:center;min-height:100dvh;box-sizing:border-box}
 .topbar{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
@@ -1882,7 +1903,7 @@ h1{font-size:.92rem;background:linear-gradient(90deg,var(--gold-light),var(--gol
 .layout{display:flex;flex-direction:column;align-items:center;gap:9px;width:100%;max-width:440px}
 .tabs{display:flex;gap:6px;width:100%}
 .tab{flex:1;text-align:center;font-size:.74rem;padding:8px;border-radius:8px;background:var(--surface);color:var(--text-muted);cursor:pointer;font-weight:700}
-.tab.active{background:var(--surface-active);color:var(--white)}
+.tab.active{background:var(--surface-active);color:var(--text-on-active)}
 .pgn-toggle{font-size:.72rem;padding:6px 12px;border-radius:8px;background:var(--surface);color:var(--text-muted);cursor:pointer;font-weight:700;border:1px solid var(--border)}
 .pgn-toggle:active{transform:scale(.96)}
 .paste-area{width:100%;display:none;flex-direction:column;gap:8px}
@@ -4272,7 +4293,8 @@ if(typeof updatePlayerPlates==='function') updatePlayerPlates();
       <details>
         <summary>🎨 Apparence</summary>
         <div class="opt-row" id="themeRow">
-          <button data-theme="dark" class="on" onclick="setTheme('dark',this)">🌙 Sombre</button>
+          <button data-theme="auto" class="on" onclick="setTheme('auto',this)">🖥️ Auto</button>
+          <button data-theme="dark" onclick="setTheme('dark',this)">🌙 Sombre</button>
           <button data-theme="light" onclick="setTheme('light',this)">☀️ Clair</button>
         </div>
       </details>
@@ -4293,20 +4315,42 @@ if(typeof updatePlayerPlates==='function') updatePlayerPlates();
   </div>
 </div>
 <script>
-function setTheme(t,btn){
-  document.body.classList.toggle('theme-light', t==='light');
-  var row=document.getElementById('themeRow');
-  if(row){ var bs=row.querySelectorAll('button'); for(var i=0;i<bs.length;i++)bs[i].classList.remove('on'); }
-  if(!btn && row) btn=row.querySelector('button[data-theme="'+t+'"]');
-  if(btn) btn.classList.add('on');
-  try{ localStorage.setItem('papu_theme', t); }catch(e){}
+var themePref='auto';
+function resolveTheme(pref){
+  if(pref==='light') return 'light';
+  if(pref==='dark') return 'dark';
+  try{ return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; }
+  catch(e){ return 'dark'; }
+}
+function applyTheme(resolved){
+  document.documentElement.classList.toggle('theme-light', resolved==='light');
   var meta=document.querySelector('meta[name="theme-color"]');
   if(meta){ var bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); if(bg) meta.setAttribute('content', bg); }
 }
+function updateThemeButtons(btn){
+  var row=document.getElementById('themeRow');
+  if(row){ var bs=row.querySelectorAll('button'); for(var i=0;i<bs.length;i++)bs[i].classList.remove('on'); }
+  if(!btn && row) btn=row.querySelector('button[data-theme="'+themePref+'"]');
+  if(btn) btn.classList.add('on');
+}
+function setTheme(t,btn){
+  themePref=t;
+  try{ localStorage.setItem('papu_theme', t); }catch(e){}
+  applyTheme(resolveTheme(t));
+  updateThemeButtons(btn);
+}
 function loadTheme(){
-  var t='dark';
-  try{ t = localStorage.getItem('papu_theme') || 'dark'; }catch(e){}
-  setTheme(t, null);
+  var t='auto';
+  try{ t = localStorage.getItem('papu_theme') || 'auto'; }catch(e){}
+  themePref=t;
+  applyTheme(resolveTheme(t));
+  updateThemeButtons(null);
+  try{
+    var mq = matchMedia('(prefers-color-scheme: dark)');
+    var onChange=function(){ if(themePref==='auto') applyTheme(resolveTheme('auto')); };
+    if(mq.addEventListener) mq.addEventListener('change', onChange);
+    else if(mq.addListener) mq.addListener(onChange);
+  }catch(e){}
 }
 loadTheme();
 </script>
