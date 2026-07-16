@@ -1899,6 +1899,8 @@ body{background:radial-gradient(circle at 50% -10%,var(--bg-grad-top),var(--bg) 
 h1{font-size:.92rem;background:linear-gradient(90deg,var(--gold-light),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.03em;text-transform:uppercase;font-weight:800}
 .libbtn{background:linear-gradient(180deg,var(--btn-lib-top),var(--btn-lib-bottom));border:1px solid var(--gold-a40);border-radius:9px;color:var(--gold-light);font-size:.74rem;font-weight:700;padding:8px 11px;cursor:pointer;white-space:nowrap}
 .libbtn:active{transform:scale(.94)}
+.theme-toggle-btn{background:linear-gradient(180deg,var(--btn-lib-top),var(--btn-lib-bottom));border:1px solid var(--gold-a40);border-radius:9px;color:var(--gold-light);font-size:1rem;font-weight:700;cursor:pointer;width:34px;height:34px;padding:0;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.theme-toggle-btn:active{transform:scale(.94)}
 .sub{font-size:.71rem;color:var(--text-dim);margin-bottom:8px;text-align:center;max-width:440px}
 .layout{display:flex;flex-direction:column;align-items:center;gap:9px;width:100%;max-width:440px}
 .tabs{display:flex;gap:6px;width:100%}
@@ -2109,6 +2111,7 @@ button.ctrl:active{transform:scale(.93)}
     height:32px;padding:0 12px;font-size:.74rem;font-weight:700;border-radius:8px;
     display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
   }
+  .tabs .theme-toggle-btn{height:32px;width:32px;font-size:.92rem;border-radius:8px}
   /* Contrôles Annuler/Nouvelle/Tourner + perspective : s'adaptent à la largeur */
   .controls{display:flex;flex-wrap:wrap;gap:6px}
   .controls .ctrl{flex:1 1 auto;min-width:80px;height:36px;padding:0 8px;font-size:.76rem;font-weight:700;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
@@ -2265,6 +2268,7 @@ button.ctrl:active{transform:scale(.93)}
 <div class="layout">
   <div class="tabs">
     <span class="mini-title">🎭 Coach &amp; Encyclopédie</span>
+    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Thème : auto (sombre)">🌙</button>
     <button class="pgn-toggle" id="tab-paste" onclick="togglePasteArea()">📋 PGN</button>
     <button class="pgn-toggle" onclick="openProfile()">👤 Profil</button>
     <button class="pgn-toggle libbtn-mini" onclick="openEnc()">📚 Encyclopédie</button>
@@ -4327,17 +4331,30 @@ function applyTheme(resolved){
   var meta=document.querySelector('meta[name="theme-color"]');
   if(meta){ var bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); if(bg) meta.setAttribute('content', bg); }
 }
+function updateThemeToggleBtn(){
+  var tb=document.getElementById('themeToggleBtn');
+  if(!tb) return;
+  var resolved=resolveTheme(themePref);
+  tb.textContent = resolved==='light' ? '☀️' : '🌙';
+  var label = themePref==='auto' ? ('auto ('+(resolved==='light'?'clair':'sombre')+')') : (resolved==='light'?'clair':'sombre');
+  tb.title = 'Thème : '+label;
+}
 function updateThemeButtons(btn){
   var row=document.getElementById('themeRow');
   if(row){ var bs=row.querySelectorAll('button'); for(var i=0;i<bs.length;i++)bs[i].classList.remove('on'); }
   if(!btn && row) btn=row.querySelector('button[data-theme="'+themePref+'"]');
   if(btn) btn.classList.add('on');
+  updateThemeToggleBtn();
 }
 function setTheme(t,btn){
   themePref=t;
   try{ localStorage.setItem('papu_theme', t); }catch(e){}
   applyTheme(resolveTheme(t));
   updateThemeButtons(btn);
+}
+function toggleTheme(){
+  var resolved=resolveTheme(themePref);
+  setTheme(resolved==='light' ? 'dark' : 'light');
 }
 function loadTheme(){
   var t='auto';
@@ -4347,7 +4364,7 @@ function loadTheme(){
   updateThemeButtons(null);
   try{
     var mq = matchMedia('(prefers-color-scheme: dark)');
-    var onChange=function(){ if(themePref==='auto') applyTheme(resolveTheme('auto')); };
+    var onChange=function(){ if(themePref==='auto'){ applyTheme(resolveTheme('auto')); updateThemeToggleBtn(); } };
     if(mq.addEventListener) mq.addEventListener('change', onChange);
     else if(mq.addListener) mq.addListener(onChange);
   }catch(e){}
