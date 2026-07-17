@@ -1,0 +1,137 @@
+COUVERTURE DES OUVERTURES — PRESENCE SIMPLE DU NOM (sans marqueur d'explication)
+==========================================================================================
+
+Corpus : 871 transcripts (Marc Quenehen/)
+Methode : recherche du nom (et variantes listees) n'importe ou dans le texte du
+transcript, mot entier (limites de mots), insensible a la casse et aux accents.
+Un fichier peut compter dans plusieurs lignes (les categories ne sont pas exclusives).
+
+Lignes marquees [RISQUE FAUX POSITIFS] : le(s) mot(s)-cle(s) sont des mots courants
+(nationalite, ville, prenom...) qui peuvent apparaitre sans rapport avec l'ouverture
+d'echecs — chiffres a verifier manuellement avant usage.
+
+*** ALERTE : SOUS-COMPTAGE PROUVE POUR LES NOMS ETRANGERS/TECHNIQUES ***
+Les sous-titres automatiques YouTube transcrivent phonetiquement le francais parle et
+ECHOUENT sur les noms d'ouverture etrangers ou techniques. Exemple corrige : "Caro-Kann"
+est massivement retranscrit "carocane" par les sous-titres. Une premiere recherche
+mot-a-mot ("caro kann") ne trouvait que 1 dossier sur 871, contre 17 dossiers ayant
+"Caro-Kann" explicitement dans leur TITRE (verifie manuellement) — preuve du sous-comptage.
+Apres ajout de la variante "carocane" (validee dans _fonds/lexique_normalisation.md,
+110 occurrences fiables), le compte reel passe a 54 dossiers. Meme correction appliquee
+a Gambit Roi (+ gambi/combi roi) et Gambit Dame (+ gambidame/gambidam/gambi dame/combi
+dame) : lignes marquees [CORRIGE] ci-dessous et dans le detail des variantes.
+Le meme risque de sous-comptage reste NON corrige et s'applique toujours tres probablement
+a : Grunfeld, Traxler, Fegatello, Nimzo-indienne, Scheveningen, Sveshnikov, Reti, Alekhine,
+Pirc, et tout autre nom d'origine non francaise dont la variante phonetique n'a pas encore
+ete validee dans le lexique. LES CHIFFRES CI-DESSOUS RESTENT DONC UN PLANCHER (minimum
+garanti), PAS UN COMPTE EXHAUSTIF, POUR CES OUVERTURES-LA NON CORRIGEES. Seules les
+lignes a mots-cles francais courants (sicilienne, francaise, anglaise, italienne, hollandaise,
+etc.) sont fiables comme approximation haute (sous reserve du risque de faux positifs ci-dessus).
+
+------------------------------------------------------------------------------------------
+
+Ouverture                        | Fichiers |  Duree cumulee
+-------------------------------------------------------------
+Vienne                           |      187 |          78h20  [RISQUE FAUX POSITIFS]
+Sicilienne (+ variantes)         |      177 |          72h32  [RISQUE FAUX POSITIFS]
+Francaise                        |      111 |          55h28  [RISQUE FAUX POSITIFS]
+Russe (Petrov)                   |       71 |          26h51  [RISQUE FAUX POSITIFS]
+Italienne                        |       69 |          28h42
+Gambit Dame                      |       68 |          31h24  [CORRIGE]
+Systeme de Londres               |       57 |          26h53
+Anglaise                         |       55 |          28h45
+Caro-Kann                        |       54 |          25h16  [CORRIGE]
+Espagnole (Ruy Lopez)            |       53 |          20h58
+Est-indienne                     |       37 |          19h47
+Ecossaise                        |       23 |          12h09
+Scandinave                       |       20 |          10h50
+Systeme Colle                    |       15 |           5h49
+Gambit Evans                     |       14 |           5h14
+Reti                             |       14 |           7h04
+Hollandaise                      |       13 |           4h04
+Gambit Roi                       |       13 |           5h17  [CORRIGE]
+Catalane                         |       11 |           5h03
+Ouverture Bird                   |       10 |           3h20  [RISQUE FAUX POSITIFS]
+Grunfeld                         |        9 |           4h56
+Petrov                           |        9 |           2h54
+Berlin (defense berlinoise)      |        8 |           3h27  [RISQUE FAUX POSITIFS]
+Benko                            |        8 |           4h20
+Danois                           |        8 |           2h35  [RISQUE FAUX POSITIFS]
+Pirc                             |        6 |           2h53
+Larsen                           |        6 |           1h49
+Fegatello                        |        6 |           2h19
+Traxler                          |        6 |           1h58
+Philidor                         |        6 |           3h00
+Albin (contre-gambit)            |        5 |           1h26
+Hippopotame                      |        5 |           2h50
+Orang-Outan                      |        5 |           2h19
+Benoni                           |        3 |           2h06
+Budapest                         |        3 |           0h52
+Owen                             |        2 |           0h46
+Nimzo-indienne                   |        2 |           0h51
+Bogo-indienne                    |        2 |           0h49
+Grob                             |        2 |           0h30
+Londres/Torre                    |        2 |           0h35  [RISQUE FAUX POSITIFS]
+Lolli                            |        1 |           1h27
+Vieille indienne                 |        1 |           0h29
+Shilling                         |        1 |           0h20
+Alekhine                         |        0 |           0h00
+Van't Kruijs                     |        0 |           0h00
+Black Lion                       |        0 |           0h00
+Nimzowitsch-Larsen               |        0 |           0h00
+Trompowsky                       |        0 |           0h00
+Maroczy (structure)              |        0 |           0h00
+
+------------------------------------------------------------------------------------------
+
+DETAIL DES VARIANTES RECHERCHEES PAR LIGNE :
+
+- Vienne : vienne
+- Sicilienne (+ variantes) : sicilienne, sicilien, dragon, najdorf, scheveningen, sveshnikov, taimanov, kan, paulsen, rossolimo, alapin
+- Francaise : francaise, française
+- Russe (Petrov) : russe
+- Italienne : italienne
+- Systeme de Londres : systeme de londres, londres
+- Anglaise : anglaise
+- Espagnole (Ruy Lopez) : espagnole, ruy lopez
+- Est-indienne : est indienne, est-indienne
+- Ecossaise : ecossaise, ecossais
+- Scandinave : scandinave
+- Systeme Colle : systeme colle, colle
+- Gambit Evans : gambit evans, evans
+- Reti : reti, réti
+- Hollandaise : hollandaise
+- Catalane : catalane
+- Ouverture Bird : bird
+- Grunfeld : grunfeld, grünfeld
+- Petrov : petrov, petroff
+- Gambit Dame : gambit dame(s), gambit de la dame, gambidame(s), gambidam, gambi dame, combi dame [CORRIGE]
+- Berlin (defense berlinoise) : berlinoise, berlin
+- Benko : benko
+- Danois : danois
+- Pirc : pirc
+- Larsen : larsen
+- Fegatello : fegatello
+- Traxler : traxler
+- Philidor : philidor
+- Albin (contre-gambit) : albin
+- Hippopotame : hippopotame
+- Orang-Outan : orang outan, orang-outan
+- Gambit Roi : gambit roi, gambit du roi, gambi roi, combi roi, gambirois, gambiroi [CORRIGE]
+- Benoni : benoni
+- Budapest : budapest
+- Owen : owen
+- Nimzo-indienne : nimzo indienne, nimzo-indienne
+- Bogo-indienne : bogo indienne, bogo-indienne
+- Grob : grob
+- Londres/Torre : torre
+- Caro-Kann : caro kann, caro-kann, carocane [CORRIGE]
+- Lolli : lolli
+- Vieille indienne : vieille indienne
+- Shilling : shilling
+- Alekhine : alekhine
+- Van't Kruijs : van't kruijs, van t kruijs
+- Black Lion : black lion
+- Nimzowitsch-Larsen : nimzowitsch
+- Trompowsky : trompowsky
+- Maroczy (structure) : maroczy
