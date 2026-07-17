@@ -1,0 +1,130 @@
+RECHERCHE — ANECDOTES BIOGRAPHIQUES DANS LE CORPUS MARC QUENEHEN
+==================================================================
+
+LE PASSAGE CIBLE : WILLIAM EVANS
+---------------------------------
+
+Fichier   : Marc Quenehen/Gambit Evans  variante agressive de l'ouverture italienne/transcript.txt
+URL       : https://www.youtube.com/watch?v=FBIwW5rTk20
+Timecode  : 0:02 - 0:58 (c'est l'ouverture de la vidéo, donc pas de "30s avant" —
+            le passage commence littéralement au premier mot)
+
+Texte :
+(0:02) alors bonjour à tous une grosse vidéo nous attend sur le combi evans
+l'ouverture du gobi evans créé par le capitaine william davies evans vous
+savez c'est un gallois né en 1790 qui va s'engager très tôt dans la marina
+quatre jours seulement et à 30 ans il va être capitaine et evans il a la
+particularité finalement d'avoir appris les échecs très tard il a appris
+auprès d'un officier de marine à l'âge de 27 28 ans je crois et quelques
+années plus tard il va a vanté le temps dit evans c'est pas la seule chose
+que va inventer d'ailleurs il va inventer alors je m'y connais pas en
+marine mais un système de lanternes à trois couleurs qui évite les
+collisions nocturne de navires pour cette invention d'ailleurs il va être
+récompensé par le gouvernement anglais qui va lui octroyer une somme
+d'argent et même par les tsars de russie qui va lui offrir des objets en
+or comme une montre en or je crois malheureusement pour evans il va
+mourir dans la le grand dénouement la grande pauvreté malgré que juste
+avant sa mort les jours de chef de l'époque c'est de se cotiser pour lui
+venir en aide
+
+(0:58, suite — retour aux échecs) mais on va voir aujourd'hui des
+premières ouvertures du gambit et vaste de ses premières créations donc
+on est vraiment à l'origine de ce gambie puis après on va voir un gambit
+evans joué par l'ancien champion du monde bobby fischer...
+
+Note : la transcription automatique déforme certains mots ("marina" pour
+marine, "vanté le temps" probablement pour "inventé le gambit"), mais le
+contenu biographique est net.
+
+
+CANDIDATS SIMILAIRES POUR CALIBRER LE MARQUEUR
+------------------------------------------------
+
+1) PAUL KERES — le joueur de tennis (aside en plein commentaire de partie)
+   Fichier  : KERES — LE ROI SANS COURONNE/transcript.txt
+   URL      : https://www.youtube.com/watch?v=-oSHoY4HxGA
+   Timecode : ~0:40
+
+   "...Paul keres est estonien également d'ailleurs Paul keres dans son
+   enfance une petite anecdote c'était également un très fort jour de
+   tennis il a été vicechampion de de tennis d'Estonie allez on regarde
+   il a donc les blancs..."
+
+   → Marc interrompt la mise en place de la partie pour un trait
+   biographique bref, signalé explicitement par "une petite anecdote",
+   puis reprend le jeu.
+
+2) BLACKBURNE — l'anecdote des parties à handicap (racontée via Steinitz)
+   Fichier  : LA MORT NOIRE — quand BLACKBURNE FRAPPE sans pitié/transcript.txt
+   URL      : https://www.youtube.com/watch?v=WfrOi72fT1Y
+   Timecode : teasing à 9:37, développée 11:39–13:50
+
+   "...je vais vous raconter une petite anecdote non non je vais la
+   garder pour la fin..." puis, ~2 min plus tard : "cette anecdote c'est
+   le premier champion du monde officiel steinitz qui était un peu un
+   contemporain de Blackburn qui va la raconter..." (l'histoire d'un
+   amateur qui demande conseil à Steinitz sans savoir qu'il joue contre
+   Blackburne lui-même, en parties à handicap).
+
+   → Anecdote longue et structurée, explicitement annoncée puis
+   développée — le format le plus proche du "conte" pur.
+
+3) AMOS BURN / FRANK MARSHALL — l'histoire de la pipe
+   Fichier  : LA PIPE DE BURN — le CALME AVANT LA TEMPÊTE./transcript.txt
+   URL      : https://www.youtube.com/watch?v=PxgJRVz2IdU
+   Timecode : 0:01
+
+   "mais qu'est-ce que c'est que cette histoire de pipe et bien c'est
+   Franck Marchall qui va nous la raconter... Marshall va nous raconter
+   une anecdote l'anecdote de la pipe de son adversaire qui s'appelle
+   amos burn..."
+
+   → Toute la vidéo est construite autour d'un trait de caractère (le
+   calme légendaire de Burn), très proche du cas Evans en ouverture de
+   vidéo.
+
+4) JUDIT POLGAR — comparaison à Beth Harmon (Le Jeu de la Dame)
+   Fichier  : Judit Polgar ou la vraie Beth Harmon des échecs !/transcript.txt
+   URL      : https://www.youtube.com/watch?v=GUdigLPvfY8
+   Timecode : 0:02
+
+   "...judit polgar une championne d'échecs hongroise née en 1976 dont la
+   trajectoire l'ascension vers les sommets peut faire penser à elisabeth
+   harmon... elle a surtout un père qui est assez particulier pour
+   l'époque, un pédagogue qui voulait absolument que ses filles
+   excellent..."
+
+   → Figure contemporaine (pas juste historique), trait biographique +
+   contexte familial, en ouverture de vidéo.
+
+5) GILLES ANDRUET — "destin tragique" et personnalité atypique
+   Fichier  : Météore dans le monde des échecs/transcript.txt
+   URL      : https://www.youtube.com/watch?v=aQ7VtMgc4t4
+   Timecode : 0:04
+
+   "...Gilles Andruet, un joueur d'échec français né en 1958 qui a eu un
+   destin tragique... c'est une étoile du jeu d'échec... un joueur
+   vraiment brillant mais également avec une personnalité assez
+   originale, atypique, il pouvait même être perturbateur et très
+   agaçant..."
+
+   → Portrait de caractère explicite (pas juste des faits biographiques
+   mais un jugement sur la personnalité).
+
+
+REMARQUE STRUCTURELLE
+----------------------
+
+La majorité des occurrences fortes ("né en [année]", "anecdote", "petite
+anecdote", "destin tragique") apparaissent soit en OUVERTURE DE VIDÉO
+(comme Evans — bio avant la partie), soit comme ASIDE SIGNALÉ
+EXPLICITEMENT en plein commentaire ("une petite anecdote..."). Il existe
+aussi toute une série de vidéos-portraits dédiées (KERES, BLACKBURNE,
+BURN, MORPHY, ALEKHINE...) où l'anecdote biographique est la colonne
+vertébrale de la vidéo entière plutôt qu'une digression — cas à part qui
+mérite peut-être un traitement différent (portrait complet vs.
+digression ponctuelle) selon ce que vise la catégorie.
+
+Question ouverte avant de lancer le passage sur les 871/884 vidéos :
+inclure les vidéos-portraits entières, ou seulement les digressions
+ponctuelles au sein de vidéos de contenu (parties/ouvertures) ?
