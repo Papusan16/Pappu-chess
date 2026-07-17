@@ -204,7 +204,7 @@ entrelacé avec les coups de la partie)
 ```json
 {
   "name": "Amos Burn",
-  "life": "52 ans au moment de la partie (donc né v. 1848)",
+  "life": "52 ans au moment de la partie",
   "country": "—",
   "role": "Joueur d'échecs, adversaire de Frank Marshall",
   "bio": "Adversaire de Frank Marshall dans une partie de 1900 (Marshall a 33 ans, Burn en a 52). Décrit par Marshall comme un joueur plutôt défensif, très solide, aimant les structures de pions fermées et le jeu positionnel. Il aimait jouer de longues heures en fumant sa pipe (autorisé à l'époque). Pendant la partie, Marshall raconte le rituel de Burn avec sa pipe — la chercher, la nettoyer, la remplir de tabac, chercher ses allumettes — en parallèle des coups joués, jusqu'à ce que Burn parvienne enfin à l'allumer... juste au moment où Marshall joue un coup gagnant (sacrifice de tour en h8, menant à un mat forcé). Burn assiste au mat avec humour ; les deux joueurs se serrent la main, la pipe s'éteint.",
