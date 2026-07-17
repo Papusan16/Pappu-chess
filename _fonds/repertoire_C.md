@@ -101,7 +101,7 @@ l'attaque yougoslave) n'est pas dans l'extrait et n'est donc pas incluse ici.
 
 ⚠️ Un id `anglaise` existe déjà dans OPS (voir section 0) — à fusionner, pas dupliquer.
 
-Source : *ÉTOUFFEMENT STRATÉGIQUE ! 🥵♟️* — 0:34–0:49
+Source : *ÉTOUFFEMENT STRATÉGIQUE ! 🥵♟️* — 0:34–0:59 (fenêtre étendue à 25s)
 
 ```json
 {
@@ -111,19 +111,21 @@ Source : *ÉTOUFFEMENT STRATÉGIQUE ! 🥵♟️* — 0:34–0:49
   "freq": null,
   "person": null,
   "short": null,
-  "idea": "Contrôler la case centrale d5 avec un pion de l'aile. Si les Noirs jouent d5, il y aura échange du pion de l'aile contre le pion du centre, ce qui donnera aux Blancs une majorité centrale de pions (il leur restera deux pions pouvant aller au centre contre un seul pour les Noirs).",
+  "idea": "Deux idées liées au contrôle de la case d5. Première idée : contrôler d5 avec un pion de l'aile (c4) ; si les Noirs jouent ...d5, l'échange qui suit donne aux Blancs une majorité centrale de pions (deux pions blancs pouvant avancer au centre contre un seul pion noir). Deuxième idée, via ce même contrôle de d5 : jouer très vite g3 et Fg2, pour placer le fou sur la grande diagonale blanche de l'échiquier.",
   "reply": null,
   "trap": null
 }
 ```
 
-**Idée directrice** : contrôler la case d5 avec un pion de l'aile (c4). Si Noir répond ...d5,
-l'échange qui suit donne aux Blancs une majorité de pions centraux (deux pions blancs pouvant
-avancer au centre contre un seul pion noir).
+**Idée directrice** (complète à présent) : contrôler la case d5 avec un pion de l'aile (c4). Si Noir
+répond ...d5, l'échange qui suit donne aux Blancs une majorité de pions centraux. Marc ajoute une
+« autre idée » liée à ce même contrôle de d5 : jouer très vite g3 et Fg2 pour installer le fou sur
+la grande diagonale blanche.
 
 **Plan type** : c4 visant d5 ; en cas d'échange sur d5, exploiter la majorité de pions centraux
-obtenue. La phrase suivante ("L'autre idée de…") est coupée par la fenêtre de 15s — un second volet
-du plan existe dans la vidéo mais n'est pas dans l'extrait, donc non repris ici.
+obtenue. En parallèle (ou alternative) : fianchetto rapide g3-Fg2 sur la même diagonale que d5.
+La phrase suivante ("Et vous voyez le pion en c4 et bientôt…") repart déjà sur un nouveau point —
+non repris, hors fenêtre des 25s.
 
 ---
 
@@ -181,7 +183,7 @@ présenté comme contre-productif pour eux, car il facilite justement cette pous
 
 ## 6. Giuoco Piano / attaque Greco
 
-Source : *Les ouvertures ne s'apprennent pas, elles se comprennent* — 22:24–22:39
+Source : *Les ouvertures ne s'apprennent pas, elles se comprennent* — 22:24–22:49 (fenêtre étendue à 25s)
 
 ```json
 {
@@ -192,7 +194,7 @@ Source : *Les ouvertures ne s'apprennent pas, elles se comprennent* — 22:24–
   "person": null,
   "short": null,
   "idea": "Le plan consiste à jouer e5, chasser le cavalier noir, sacrifier le fou puis enchaîner par Cg5+, suivi de l'arrivée de la dame : le tandem dame + cavalier attaque pour mater le roi.",
-  "reply": "Dans la position montrée, ce plan ne fonctionne pas : Noir a le fou en e7. Sur e5, il bouge son cavalier, et le fou prend (la suite exacte est coupée par la fenêtre de 15s).",
+  "reply": "Dans la position montrée, ce plan échoue tel quel car Noir a le fou en e7 : sur e5, le cavalier bouge, fou prend échec, roi prend le cavalier g5 échec, et Marc dit \"il va me prendre\". Il intercale alors h4, ce qui menace e5 à nouveau et fait bouger le cavalier — la suite (\"Fou…\") est encore coupée par la fenêtre de 25s.",
   "trap": null
 }
 ```
@@ -200,17 +202,19 @@ Source : *Les ouvertures ne s'apprennent pas, elles se comprennent* — 22:24–
 **Idée directrice** : jouer e5, chasser le cavalier noir, sacrifier le fou, puis enchaîner
 cavalier-g5 échec et l'arrivée de la dame — le tandem dame + cavalier attaque pour mater le roi.
 
-**Plan type / mise en garde** : la vidéo précise explicitement que **ce plan échoue** dans la
-position montrée, à cause du fou noir déjà en e7 ("Mais là, ça marche pas. Pourquoi ? Parce qu'il a
-le fou en e7. Sur e5, il bouge son cavalier. Fou prend…" — phrase coupée par la fenêtre de 15s).
-C'est un contenu directement issu de la source (pas une connaissance générique ajoutée), à traiter
-comme "plan classique + son contre-exemple", pas comme une ligne gagnante universelle.
+**Plan type / mise en garde** : la vidéo précise explicitement que **ce plan échoue tel quel** dans
+la position montrée, à cause du fou noir déjà en e7. Séquence donnée par Marc : "Sur e5, il bouge
+son cavalier. Fou prend échec. Roi prend cavalier g5 échec. Il va me prendre. Donc là, je vais
+intercaler le coup en h4. Et maintenant, ça menace e5, le cavalier bouge. Fou…" — la fenêtre de 25s
+coupe encore la toute fin de la ligne (juste après "Fou"). C'est un contenu directement issu de la
+source (pas une connaissance générique ajoutée), à traiter comme "plan classique + sa réfutation
+précise dans cette partie", pas comme une ligne gagnante universelle.
 
 ---
 
 ## 7. Hollandaise
 
-Source : *Mes parties contre des GMI !* — 19:49–20:04
+Source : *Mes parties contre des GMI !* — 19:49–20:14 (fenêtre étendue à 25s)
 
 ```json
 {
@@ -220,7 +224,7 @@ Source : *Mes parties contre des GMI !* — 19:49–20:04
   "freq": null,
   "person": null,
   "short": null,
-  "idea": "Mettre en place toute une structure : une chaîne de pions sur cases blanches côté Noir, décrite comme une véritable muraille.",
+  "idea": "Mettre en place toute une structure : une chaîne de pions sur cases blanches côté Noir, décrite comme une véritable muraille. Inconvénient signalé par Marc : le fou en c1 (fou de cases blanches, resté à la maison côté Blanc dans l'exemple) peut se retrouver entravé par ses propres pions — mais dans la partie montrée, ce problème ne se pose pas vraiment car le fou de cases noires a déjà été échangé, donc après f4 il ne reste que le \"bon\" fou.",
   "reply": null,
   "trap": null
 }
@@ -229,11 +233,13 @@ Source : *Mes parties contre des GMI !* — 19:49–20:04
 **Idée directrice** : ça consiste à mettre en place toute une structure — une chaîne de pions (côté
 Noir) sur cases blanches, formant une véritable muraille.
 
-**Plan type** : ⚠️ **incomplet dans la source.** La phrase sur l'inconvénient de cette structure est
-coupée net par la fenêtre de 15s : "l'inconvénient d'une telle structure, c'est lorsqu'on a le fou
-en c1 qui est…" — la suite (probablement l'enfermement du fou de cases blanches) n'est pas dans
-l'extrait. À ne pas compléter par déduction générique ; nécessite un extrait plus long ou le
-transcript source pour ce point précis.
+**Plan type / inconvénient** (désormais complet) : "l'inconvénient d'une telle structure, c'est
+lorsqu'on a le fou en c1 qui est entravé par tous ces pions ; mais là, finalement, le fou — le fou
+de case noire a été échangé, donc après f4, finalement il ne lui reste que le bon fou." Autrement
+dit : le risque générique de la structure est d'enfermer son propre fou de cases blanches (en c1),
+mais dans cette partie précise ce risque est neutralisé parce que l'autre fou (cases noires) a déjà
+quitté l'échiquier. À garder comme commentaire spécifique à la partie montrée, pas comme règle
+générale de l'ouverture.
 
 ---
 
@@ -247,9 +253,9 @@ transcript source pour ce point précis.
    partir des 15 secondes extraites sans ajouter des connaissances génériques — volontairement non
    remplis, à compléter par une relecture humaine ou un extrait plus large du transcript source.
 3. **Collision d'id** : `anglaise` existe déjà dans OPS — fusion nécessaire, pas insertion brute.
-4. **Contenus tronqués** : fiches 3 (Anglaise, "l'autre idée de…"), 6 (Giuoco Piano, la suite du
-   contre-exemple) et 7 (Hollandaise, l'inconvénient de la structure) sont coupées par la fenêtre de
-   15s — la phrase réelle continue au-delà. Étendre la fenêtre pour ces trois-là si le contenu
-   complet est nécessaire.
+4. **Contenus tronqués** : fenêtre étendue à 25s pour les fiches 3 (Anglaise), 6 (Giuoco Piano) et 7
+   (Hollandaise). Fiches 3 et 7 sont maintenant complètes (la phrase se termine dans la fenêtre).
+   Fiche 6 (Giuoco Piano) est toujours coupée, un cran plus loin, juste après "Fou…" à 22:49 — la
+   ligne de réfutation continue au-delà de 25s si besoin d'aller plus loin.
 5. **Laissés de côté, comme demandé** : Ding-Nepo (ouverture non identifiée) et "l'ouverture au
    rang" (terme à vérifier) — non traités ici.
