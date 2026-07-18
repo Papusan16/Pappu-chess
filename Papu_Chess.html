@@ -3221,6 +3221,57 @@ function fouPassedPawns(mi){
     return res;
   }catch(e){ return []; }
 }
+function fouBadBishopSquares(mi){
+  // Mauvais fou (Silman) : ≥2 pions GÊNEURS AMIS (premier obstacle sur chacune des 4 diagonales, et cet
+  // obstacle doit être un pion de la couleur du fou) fixés, mobilité réelle faible (≤4 cases légales).
+  try{
+    var g=new Chess();
+    for(var k=0;k<=mi;k++){ var fm=fullMoves[k]; if(!fm) return []; g.move({from:fm.from,to:fm.to,promotion:fm.promotion||'q'}); }
+    var board=g.board(), files='abcdefgh', res=[];
+    var DIAGS=[[1,1],[1,-1],[-1,1],[-1,-1]];
+    for(var row=0;row<8;row++)for(var c=0;c<8;c++){
+      var p=board[row][c]; if(!p||p.type!=='b') continue;
+      var color=p.color, sq=files[c]+(8-row);
+      // 1) pions GÊNEURS : premier pion ami rencontré sur chacune des 4 diagonales du fou (local, pas global)
+      var blockers=[];
+      DIAGS.forEach(function(d){
+        for(var dist=1; dist<8; dist++){
+          var rr=row+d[0]*dist, cc=c+d[1]*dist;
+          if(rr<0||rr>7||cc<0||cc>7) break;
+          var pp=board[rr][cc];
+          if(!pp) continue; // case vide : la diagonale continue
+          if(pp.type==='p'&&pp.color===color) blockers.push({f:cc, rank:8-rr});
+          break; // première pièce rencontrée (amie ou ennemie) bouche cette diagonale
+        }
+      });
+      if(blockers.length<2) continue;
+      // 2) mobilité réelle : peu de cases légalement accessibles
+      var mob=0;
+      try{
+        var fen1=g.fen().split(' '); fen1[1]=color; // copie : force le trait pour interroger CE fou, ne touche jamais g/game
+        mob=new Chess(fen1.join(' ')).moves({square:sq, verbose:true}).length;
+      }catch(e){ continue; }
+      if(mob>4) continue;
+      // 3) ces pions gêneurs (et EUX SEULS) sont-ils TOUS fixés ?
+      var oppMoves=[];
+      try{
+        var fen2=g.fen().split(' '); fen2[1]=(color==='w'?'b':'w'); // copie également
+        oppMoves=new Chess(fen2.join(' ')).moves({verbose:true});
+      }catch(e){}
+      var allFixed = blockers.every(function(pw){
+        var aheadRank=(color==='w')?pw.rank+1:pw.rank-1;
+        if(aheadRank<1||aheadRank>8) return true; // pion en bord de tableau : traité comme fixé
+        if(board[8-aheadRank][pw.f]) return true; // case d'avance occupée
+        var aheadSq=files[pw.f]+aheadRank;
+        return oppMoves.some(function(m){return m.to===aheadSq;}); // case d'avance tenue par l'adversaire
+      });
+      if(!allFixed) continue; // un des gêneurs peut encore avancer → il libérera le fou, pas mauvais
+      res.push({s:sq, side:(color==='w')?'Blancs':'Noirs', mob:mob, gene:blockers.length});
+    }
+    res.sort(function(a,b){return a.mob-b.mob;});
+    return res;
+  }catch(e){ return []; }
+}
 function commentAnalyzedMove(mi){
   var r = gameAnalysis.perMove[mi];
   if(!r) return;
@@ -3260,12 +3311,16 @@ function commentAnalyzedMove(mi){
   } else {
     var outs = (typeof fouOutpostSquares==='function') ? fouOutpostSquares(mi) : [];
     var pass = (typeof fouPassedPawns==='function') ? fouPassedPawns(mi) : [];
+    var bad = (typeof fouBadBishopSquares==='function') ? fouBadBishopSquares(mi) : [];
     if(outs.length){
       fouCircles=[{s:outs[0].s, col:'var(--fou)'}];
       circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">🃏 Avant-poste en <b>'+outs[0].s+'</b> ('+outs[0].side+') : cavalier inattaquable par un pion, tenu par un pion. Le déséquilibre à exploiter.</div>';
     } else if(pass.length){
       fouCircles=[{s:pass[0].s, col:'var(--fou)'}];
       circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">🃏 Pion passé en <b>'+pass[0].s+'</b> ('+pass[0].side+') : aucun pion adverse ne peut l\'arrêter. À pousser — ou à bloquer d\'urgence.</div>';
+    } else if(bad.length){
+      fouCircles=[{s:bad[0].s, col:'var(--fou)'}];
+      circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">🃏 Fou en <b>'+bad[0].s+'</b> ('+bad[0].side+') : coincé par ses propres pions fixés, mobilité famélique. Un candidat naturel à l\'échange.</div>';
     }
   }
   sp.innerHTML='<div class="stitle">'+who+' · coup '+(Math.floor(mi/2)+1)+'</div><div class="stext" style="line-height:1.45">'+msg+'</div>'+pedHtml+circMsg;
