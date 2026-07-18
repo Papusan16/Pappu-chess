@@ -13,19 +13,17 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
 - doctrine_couleur_synthese.md : synthèse de la doctrine signature de
   Marc (axiome, loi arithmétique, loi de conservation, mauvais fou,
   verrou, échange). En grande partie calculable.
-- Détecteur de MAUVAIS FOU câblé (analyse seulement) : 3 critères
+- Détecteur de MAUVAIS FOU VALIDÉ : câblé dans identify + seuil
+  mauvais fou (verrou de pions) + Éteint coupe les cercles. 3 critères
   (≥2 pions gêneurs amis sur la couleur du fou, mobilité ≤4 cases,
-  gêneurs fixés). Cercle violet + phrase du Fou. NON ENCORE VALIDÉ
-  sur position réelle.
+  gêneurs fixés dont verrou de pion adverse via pawnHoldsSquare).
+  Cercle violet + phrase du Fou. Validé en isolant fouBadBishopSquares
+  dans Node (chess.js 0.10.3) sur 4 positions : fou c8 muré derrière
+  verrou c5/e5 (détecté), fou sorti en f5 (silence), position de
+  départ (silence), milieu de jeu ouvert (silence). identify() appelle
+  bien fouOutpostSquares/fouPassedPawns/fouBadBishopSquares ; la
+  branche cercles de commentAnalyzedMove est gatée sur fouMode !== 'off'.
 - personnes.md : 9 fiches biographiques (format PEOPLE), local.
-
-## À valider
-- Détecteur de mauvais fou : tester sur une française d'avance fermée
-  (fou c8 muré) → doit détecter ; sur un fou sorti devant sa chaîne
-  → doit se taire. Caler les seuils.
-- Vérifier que le mode Éteint coupe AUSSI les cercles en analyse
-  (le gate mauvais fou doit tester fouMode !== 'off', pas seulement
-  playMode).
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
