@@ -3258,12 +3258,24 @@ function fouBadBishopSquares(mi){
         var fen2=g.fen().split(' '); fen2[1]=(color==='w'?'b':'w'); // copie également
         oppMoves=new Chess(fen2.join(' ')).moves({verbose:true});
       }catch(e){}
+      var enemyCol=(color==='w')?'b':'w';
+      function pawnHoldsSquare(f, rank){ // un pion ENNEMI attaque-t-il (f,rank) ? → verrou de structure
+        var pr=(enemyCol==='w')?rank-1:rank+1; // rangée du pion ennemi qui tiendrait cette case
+        if(pr<1||pr>8) return false;
+        for(var df=-1; df<=1; df+=2){
+          var ff=f+df; if(ff<0||ff>7) continue;
+          var pp=board[8-pr][ff];
+          if(pp&&pp.type==='p'&&pp.color===enemyCol) return true;
+        }
+        return false;
+      }
       var allFixed = blockers.every(function(pw){
         var aheadRank=(color==='w')?pw.rank+1:pw.rank-1;
         if(aheadRank<1||aheadRank>8) return true; // pion en bord de tableau : traité comme fixé
         if(board[8-aheadRank][pw.f]) return true; // case d'avance occupée
+        if(pawnHoldsSquare(pw.f, aheadRank)) return true; // case d'avance tenue par un pion adverse (verrou)
         var aheadSq=files[pw.f]+aheadRank;
-        return oppMoves.some(function(m){return m.to===aheadSq;}); // case d'avance tenue par l'adversaire
+        return oppMoves.some(function(m){return m.to===aheadSq;}); // ou atteignable par un coup adverse
       });
       if(!allFixed) continue; // un des gêneurs peut encore avancer → il libérera le fou, pas mauvais
       res.push({s:sq, side:(color==='w')?'Blancs':'Noirs', mob:mob, gene:blockers.length});
@@ -3300,15 +3312,16 @@ function commentAnalyzedMove(mi){
   }
   var ped = (typeof fouPedago==='function') ? fouPedago(r,mi) : '';
   var pedHtml = ped ? ('<div class="stext" style="margin-top:7px;color:var(--fou-text);font-style:italic">🃏 '+ped+'</div>') : '';
-  fouArrows = r.best ? [{m:r.best}] : []; // le Fou pointe le coup qu'il recommande
+  fouArrows = (fouMode!=='off' && r.best) ? [{m:r.best}] : []; // le Fou pointe le coup qu'il recommande
   // Cercle du Fou : sur une faute, entourer une pièce laissée en prise (réflexe M1, scan Captures)
+  // Éteint (fouMode==='off') coupe AUSSI les cercles en analyse (journal, point 2).
   fouCircles=[]; var circMsg='';
-  var isMistake = (r.cls.label==='Gaffe' || r.cls.label==='Erreur' || r.cls.label==='Imprécision');
+  var isMistake = (fouMode!=='off') && (r.cls.label==='Gaffe' || r.cls.label==='Erreur' || r.cls.label==='Imprécision');
   var hang = (isMistake && typeof fouHangingSquares==='function') ? fouHangingSquares(mi) : [];
-  if(hang.length){
+  if(fouMode!=='off' && hang.length){
     fouCircles=[{s:hang[0].s, col:'var(--fou)'}];
     circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">🃏 La pièce en <b>'+hang[0].s+'</b> reste en prise — le scan Captures l\'aurait vu.</div>';
-  } else {
+  } else if(fouMode!=='off') {
     var outs = (typeof fouOutpostSquares==='function') ? fouOutpostSquares(mi) : [];
     var pass = (typeof fouPassedPawns==='function') ? fouPassedPawns(mi) : [];
     var bad = (typeof fouBadBishopSquares==='function') ? fouBadBishopSquares(mi) : [];
@@ -3517,6 +3530,27 @@ function identify(animate){
     html+='<div class="stext dyn-advice" id="dynAdvice" style="margin-top:6px;color:var(--text-thinking);font-style:italic">💭 Je réfléchis à un plan concret…</div>';
   }
   html+=fouCoachBlock();
+  // ANNOTATION STRUCTURELLE VIVANTE : même hors « Analyser », le Fou entoure UN fait
+  // de structure sur la position courante (avant-poste, pion passé, mauvais fou).
+  // Faits calculables (chess.js seul, aucune vérité moteur) → compatible no-leakage.
+  // Gaté par fouMode : 'off' et 'discret' sortent plus haut, donc coupent aussi les cercles.
+  if(cursor>0){
+    var _mi=cursor-1, _sNote='';
+    var _outs=(typeof fouOutpostSquares==='function')?fouOutpostSquares(_mi):[];
+    var _pass=(typeof fouPassedPawns==='function')?fouPassedPawns(_mi):[];
+    var _bad =(typeof fouBadBishopSquares==='function')?fouBadBishopSquares(_mi):[];
+    if(_outs.length){
+      fouCircles=[{s:_outs[0].s, col:'var(--fou)'}];
+      _sNote='🃏 Avant-poste en <b>'+_outs[0].s+'</b> ('+_outs[0].side+') : cavalier inattaquable par un pion, tenu par un pion. Le déséquilibre à exploiter.';
+    } else if(_pass.length){
+      fouCircles=[{s:_pass[0].s, col:'var(--fou)'}];
+      _sNote='🃏 Pion passé en <b>'+_pass[0].s+'</b> ('+_pass[0].side+') : aucun pion adverse ne peut l\'arrêter. À pousser — ou à bloquer d\'urgence.';
+    } else if(_bad.length){
+      fouCircles=[{s:_bad[0].s, col:'var(--fou)'}];
+      _sNote='🃏 Fou en <b>'+_bad[0].s+'</b> ('+_bad[0].side+') : coincé par ses propres pions fixés, mobilité famélique. Un candidat naturel à l\'échange.';
+    }
+    if(_sNote) html+='<div class="stext" style="margin-top:7px;color:var(--fou-text);font-style:italic">'+_sNote+'</div>';
+  }
   sp.innerHTML=html;
   // remplir le conseil dynamique de façon asynchrone (le moteur suggère le meilleur coup)
   if(!hasSpecific && seq.length>0 && sfReady){
