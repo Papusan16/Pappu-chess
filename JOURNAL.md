@@ -6,8 +6,10 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
 ## Fait récemment
 - Halo rouge d'échec (fait de position) + primitive cercle du Fou
   (voix) : câblés.
-- Récolement transcripts Marc Quenehen : 2 chaînes, ~880 vidéos
+- Récolement transcripts Marc Quenehen CLOS : 2 chaînes, ~880 vidéos
   valides, 9 échecs irrécupérables. Dans _doctrine/ et Marc Quenehen/.
+  7 dossiers en trop investigués (doublons/vides parasites) : aucun
+  transcript valide perdu, négligés d'un commun accord.
 - 9 index de contenu (A–I) construits. G stérile (fermée), C traité
   (fiches d'ouverture), H → doctrine couleur.
 - doctrine_couleur_synthese.md : synthèse de la doctrine signature de
