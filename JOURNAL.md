@@ -26,6 +26,11 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   bien fouOutpostSquares/fouPassedPawns/fouBadBishopSquares ; la
   branche cercles de commentAnalyzedMove est gatée sur fouMode !== 'off'.
 - personnes.md : 9 fiches biographiques (format PEOPLE), local.
+- Carte des réflexes adoptée : 5 rayons (Histoire, Théorie, Technique,
+  Pratique, Méthode). reflexes_methode.md créé (M1 ordre de calcul,
+  M2 pré-requis de combinaison). Réflexe finale « vigilance au pat /
+  sous-promotion » consigné dans lot 2, en attente d'un rayon
+  Technique/finales.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,

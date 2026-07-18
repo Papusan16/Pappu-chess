@@ -1,4 +1,9 @@
-# Réflexes de méthode — synthèse arbitrée
+# Réflexes — rayon Méthode
+
+Le fonds de réflexes est organisé en cinq rayons : Histoire, Théorie,
+Technique, Pratique, Méthode. Ce fichier couvre le rayon **Méthode** —
+le « comment penser et comment progresser », que le Fou incarne en
+premier parmi les cinq.
 
 Synthèse arbitrée manuellement à partir d'`index_A.md` (candidats de
 métadiscours de méthode, corpus Marc Quenehen). Inspiration Marc
