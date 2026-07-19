@@ -2464,6 +2464,8 @@ const PIECES={K:'\u2654',Q:'\u2655',R:'\u2656',B:'\u2657',N:'\u2658',P:'\u2659',
 let game=new Chess(),flipped=false,sel=null,legal=[],lastFrom=null,lastTo=null,openDetail=null;
 let fullMoves=[],cursor=0,moveComments=[],pgnMode=false;
 let moveAnnotations=[]; // annotations visuelles (%cal/%csl) par coup, pour dessiner les cercles/flèches de Marc
+let startFen=null; // position de départ imposée par un PGN ([SetUp "1"]/[FEN ...]) ; null = position standard
+let initialComment='', initialAnno={arrows:[],circles:[]}; // commentaire/annotations attachés à la position de départ, avant le premier coup
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
 let fouCircles=[]; // cases que le Fou entoure → cercles violets pointillés (pièce en prise, avant-poste…)
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
@@ -3041,7 +3043,7 @@ function click(name){
   if(!atLiveEnd()){
     if(confirm('Tu es revenu en arrière. Jouer ce coup effacera les coups suivants et repartira d\'ici. Continuer ?')){
       // tronquer la partie au curseur
-      const g=new Chess();
+      const g=new Chess(startFen||undefined);
       for(let i=0;i<cursor;i++){ g.move(fullMoves[i]); }
       game=g; syncFull();
     } else {
@@ -3061,8 +3063,8 @@ function click(name){
   render(false);
 }
 function rebuildTo(idx){
-  // positionne l'échiquier au coup idx (0=position initiale) SANS modifier fullMoves
-  const g=new Chess();
+  // positionne l'échiquier au coup idx (0=position initiale, ou startFen si le PGN en imposait une) SANS modifier fullMoves
+  const g=new Chess(startFen||undefined);
   for(let i=0;i<idx;i++){ g.move(fullMoves[i]); }
   game=g; cursor=idx; sel=null; legal=[];
   if(idx>0){ const m=fullMoves[idx-1]; lastFrom=m.from; lastTo=m.to; }
@@ -3368,7 +3370,7 @@ function undo(){
     render(false);
   }
 }
-function reset(){game=new Chess();fullMoves=[];cursor=0;moveComments=[];moveAnnotations=[];pgnMode=false;lastFrom=lastTo=null;sel=null;legal=[];render(false);}
+function reset(){game=new Chess();fullMoves=[];cursor=0;moveComments=[];moveAnnotations=[];pgnMode=false;startFen=null;initialComment='';initialAnno={arrows:[],circles:[]};lastFrom=lastTo=null;sel=null;legal=[];render(false);}
 function setFouMode(m,btn){
   fouMode=m;
   var row=document.getElementById('foumodeRow');
@@ -3445,6 +3447,24 @@ function identify(animate){
   // Il garde son message et n'affiche un conseil que si on le sollicite (Idée du prof).
   // Exception : le mode PGN commenté et l'analyse restent actifs (ce sont des demandes explicites).
   if(fouMode==='discret' && !pgnMode && !gameAnalysis){ return; }
+  // MODE PGN COMMENTÉ, position de départ (avant le premier coup) : commentaire/annotations attachés au FEN importé
+  if(pgnMode && cursor===0 && (initialComment || initialAnno.arrows.length || initialAnno.circles.length)){
+    fouArrows = initialAnno.arrows.slice();
+    fouCircles = initialAnno.circles.slice();
+    let html='<div class="stitle">🎭 Position de départ</div>';
+    var cm0 = initialComment ? glyphExpand(initialComment) : '';
+    if(cm0){
+      let mood='happy';
+      if(/‼|!!/.test(cm0)) mood='wow';
+      else if(/\?\?/.test(cm0)) mood='hmm';
+      else if(/!/.test(cm0)) mood='joy';
+      else if(/\?/.test(cm0)) mood='hmm';
+      setMood(mood,animate);
+      html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+cm0+'</div>';
+    }
+    sp.innerHTML=html;
+    return;
+  }
   // MODE PGN COMMENTÉ : le Fou lit le commentaire du coup courant + dessine ses annotations visuelles
   if(pgnMode && cursor>0 && (moveComments[cursor-1] || (moveAnnotations[cursor-1] && (moveAnnotations[cursor-1].arrows.length||moveAnnotations[cursor-1].circles.length)))){
     var an = moveAnnotations[cursor-1] || {arrows:[],circles:[]};
@@ -3730,9 +3750,10 @@ function glyphExpand(cm){
   }
   return cm;
 }
-function parsePgnWithComments(txt){
-  // retirer les en-têtes [ ... ]
-  let body = txt.replace(/\[[^\]]*\]/g,' ');
+function parsePgnWithComments(txt,headers){
+  // retirer les en-têtes [Tag "Valeur"] (guillemets obligatoires : ne touche pas
+  // aux annotations [%cal ...]/[%csl ...]/[%eval ...]/[%clk ...] à l'intérieur des commentaires { })
+  let body = txt.replace(/\[[A-Za-z]+\s+"[^"]*"\]/g,' ');
   // retirer le résultat final
   body = body.replace(/\s(1-0|0-1|1\/2-1\/2|\*)\s*$/,' ');
   const moves=[]; const comments=[];
@@ -3754,9 +3775,12 @@ function parsePgnWithComments(txt){
       i=j;
     }
   }
+  // position de départ : si le PGN porte [SetUp "1"] + [FEN "..."], on démarre de cette position
+  var setupFen = (headers && headers.SetUp==='1' && headers.FEN) ? headers.FEN : undefined;
   // reconstruire : chaque token move (hors numéros) reçoit le commentaire qui suit
-  const g=new Chess();
+  const g=new Chess(setupFen);
   let lastIdx=-1;
+  let leadingComment=''; // commentaire trouvé avant le premier coup (attaché à la position de départ)
   for(let k=0;k<tokens.length;k++){
     const tk=tokens[k];
     if(tk.t==='m'){
@@ -3776,25 +3800,34 @@ function parsePgnWithComments(txt){
       if(lastIdx>=0){
         const c=nagToText(tk.v).replace(/\s+/g,' ').trim();
         comments[lastIdx]=(comments[lastIdx]?comments[lastIdx]+' ':'')+c;
+      } else {
+        const c=nagToText(tk.v).replace(/\s+/g,' ').trim();
+        leadingComment=(leadingComment?leadingComment+' ':'')+c;
       }
     }
   }
   var strippedComments = comments.map(function(c){ return c ? stripVisuals(c) : c; });
   var annos = comments.map(function(c){ return c ? extractVisuals(c) : {arrows:[],circles:[]}; });
-  return {game:g,comments:strippedComments,annos:annos,count:moves.length};
+  var initComment = leadingComment ? stripVisuals(leadingComment) : '';
+  var initAnno = leadingComment ? extractVisuals(leadingComment) : {arrows:[],circles:[]};
+  return {game:g,comments:strippedComments,annos:annos,count:moves.length,
+    startFen:setupFen||null,initialComment:initComment,initialAnno:initAnno};
 }
 function loadPgn(){
   const txt=document.getElementById('pgnInput').value.trim();
   if(!txt)return;
   pgnHeaders = parsePgnHeaders(txt);
   let parsed=null;
-  try{ parsed=parsePgnWithComments(txt); }catch(e){ parsed=null; }
-  if(parsed && parsed.count>0){
+  try{ parsed=parsePgnWithComments(txt,pgnHeaders); }catch(e){ parsed=null; }
+  if(parsed && (parsed.count>0 || parsed.startFen || parsed.initialComment)){
     game=parsed.game;
+    startFen=parsed.startFen||null;
     syncFull();
     moveComments=parsed.comments;
     moveAnnotations=parsed.annos||[];
-    pgnMode = moveComments.some(function(c){return c && c.length;});
+    initialComment=parsed.initialComment||'';
+    initialAnno=parsed.initialAnno||{arrows:[],circles:[]};
+    pgnMode = moveComments.some(function(c){return c && c.length;}) || !!initialComment || initialAnno.arrows.length>0 || initialAnno.circles.length>0;
     lastFrom=lastTo=null;sel=null;legal=[];
     switchTab('play');
     rebuildTo(0);
@@ -3802,6 +3835,7 @@ function loadPgn(){
     return;
   }
   // repli : ancienne méthode simple
+  startFen=null;initialComment='';initialAnno={arrows:[],circles:[]};
   const g=new Chess();let ok=g.load_pgn(txt);
   if(!ok){const c=txt.replace(/\d+\./g,' ').replace(/[+#]/g,'').split(/\s+/).filter(Boolean);const g2=new Chess();for(const mv of c)g2.move(mv);if(g2.history().length){game=g2;ok=true;}}else game=g;
   if(ok){syncFull();moveComments=[];pgnMode=false;lastFrom=lastTo=null;sel=null;legal=[];switchTab('play');rebuildTo(0);announceImportedGame();}
