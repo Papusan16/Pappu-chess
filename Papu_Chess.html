@@ -2093,16 +2093,20 @@ button.ctrl:active{transform:scale(.93)}
     grid-template-columns:auto minmax(240px,1fr);
     grid-template-areas:
       "board  tabs"
-      "board  jester"
       "board  turn"
       "board  ctrl"
       "board  nav"
+      "board  jester"
       "board  engine"
       "board  note"
       "board  paste"
       "board  teach"
       "board  menu"
       "board  moves";
+    /* turn/ctrl/nav juste après tabs, AVANT jester : rien de hauteur variable ne les précède
+       plus, donc leur position verticale ne bouge plus selon le contenu du bloc coach (bulle
+       du Fou tantôt courte, tantôt riche en théorie + chips). C'est jester + moves, tous deux
+       après, qui absorbent la variation entre eux (moves s'étire/se réduit). */
     grid-template-rows:auto auto auto auto auto auto auto auto auto auto 1fr;
     gap:5px 20px;
     align-items:start;
