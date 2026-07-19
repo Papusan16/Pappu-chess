@@ -57,6 +57,22 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   par étape, %cal/%csl déjà lisibles par extractVisuals()) + convention
   de couleur (R cible / Y ligne d'attaque / G case-coup de travail).
   Lecteur d'étapes dans l'app : à construire.
+- Affichage réagencé (laptop) : nav-controls (⏮◀▶⏭) et statut moteur
+  déplacés de sous l'échiquier vers la colonne droite (sous
+  Annuler/Nouvelle/Tourner), statut moteur discret. fitBoard() corrigé
+  en conséquence (réservation de hauteur pour la nav supprimée,
+  sous-estimation préexistante de la ligne a-h + bordure du plateau
+  comblée, margin par défaut du navigateur neutralisé) : débordement
+  vertical ramené de ~50px à ~1px sur les résolutions laptop courantes.
+  Liste des coups plafonnée (#movesPlayed, défilement interne) pour
+  qu'une longue partie chargée ne pousse plus l'échiquier hors écran.
+  Flèches de conseil livre/moteur masquées dès qu'une position FEN est
+  imposée ou en mode PGN/démonstration (n'ont pas de sens hors d'une
+  partie jouée depuis le départ, se superposaient aux %cal/%csl d'une
+  démonstration importée). extractVisuals() corrigé : prend la
+  DERNIÈRE occurrence de %cal/%csl d'un commentaire (pas la première),
+  pour qu'une démonstration multi-étapes (sans lecteur dédié, étapes
+  concaténées en un seul commentaire) affiche l'état cumulatif final.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
