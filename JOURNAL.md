@@ -41,6 +41,16 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   flèches/cercles sur une position) : ces dernières sont à capturer en
   PGN annoté `%cal`/`%csl` via le pipeline video→PGN — nouvel usage du
   corpus tactique, distinct de l'extraction de réflexes.
+- Import PGN (« Charger le texte ») corrigé : une position posée via
+  en-tête `[SetUp "1"]`/`[FEN ...]` initialise désormais l'échiquier
+  sur cette position (y compris sans aucun coup), et ses annotations
+  `%cal`/`%csl` s'affichent (flèches/cercles) dès la position de
+  départ. Bug additionnel corrigé au passage : le retrait des en-têtes
+  PGN détruisait par erreur les annotations `%cal`/`%csl` situées à
+  l'intérieur des commentaires `{ }`, quelle que soit la position de
+  départ. Testé visuellement (Chromium piloté). La chaîne des
+  démonstrations de calcul annotées (position + flèches Marc) est
+  fonctionnelle de bout en bout.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
