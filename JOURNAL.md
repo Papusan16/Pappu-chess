@@ -73,6 +73,18 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   DERNIÈRE occurrence de %cal/%csl d'un commentaire (pas la première),
   pour qu'une démonstration multi-étapes (sans lecteur dédié, étapes
   concaténées en un seul commentaire) affiche l'état cumulatif final.
+- Design de la colonne droite (coach) densifié : boutons resserrés
+  (hauteurs et espacements réduits partout), polices agrandies sur les
+  textes clés (liste des coups, commentaire du Fou, noms des joueurs).
+  Liste des coups étirée pour occuper l'espace vertical restant jusqu'au
+  bas de l'échiquier, défilement interne. Bulle du Fou à hauteur
+  NATURELLE (jamais coupée ni en scroll interne, un commentaire long
+  s'affiche en entier) : c'est la liste des coups qui absorbe la
+  variation de hauteur en se réduisant/s'étirant, les boutons entre les
+  deux gardent une taille fixe. Validé par rendu piloté (Chromium
+  headless) avec commentaire court et commentaire long, sur plusieurs
+  résolutions laptop : aucun débordement de page, fitBoard() et layout
+  mobile non affectés.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,

@@ -2098,13 +2098,13 @@ button.ctrl:active{transform:scale(.93)}
       "board  ctrl"
       "board  nav"
       "board  engine"
+      "board  note"
       "board  paste"
       "board  teach"
       "board  menu"
-      "board  moves"
-      ".      moves";
+      "board  moves";
     grid-template-rows:auto auto auto auto auto auto auto auto auto auto 1fr;
-    gap:8px 20px;
+    gap:5px 20px;
     align-items:start;
   }
   .tabs{grid-area:tabs}
@@ -2114,21 +2114,24 @@ button.ctrl:active{transform:scale(.93)}
      de la nav supprimée du calcul, elle ne vit plus dans la colonne gauche). */
   .nav-controls{grid-area:nav;margin-top:2px}
   #engineStatus{grid-area:engine;margin-top:0 !important;text-align:right;opacity:.75}
+  #offlineNote{grid-area:note}
   .paste-area{grid-area:paste}
   .turn-ind{grid-area:turn;text-align:center}
   .controls{grid-area:ctrl}
   .teach-row{grid-area:teach}
   .settings-menu{grid-area:menu}
   .moves-played{grid-area:moves}
-  /* liste des coups : hauteur plafonnée avec défilement interne, jamais plein flux
-     (sinon un PGN long agrandit la page et pousse l'échiquier hors écran). #movesPlayed
-     (spécificité id) l'emporte sciemment sur le .moves-played{max-height:86px} du
-     compactage global plus bas dans la feuille : plus de place disponible en desktop. */
-  #movesPlayed{max-height:220px;overflow-y:auto}
+  /* liste des coups : occupe tout l'espace vertical restant sous les contrôles (align-self:
+     stretch sur la cellule moves, qui va jusqu'au bas de la grille) et défile EN INTERNE
+     (overflow-y:auto) au lieu d'agrandir la page — jamais de hauteur fixe ni de max-height :
+     la cellule elle-même est bornée par la hauteur de l'échiquier, donc pas de débordement.
+     #movesPlayed (spécificité id) l'emporte sciemment sur le .moves-played{max-height:86px}
+     du compactage global plus bas dans la feuille. */
+  #movesPlayed{align-self:stretch;max-height:none;overflow-y:auto}
   .jester-zone{grid-area:jester;position:static;display:flex;flex-direction:row;align-items:flex-start;gap:10px;pointer-events:auto;z-index:auto}
   .jester-zone .jester{opacity:1;flex:0 0 60px;cursor:default}
   .jester-zone .jester-svg{width:60px;height:80px}
-  .jester-zone .speech{opacity:1;transform:none;max-height:none;overflow:visible;flex:1;width:auto;min-height:120px;border-bottom-left-radius:4px;border-bottom-right-radius:16px}
+  .jester-zone .speech{opacity:1;transform:none;max-height:none;overflow:visible;flex:1;width:auto;min-height:90px;border-bottom-left-radius:4px;border-bottom-right-radius:16px}
   .jester-zone .speech::before{left:-11px;right:auto;border-right-color:var(--white);border-left-color:transparent;border-left:0}
   .jester-dot{display:none !important}
 
@@ -2141,15 +2144,15 @@ button.ctrl:active{transform:scale(.93)}
   }
   .tabs .theme-toggle-btn{height:32px;width:32px;font-size:.92rem;border-radius:8px}
   /* Contrôles Annuler/Nouvelle/Tourner + perspective : s'adaptent à la largeur */
-  .controls{display:flex;flex-wrap:wrap;gap:6px}
-  .controls .ctrl{flex:1 1 auto;min-width:80px;height:36px;padding:0 8px;font-size:.76rem;font-weight:700;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
-  .persp-btn{flex:0 0 auto !important;width:36px;height:36px;padding:0 !important;justify-content:center}
+  .controls{display:flex;flex-wrap:wrap;gap:5px}
+  .controls .ctrl{flex:1 1 auto;min-width:80px;height:30px;padding:0 8px;font-size:.74rem;font-weight:700;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+  .persp-btn{flex:0 0 auto !important;width:30px;height:30px;padding:0 !important;justify-content:center}
   /* Navigation sous l'échiquier : 4 boutons égaux */
-  .nav-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-  .nav-controls button{height:38px;border-radius:8px;font-size:15px}
+  .nav-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+  .nav-controls button{height:28px;border-radius:7px;font-size:13px}
   /* Boutons pédago : même hauteur */
-  .teach-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .teach-btn{height:38px;border-radius:8px;font-size:.8rem;font-weight:700}
+  .teach-row{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .teach-btn{height:32px;border-radius:7px;font-size:.78rem;font-weight:700}
   .teach-row .resign-btn{grid-column:1 / -1}
 }
 /* Fenêtre étroite (côte à côte) : rester compact */
@@ -2245,22 +2248,35 @@ button.ctrl:active{transform:scale(.93)}
   .topbar{max-width:none;margin-bottom:4px}
   h1{font-size:1rem}
   .layout{max-width:1500px}
+  /* réaffirmé ici (après le compactage vertical global, gap:7px uniforme) : rangées plus
+     serrées dans la colonne droite, colonnes toujours écartées de 20px du plateau. */
+  .layout{gap:5px 20px}
   /* onglet PGN discret, aligné à gauche de la colonne droite */
   .tabs{grid-area:tabs;justify-content:flex-end}
-  /* bulle du Fou : plus compacte */
-  .jester-zone .speech{min-height:0;padding:9px 11px;font-size:.82rem}
-  .jester-zone .speech .stitle{font-size:.9rem}
-  .jester-zone .speech .stext{font-size:.8rem;line-height:1.4}
-  .jester-zone .jester{flex:0 0 52px}
-  .jester-zone .jester-svg{width:52px;height:69px}
-  /* boutons compacts partout dans la colonne droite */
-  .controls .ctrl{padding:7px 6px;font-size:.78rem}
-  .nav-controls button{padding:5px 4px;font-size:13px}
-  .teach-btn{padding:8px 6px;font-size:.76rem}
-  .settings-menu summary{padding:7px 11px;font-size:.76rem}
-  .turn-ind{font-size:.76rem;margin:1px 0}
-  .persp-btn{max-width:44px}
+  /* bulle du Fou : hauteur NATURELLE, jamais coupée ni en scroll interne — un commentaire
+     long s'affiche en entier. C'est la liste des coups plus bas (déjà étirable/en défilement
+     interne) qui absorbe la variation : elle se réduit quand la bulle grandit, grandit quand
+     la bulle est courte. Les boutons entre les deux gardent une taille fixe (cf. règles de
+     hauteur/padding ci-dessus, indépendantes du contenu), ils sont juste repoussés de la
+     même distance que la bulle grandit — jamais déformés. */
+  #speech{height:auto;min-height:64px;max-height:none;overflow:visible}
+  .jester-zone .speech{min-height:0;padding:8px 11px;font-size:.82rem}
+  .jester-zone .speech .stitle{font-size:.98rem}
+  .jester-zone .speech .stext{font-size:.92rem;line-height:1.42}
+  .jester-zone .jester{flex:0 0 46px}
+  .jester-zone .jester-svg{width:46px;height:61px}
+  /* boutons ramassés partout dans la colonne droite (hauteur déjà réduite plus haut) */
+  .controls .ctrl{padding:0 6px;font-size:.75rem}
+  .nav-controls button{padding:0 4px;font-size:13px}
+  .teach-btn{padding:0 6px;font-size:.76rem}
+  .settings-menu summary{padding:5px 11px;font-size:.76rem}
+  .turn-ind{font-size:.76rem;margin:0}
+  .persp-btn{max-width:40px}
   .color-pick button{padding:9px 6px;font-size:.78rem}
+  /* textes clés agrandis : liste des coups + noms des joueurs */
+  #movesPlayed{font-size:.96rem;line-height:1.5;padding:8px 10px}
+  .player-plate{font-size:.96rem;padding:2px 6px 2px 20px;min-height:22px}
+  .player-plate .pp-elo{font-size:.82rem}
 }
 
 @media (min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape){
