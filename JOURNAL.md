@@ -28,9 +28,19 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
 - personnes.md : 9 fiches biographiques (format PEOPLE), local.
 - Carte des réflexes adoptée : 5 rayons (Histoire, Théorie, Technique,
   Pratique, Méthode). reflexes_methode.md créé (M1 ordre de calcul,
-  M2 pré-requis de combinaison). Réflexe finale « vigilance au pat /
-  sous-promotion » consigné dans lot 2, en attente d'un rayon
-  Technique/finales.
+  M2 pré-requis de combinaison, enrichi des indices combinatoires ;
+  M3 vérifier les défenses ; M4 vigilance à la déprotection). Rayon
+  Technique ouvert (reflexes_technique.md : graine finales de pions,
+  graine vigilance au pat / sous-promotion). reserve_arbitrage.md créé
+  : catalogue des éléments repérés non encore placés (motifs nommés
+  catégorie E, prophylaxie, méfiance aux principes dogmatiques,
+  économie des forces, progression du calcul en série, pièce attaquée
+  bougée mécaniquement).
+- Distinction actée entre réflexes (principes de méthode) et
+  démonstrations de calcul (les séquences que Marc énonce en traçant
+  flèches/cercles sur une position) : ces dernières sont à capturer en
+  PGN annoté `%cal`/`%csl` via le pipeline video→PGN — nouvel usage du
+  corpus tactique, distinct de l'extraction de réflexes.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
