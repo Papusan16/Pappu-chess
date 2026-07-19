@@ -31,5 +31,27 @@ d'arbitrage. Brouillon de travail, pas encore inséré dans
   surchargées, alignements) avant tout calcul
 - **Réflexe** : le Fou apprend à pressentir qu'une combinaison est
   possible en repérant ces signaux, plutôt que de calculer à
-  l'aveugle.
-- **Source** : « Mat arabe ou dent du dragon »
+  l'aveugle. Marc nomme ces signaux les « indices combinatoires » :
+  roi en insécurité, pièces insuffisamment protégées, pièces mal
+  placées. Une fois ces indices repérés, il faut les relier entre eux
+  pour construire la combinaison.
+- **Source** : « Mat arabe ou dent du dragon », « Mieux calculer aux
+  échecs 🔍 »
+
+## M3. Vérifier les défenses adverses
+
+- **Thème** : contrôle de la combinaison
+- **Déclencheur** : une combinaison ou un coup fort candidat identifié,
+  avant de le jouer
+- **Réflexe** : le Fou rappelle de ne pas s'arrêter à l'idée trouvée,
+  mais d'éprouver la combinaison contre chaque ressource défensive de
+  l'adversaire avant de conclure.
+- **Source** : « Mieux calculer aux échecs 🔍 »
+
+## M4. Vigilance à la déprotection
+
+- **Thème** : sécurité du coup
+- **Déclencheur** : avant de déplacer une de ses propres pièces
+- **Réflexe** : le Fou rappelle de vérifier ce que la pièce défendait,
+  pour ne pas laisser en prise ce qu'elle protégeait.
+- **Source** : « Mieux calculer aux échecs 🔍 »
