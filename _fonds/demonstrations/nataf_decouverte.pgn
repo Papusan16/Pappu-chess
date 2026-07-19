@@ -1,0 +1,48 @@
+[Event "Démonstration à étapes — échec à la découverte"]
+[Site "Igor Nataf, vidéo « Le Cavalier à l'attaque du Roi » ~1:23–1:41 (2e joueur non identifié)"]
+[SetUp "1"]
+[FEN "1rbk3r/p1p2q2/1pQ2N2/3Ppp1p/3P3B/P7/1PP5/1K1R4 w - - 0 1"]
+
+{
+Première démonstration à étapes du fonds. Position fixe (FEN ci-dessus) :
+aucun coup n'est joué, seules les annotations visuelles changent d'une
+étape à l'autre, de façon CUMULATIVE (chaque étape reprend les %cal/%csl
+de la précédente et en ajoute), jusqu'à la remise à zéro de l'étape 6.
+
+Convention de couleur : R rouge = cible, Y jaune = ligne d'attaque,
+G vert = case/coup de travail.
+
+Format de consignation, pas encore lu par un lecteur d'étapes dans
+l'app (à construire plus tard) : chaque étape est un bloc commenté
+numéroté ci-dessous, avec ses %cal/%csl au format déjà reconnu par
+extractVisuals() (Papu_Chess.html) et le texte du Fou associé.
+}
+
+{ ÉTAPE 1
+[%csl Rd8]
+Le Fou : « Leur roi, en d8, est dans le viseur… »
+}
+
+{ ÉTAPE 2 — cumulatif : + ligne d'attaque (fou h4 → d8)
+[%csl Rd8][%cal Yh4d8]
+Le Fou : « …du fou h4, le long de la diagonale. »
+}
+
+{ ÉTAPE 3 — cumulatif : + case de travail (cavalier f6)
+[%csl Rd8,Gf6][%cal Yh4d8]
+Le Fou : « Avec les Blancs, on cherche à bouger le cavalier f6 pour ouvrir l'échec. »
+}
+
+{ ÉTAPE 4 — cumulatif : + coup de travail joué (f6-e4)
+[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4]
+Le Fou : « Nataf est venu en e4. »
+}
+
+{ ÉTAPE 5 — cumulatif : + coup de travail alternatif (f6-e8)
+[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
+Le Fou : « On verra que cavalier e8 marchait aussi. »
+}
+
+{ ÉTAPE 6 — réinitialisation : aucune annotation, l'échiquier redevient nu }
+
+*

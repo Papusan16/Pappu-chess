@@ -51,6 +51,12 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   départ. Testé visuellement (Chromium piloté). La chaîne des
   démonstrations de calcul annotées (position + flèches Marc) est
   fonctionnelle de bout en bout.
+- Première démonstration à étapes consignée : `_fonds/demonstrations/
+  nataf_decouverte.pgn` (échec à la découverte, Igor Nataf). Format
+  établi « position + étapes cumulatives » (un bloc commenté numéroté
+  par étape, %cal/%csl déjà lisibles par extractVisuals()) + convention
+  de couleur (R cible / Y ligne d'attaque / G case-coup de travail).
+  Lecteur d'étapes dans l'app : à construire.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
