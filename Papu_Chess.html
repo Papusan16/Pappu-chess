@@ -1913,7 +1913,7 @@ html.theme-light{
   --ombre-plateau:rgba(0,0,0,.12);--ombre-piece:rgba(0,0,0,.12);--ombre-piece-arlequin:rgba(0,0,0,.15);
   --ombre-bulle:rgba(0,0,0,.15);--ombre-carte:rgba(0,0,0,.18);
 }
-body{background:radial-gradient(circle at 50% -10%,var(--bg-grad-top),var(--bg) 65%);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding:8px 8px 16px;display:flex;flex-direction:column;align-items:center;min-height:100dvh;box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% -10%,var(--bg-grad-top),var(--bg) 65%);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding:8px 8px 16px;display:flex;flex-direction:column;align-items:center;min-height:100dvh;box-sizing:border-box}
 .topbar{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
 h1{font-size:.92rem;background:linear-gradient(90deg,var(--gold-light),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.03em;text-transform:uppercase;font-weight:800}
 .libbtn{background:linear-gradient(180deg,var(--btn-lib-top),var(--btn-lib-bottom));border:1px solid var(--gold-a40);border-radius:9px;color:var(--gold-light);font-size:.74rem;font-weight:700;padding:8px 11px;cursor:pointer;white-space:nowrap}
@@ -2096,26 +2096,35 @@ button.ctrl:active{transform:scale(.93)}
       "board  jester"
       "board  turn"
       "board  ctrl"
+      "board  nav"
+      "board  engine"
       "board  paste"
       "board  teach"
       "board  menu"
       "board  moves"
-      "nav    moves"
-      ".      .";
-    grid-template-rows:auto auto auto auto auto auto auto auto auto 1fr;
+      ".      moves";
+    grid-template-rows:auto auto auto auto auto auto auto auto auto auto 1fr;
     gap:8px 20px;
     align-items:start;
   }
   .tabs{grid-area:tabs}
   .board-eval-wrap{grid-area:board;align-self:start}
-  /* navigation SOUS l'échiquier (colonne gauche) */
+  /* navigation dans la colonne DROITE, sous Annuler/Nouvelle/Tourner : ne pousse plus
+     l'échiquier vers le bas et n'ajoute plus de hauteur sous lui (cf. fitBoard : réservation
+     de la nav supprimée du calcul, elle ne vit plus dans la colonne gauche). */
   .nav-controls{grid-area:nav;margin-top:2px}
+  #engineStatus{grid-area:engine;margin-top:0 !important;text-align:right;opacity:.75}
   .paste-area{grid-area:paste}
   .turn-ind{grid-area:turn;text-align:center}
   .controls{grid-area:ctrl}
   .teach-row{grid-area:teach}
   .settings-menu{grid-area:menu}
-  .moves-played{grid-area:moves;max-height:none}
+  .moves-played{grid-area:moves}
+  /* liste des coups : hauteur plafonnée avec défilement interne, jamais plein flux
+     (sinon un PGN long agrandit la page et pousse l'échiquier hors écran). #movesPlayed
+     (spécificité id) l'emporte sciemment sur le .moves-played{max-height:86px} du
+     compactage global plus bas dans la feuille : plus de place disponible en desktop. */
+  #movesPlayed{max-height:220px;overflow-y:auto}
   .jester-zone{grid-area:jester;position:static;display:flex;flex-direction:row;align-items:flex-start;gap:10px;pointer-events:auto;z-index:auto}
   .jester-zone .jester{opacity:1;flex:0 0 60px;cursor:default}
   .jester-zone .jester-svg{width:60px;height:80px}
@@ -3731,10 +3740,15 @@ function extractVisuals(cm){
   // Format : [%cal Gd4e5,Rf1c4]  /  [%csl Re5,Gd4]  (G=vert, R=rouge, B=bleu, Y=or).
   var arrows=[], circles=[];
   var colMap={G:'var(--arrow-main)', R:'var(--annot-red)', B:'var(--annot-blue)', Y:'var(--annot-yellow)'};
-  var mCal=cm.match(/\[%cal\s+([^\]]+)\]/i);
+  // dernier [%cal ...]/[%csl ...] du texte : un commentaire "position de départ" peut concaténer
+  // plusieurs étapes d'une démonstration (cf. nataf_decouverte.pgn) — sans lecteur d'étapes, on
+  // affiche l'état cumulatif final, donc la DERNIÈRE occurrence, pas la première.
+  var allCal=cm.match(/\[%cal\s+([^\]]+)\]/gi);
+  var mCal=allCal && allCal.length ? allCal[allCal.length-1].match(/\[%cal\s+([^\]]+)\]/i) : null;
   if(mCal){ mCal[1].split(',').forEach(function(e){ var m=e.trim().match(/^([GRYB])([a-h][1-8])([a-h][1-8])/i);
     if(m) arrows.push({m:(m[2]+m[3]).toLowerCase(), col:colMap[m[1].toUpperCase()]||'var(--fou)'}); }); }
-  var mCsl=cm.match(/\[%csl\s+([^\]]+)\]/i);
+  var allCsl=cm.match(/\[%csl\s+([^\]]+)\]/gi);
+  var mCsl=allCsl && allCsl.length ? allCsl[allCsl.length-1].match(/\[%csl\s+([^\]]+)\]/i) : null;
   if(mCsl){ mCsl[1].split(',').forEach(function(e){ var m=e.trim().match(/^([GRYB])([a-h][1-8])/i);
     if(m) circles.push({s:m[2].toLowerCase(), col:colMap[m[1].toUpperCase()]||'var(--fou)'}); }); }
   return {arrows:arrows, circles:circles};
@@ -4289,7 +4303,9 @@ function drawArrows(){
   var tog=document.getElementById('arrowToggle');
   var arrowsOn = !(tog && !tog.checked);
   // 1) Flèches "recommandées" (livre d'ouverture / moteur) — masquées en mode Jouer (anti-triche)
-  if(!playMode && arrowsOn){
+  // et masquées dès qu'une position de départ est imposée (FEN) ou qu'on est en mode PGN/démonstration :
+  // le livre/moteur n'a rien à dire sur une position posée pour l'exemple, seules les %cal/%csl du commentaire comptent.
+  if(!playMode && arrowsOn && !startFen && !pgnMode){
     var seq=getUciSeq();
     var opts=BOOK[seq.join(' ')];
     if(opts && opts.length){ drawArrowList(opts,false); }
@@ -4366,14 +4382,18 @@ function fitBoard(){
       // quel que soit le scroll), sinon un coup de molette agrandit l'échiquier en boucle.
       var scrollY = window.scrollY || window.pageYOffset || 0;
       var wrapTop = wrap.getBoundingClientRect().top + scrollY;
-      // la navigation est SOUS l'échiquier : réserver sa hauteur (~46px) ET celle des
-      // plaques de joueur (au-dessus/en-dessous du plateau), sinon l'ensemble déborde en paysage.
-      var navH = 46;
+      // la navigation vit désormais dans la colonne droite (plus sous l'échiquier) : plus besoin
+      // de lui réserver de hauteur ici. Reste à réserver : les plaques de joueur (au-dessus/
+      // en-dessous du plateau) ET la ligne des lettres a-h + la bordure du plateau, qui s'ajoutent
+      // sous --board-size (grid-template-rows du .board-grid = "auto 18px" + bordure #board).
       var plates = 0;
       var pt=document.getElementById('playerTop'), pb=document.getElementById('playerBottom');
       if(pt) plates += pt.getBoundingClientRect().height;
       if(pb) plates += pb.getBoundingClientRect().height;
-      var availH = vh - wrapTop - navH - plates - 16;
+      var filesRow=document.querySelector('.files');
+      var filesH = filesRow ? filesRow.getBoundingClientRect().height : 18;
+      var boardBorder = 6; // #board : border 3px haut + 3px bas
+      var availH = vh - wrapTop - plates - filesH - boardBorder - 16;
       // largeur max pour l'échiquier : fenêtre - colonne droite (min 240) - barre d'éval - marges
       var colW = vw - 240 - 26 - 44;
       // écran court (paysage téléphone) : un plancher plus bas évite de forcer un débordement
