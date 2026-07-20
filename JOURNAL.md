@@ -114,6 +114,19 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   (une div position:fixed;top:0 n'apparaît pas à y=0 sur l'image) — la preuve
   fiable du sticky a été obtenue via getBoundingClientRect() (DOM), pas par
   inspection visuelle du screenshot à cet instant précis.
+- Persistance de la fiche profil corrigée : les champs pseudo rapides
+  Lichess/Chess.com (Modes & réglages) n'avaient aucun handler et ne
+  sauvegardaient jamais rien tant qu'on n'ouvrait pas séparément la fiche
+  Profil complète pour cliquer « Enregistrer » — ajout de
+  oninput="saveIdentity()" sur les deux champs, comme le pseudo app.
+  importLastChesscom() redemandait aussi le pseudo à CHAQUE clic (même
+  intra-session) car le pseudo obtenu via prompt() n'était jamais réécrit
+  dans le champ ni sauvegardé : corrigé (écrit dans le champ + saveIdentity()
+  avant utilisation). Persistance testée par navigation Chromium headless
+  séparée sur le même profil navigateur (véritable rechargement, pas la
+  mémoire JS d'un seul onglet) : les pseudos survivent bien au rechargement.
+  Diagnostic écarté : ce n'était pas un problème d'origine file:// vs
+  localhost (le lancement local sert toujours sur le port fixe 8000).
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,

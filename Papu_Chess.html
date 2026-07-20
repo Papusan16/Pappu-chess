@@ -2424,8 +2424,8 @@ button.ctrl:active{transform:scale(.93)}
             <span style="font-size:.62rem;color:var(--text-muted);white-space:nowrap">Elo / FIDE (manuel)</span>
           </div>
           <div style="display:flex;gap:5px">
-            <input id="lichessUser" placeholder="pseudo Lichess" autocomplete="off" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border-a);border-radius:7px;color:var(--text-input);padding:6px 8px;font-size:.76rem">
-            <input id="chesscomUser" placeholder="pseudo Chess.com" autocomplete="off" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border-a);border-radius:7px;color:var(--text-input);padding:6px 8px;font-size:.76rem">
+            <input id="lichessUser" placeholder="pseudo Lichess" autocomplete="off" oninput="saveIdentity()" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border-a);border-radius:7px;color:var(--text-input);padding:6px 8px;font-size:.76rem">
+            <input id="chesscomUser" placeholder="pseudo Chess.com" autocomplete="off" oninput="saveIdentity()" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border-a);border-radius:7px;color:var(--text-input);padding:6px 8px;font-size:.76rem">
           </div>
           <div style="display:flex;gap:6px;align-items:center">
             <button type="button" onclick="fetchUserRating()" style="background:linear-gradient(180deg,var(--arrow-main),var(--arrow-main-dark));border:none;border-radius:7px;color:var(--white);font-weight:700;font-size:.74rem;padding:6px 10px;cursor:pointer;white-space:nowrap">🎭 Récupérer mon niveau</button>
@@ -3735,7 +3735,11 @@ async function importLastChesscom(){
   var st=document.getElementById('importStatus');
   function say(m,c){ if(st){ st.style.color=c||'var(--text-muted)'; st.textContent=m; } }
   var u=((document.getElementById('chesscomUser')||{}).value||'').trim();
-  if(!u){ u=((prompt('Ton pseudo Chess.com :')||'').trim()); }
+  if(!u){
+    u=((prompt('Ton pseudo Chess.com :')||'').trim());
+    // mémorisé tout de suite : sinon on redemande à chaque clic, même dans la même session
+    if(u){ var ci=document.getElementById('chesscomUser'); if(ci) ci.value=u; saveIdentity(); }
+  }
   if(!u){ return; }
   say('Recherche de ta dernière partie Chess.com…');
   async function monthGames(y,m){
