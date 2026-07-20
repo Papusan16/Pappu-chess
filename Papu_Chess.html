@@ -2622,6 +2622,13 @@ function favoriteOpeningNote(best, seq){
   return '';
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+// Comparaison TOLÉRANTE de pseudos : insensible à la casse, espaces/underscores/tirets
+// équivalents (ex. "Papu_San" Lichess = "Papu_san" Chess.com = "Papu san" app).
+function normPseudo(s){ return String(s||'').toLowerCase().trim().replace(/[\s_-]+/g,' '); }
+function pseudoMatches(a,b){ return !!a && !!b && normPseudo(a)===normPseudo(b); }
+function myPseudos(){
+  return [userName,(document.getElementById('lichessUser')||{}).value,(document.getElementById('chesscomUser')||{}).value].filter(Boolean);
+}
 function playerNameFor(color){
   var h=pgnHeaders||{};
   // Mode « Jouer contre » : toi vs Le Fou
@@ -2633,11 +2640,9 @@ function playerNameFor(color){
   var nm = color==='w' ? (h.White||'') : (h.Black||'');
   var el = color==='w' ? (h.WhiteElo||'') : (h.BlackElo||'');
   if(!nm) nm = (color==='w') ? 'Blancs' : 'Noirs';
-  // marquer « toi » si un de tes pseudos correspond
-  var you=false;
-  var mine=[userName,(document.getElementById('lichessUser')||{}).value,(document.getElementById('chesscomUser')||{}).value]
-           .filter(Boolean).map(function(s){return String(s).toLowerCase().trim();});
-  if(mine.indexOf(String(nm).toLowerCase().trim())>=0) you=true;
+  // marquer « toi » si un de tes pseudos correspond (comparaison tolérante)
+  var mine=myPseudos();
+  var you=mine.some(function(p){ return pseudoMatches(p,nm); });
   return {name:nm, elo:(el?String(el):''), you:you};
 }
 function fillPlate(id,color){
@@ -3889,6 +3894,13 @@ function loadPgn(){
 }
 function announceImportedGame(){
   var h=pgnHeaders||{};
+  // Orientation automatique : si un de tes pseudos (fiche profil) correspond aux tags
+  // [White]/[Black] du PGN, ouvrir l'échiquier de TON côté (comparaison tolérante).
+  // Sinon : orientation par défaut inchangée (Blancs en bas).
+  var mine=myPseudos();
+  var iAmWhite = h.White && mine.some(function(p){ return pseudoMatches(p,h.White); });
+  var iAmBlack = h.Black && mine.some(function(p){ return pseudoMatches(p,h.Black); });
+  if(iAmWhite || iAmBlack){ chooseColor(iAmBlack?'b':'w'); }
   var w=h.White||'Blancs', bl=h.Black||'Noirs';
   var we=h.WhiteElo?(' ('+h.WhiteElo+')'):'', be=h.BlackElo?(' ('+h.BlackElo+')'):'';
   var res=h.Result||'*';

@@ -127,6 +127,18 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   mémoire JS d'un seul onglet) : les pseudos survivent bien au rechargement.
   Diagnostic écarté : ce n'était pas un problème d'origine file:// vs
   localhost (le lancement local sert toujours sur le port fixe 8000).
+- Orientation automatique du plateau selon le pseudo de l'utilisateur :
+  un embryon existait déjà (playerNameFor() comparait déjà les pseudos, mais
+  seulement casse+trim, et seulement pour afficher le badge « toi » — rien ne
+  pilotait l'orientation). Ajout de normPseudo()/pseudoMatches()/myPseudos()
+  (comparaison tolérante : casse, espaces/underscores/tirets équivalents,
+  partagée avec le badge « toi » upgradé au passage) et branchement dans
+  announceImportedGame() : si [White] ou [Black] du PGN importé correspond à
+  un pseudo du profil, chooseColor() bascule automatiquement l'échiquier de
+  ce côté, sans clic sur Tourner. Testé (headless, isolé) : pseudo Lichess
+  "Papu_San" vs tag PGN chess.com "Papu_san" (casse/underscore différents) →
+  matché, flipped=true, colorChosen=true. Cas témoin sans pseudo
+  correspondant → aucun flip (pas de faux positif).
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
