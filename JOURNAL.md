@@ -86,6 +86,35 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   résolutions laptop : aucun débordement de page, fitBoard() et layout
   mobile non affectés.
 
+- Mise en page repensée en « page défilable assumée » (desktop) : la liste des
+  coups (#movesPlayed) n'a plus de plafond ni de scroll interne nulle part
+  (overflow:visible ; le .moves-played{max-height:86px} global — qui touchait
+  aussi le mobile — a été retiré, contre-productif). L'échiquier + les plaques
+  de joueurs (board-eval-wrap) sont en position:sticky;top:6px sur desktop :
+  ils restent visibles tout en haut pendant que la page défile pour dérouler
+  une longue partie. Ordre tabs→Trait→contrôles→nav→bulle du Fou→liste des
+  coups déjà en place (session précédente), non modifié. Bulle du Fou :
+  hauteur naturelle par défaut, scroll interne (65vh) en dernier recours
+  seulement pour un commentaire vraiment très long (avant : jamais de scroll,
+  jamais de plafond). Bug latent corrigé au passage : .player-plate n'avait
+  pas de largeur définie (shrink-to-fit centré par align-items:center du
+  parent), donc le nom (max-width:60%) se résolvait contre une boîte minuscule
+  et tronquait "Noirs" en "No…" — invisible à .96rem, devenu flagrant en
+  l'agrandissant. Fixé par .player-plate{width:100%}. Noms des joueurs
+  agrandis (1.12rem, weight 800, contraste renforcé) sur desktop et centrés
+  horizontalement sur la largeur du plateau (justify-content:center + padding
+  symétrique ; avant : calés à gauche via un padding-left:20px orphelin). Titre
+  "Coach & Encyclopédie" → "Papu-Chess", cliquable (h1 + mini-title),
+  réinitialise l'app comme le bouton Nouvelle (onclick="reset()"). Validé par
+  rendu piloté (Chromium headless, serveur local) : défaut, partie très
+  longue (300+ demi-coups synthétiques), commentaire très long, et mobile
+  (position:static conservée, liste non plafonnée aussi bénéfique côté
+  mobile). Piège méthodologique noté : --screenshot de Chromium headless ne
+  restitue pas fidèlement un window.scrollTo() déclenché en JS avant capture
+  (une div position:fixed;top:0 n'apparaît pas à y=0 sur l'image) — la preuve
+  fiable du sticky a été obtenue via getBoundingClientRect() (DOM), pas par
+  inspection visuelle du screenshot à cet instant précis.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.

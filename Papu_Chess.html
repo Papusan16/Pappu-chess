@@ -19,7 +19,7 @@
 })();
 </script>
 
-<title>Échecs — Coach & Encyclopédie</title>
+<title>Papu-Chess</title>
 <script>
 /* chess.js 0.10.3 intégré — fonctionne hors ligne */
 /*
@@ -1916,6 +1916,8 @@ html.theme-light{
 body{margin:0;background:radial-gradient(circle at 50% -10%,var(--bg-grad-top),var(--bg) 65%);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding:8px 8px 16px;display:flex;flex-direction:column;align-items:center;min-height:100dvh;box-sizing:border-box}
 .topbar{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
 h1{font-size:.92rem;background:linear-gradient(90deg,var(--gold-light),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.03em;text-transform:uppercase;font-weight:800}
+.app-title{cursor:pointer;user-select:none}
+.app-title:active{opacity:.7}
 .libbtn{background:linear-gradient(180deg,var(--btn-lib-top),var(--btn-lib-bottom));border:1px solid var(--gold-a40);border-radius:9px;color:var(--gold-light);font-size:.74rem;font-weight:700;padding:8px 11px;cursor:pointer;white-space:nowrap}
 .libbtn:active{transform:scale(.94)}
 .theme-toggle-btn{background:linear-gradient(180deg,var(--btn-lib-top),var(--btn-lib-bottom));border:1px solid var(--gold-a40);border-radius:9px;color:var(--gold-light);font-size:1rem;font-weight:700;cursor:pointer;width:34px;height:34px;padding:0;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;line-height:1}
@@ -2056,8 +2058,10 @@ button.ctrl:active{transform:scale(.93)}
 .arrow-alt{stroke:var(--arrow-alt);fill:var(--arrow-alt)}
 .toggle-arrows{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text-muted);margin-top:1px;cursor:pointer;user-select:none}
 .toggle-arrows input{accent-color:var(--gold)}
-/* Plaques de joueur autour de l'échiquier : savoir qui est en haut / en bas */
-.player-plate{display:flex;align-items:center;gap:7px;font-size:.8rem;font-weight:700;color:var(--text-input);padding:3px 6px 3px 20px;min-height:20px}
+/* Plaques de joueur autour de l'échiquier : savoir qui est en haut / en bas.
+   justify-content:center + padding symétrique : centrées sur la largeur du plateau
+   (avant : padding-left:20px sans centrage, donc calées à gauche). */
+.player-plate{display:flex;align-items:center;justify-content:center;gap:7px;font-size:.8rem;font-weight:700;color:var(--text-input);padding:3px 6px;min-height:20px;width:100%;box-sizing:border-box}
 .player-plate .pp-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
 .player-plate .pp-elo{font-weight:600;color:var(--text-muted);font-size:.72rem}
 .player-plate .pp-dot{width:12px;height:12px;border-radius:3px;border:1px solid var(--border-dashed);flex:0 0 auto}
@@ -2112,7 +2116,11 @@ button.ctrl:active{transform:scale(.93)}
     align-items:start;
   }
   .tabs{grid-area:tabs}
-  .board-eval-wrap{grid-area:board;align-self:start}
+  /* PAGE défilable assumée : l'échiquier + les plaques de joueurs restent ANCRÉS en haut,
+     toujours visibles, pendant que la page défile pour dérouler la liste des coups en bas
+     (cf. #movesPlayed plus bas). top:6px reprend le padding-top du body en mode desktop
+     compact, pour ne pas coller au bord de la fenêtre une fois collé (sticky). */
+  .board-eval-wrap{grid-area:board;align-self:start;position:sticky;top:6px}
   /* navigation dans la colonne DROITE, sous Annuler/Nouvelle/Tourner : ne pousse plus
      l'échiquier vers le bas et n'ajoute plus de hauteur sous lui (cf. fitBoard : réservation
      de la nav supprimée du calcul, elle ne vit plus dans la colonne gauche). */
@@ -2125,13 +2133,14 @@ button.ctrl:active{transform:scale(.93)}
   .teach-row{grid-area:teach}
   .settings-menu{grid-area:menu}
   .moves-played{grid-area:moves}
-  /* liste des coups : occupe tout l'espace vertical restant sous les contrôles (align-self:
-     stretch sur la cellule moves, qui va jusqu'au bas de la grille) et défile EN INTERNE
-     (overflow-y:auto) au lieu d'agrandir la page — jamais de hauteur fixe ni de max-height :
-     la cellule elle-même est bornée par la hauteur de l'échiquier, donc pas de débordement.
-     #movesPlayed (spécificité id) l'emporte sciemment sur le .moves-played{max-height:86px}
-     du compactage global plus bas dans la feuille. */
-  #movesPlayed{align-self:stretch;max-height:none;overflow-y:auto}
+  /* liste des coups : ni plafond ni scroll interne — align-self:stretch + la piste "1fr"
+     comblent d'abord l'espace restant sous les contrôles (jusqu'au bas de l'échiquier) pour
+     une partie courte ; overflow:visible restitue ensuite à la grille la taille naturelle du
+     contenu comme minimum, donc une longue partie fait grandir la piste (et la PAGE) au-delà
+     de cet espace au lieu de scroller en interne. C'est l'échiquier sticky (board-eval-wrap,
+     ci-dessus) qui reste visible pendant ce défilement. #movesPlayed (spécificité id) l'emporte
+     sciemment sur le compactage global plus bas dans la feuille. */
+  #movesPlayed{align-self:stretch;max-height:none;overflow:visible}
   .jester-zone{grid-area:jester;position:static;display:flex;flex-direction:row;align-items:flex-start;gap:10px;pointer-events:auto;z-index:auto}
   .jester-zone .jester{opacity:1;flex:0 0 60px;cursor:default}
   .jester-zone .jester-svg{width:60px;height:80px}
@@ -2211,7 +2220,6 @@ button.ctrl:active{transform:scale(.93)}
 .turn-ind{margin:1px 0;font-size:.78rem}
 .controls .ctrl{padding:8px 6px}
 .nav-controls button{padding:6px 4px}
-.moves-played{max-height:86px;overflow-y:auto}
 
 @media (max-height: 800px) and (min-width:640px){
   .topbar{padding:4px 0;margin-bottom:2px}
@@ -2257,13 +2265,13 @@ button.ctrl:active{transform:scale(.93)}
   .layout{gap:5px 20px}
   /* onglet PGN discret, aligné à gauche de la colonne droite */
   .tabs{grid-area:tabs;justify-content:flex-end}
-  /* bulle du Fou : hauteur NATURELLE, jamais coupée ni en scroll interne — un commentaire
-     long s'affiche en entier. C'est la liste des coups plus bas (déjà étirable/en défilement
-     interne) qui absorbe la variation : elle se réduit quand la bulle grandit, grandit quand
-     la bulle est courte. Les boutons entre les deux gardent une taille fixe (cf. règles de
-     hauteur/padding ci-dessus, indépendantes du contenu), ils sont juste repoussés de la
-     même distance que la bulle grandit — jamais déformés. */
-  #speech{height:auto;min-height:64px;max-height:none;overflow:visible}
+  /* bulle du Fou : hauteur NATURELLE par défaut — un commentaire de longueur normale s'affiche
+     en entier, sans être coupé. Le scroll interne (65vh) n'est qu'un DERNIER RECOURS pour un
+     texte vraiment très long, pour ne jamais pousser les boutons de contrôle/nav (au-dessus)
+     ni l'échiquier sticky hors d'une portée raisonnable. Les boutons entre tabs et la bulle
+     gardent une taille fixe (cf. règles de hauteur/padding ci-dessus, indépendantes du
+     contenu) : ils sont juste repoussés de la distance que la bulle grandit, jamais déformés. */
+  #speech{height:auto;min-height:64px;max-height:65vh;overflow-y:auto}
   .jester-zone .speech{min-height:0;padding:8px 11px;font-size:.82rem}
   .jester-zone .speech .stitle{font-size:.98rem}
   .jester-zone .speech .stext{font-size:.92rem;line-height:1.42}
@@ -2277,10 +2285,11 @@ button.ctrl:active{transform:scale(.93)}
   .turn-ind{font-size:.76rem;margin:0}
   .persp-btn{max-width:40px}
   .color-pick button{padding:9px 6px;font-size:.78rem}
-  /* textes clés agrandis : liste des coups + noms des joueurs */
+  /* textes clés agrandis : liste des coups + noms des joueurs (nettement plus visibles,
+     contraste renforcé par le poids de police) */
   #movesPlayed{font-size:.96rem;line-height:1.5;padding:8px 10px}
-  .player-plate{font-size:.96rem;padding:2px 6px 2px 20px;min-height:22px}
-  .player-plate .pp-elo{font-size:.82rem}
+  .player-plate{font-size:1.12rem;font-weight:800;padding:3px 6px;min-height:26px}
+  .player-plate .pp-elo{font-size:.9rem;font-weight:700}
 }
 
 @media (min-width: 640px) and (min-height: 540px), (min-width: 640px) and (orientation: landscape){
@@ -2312,10 +2321,10 @@ button.ctrl:active{transform:scale(.93)}
 .mv.mv-blunder{color:var(--move-blunder);font-weight:800}
 </style></head>
 <body>
-<div class="topbar"><h1>🎭 Coach & Encyclopédie</h1><button class="libbtn" onclick="openProfile()">👤 Profil</button><button class="libbtn" onclick="openEnc()">📚 Encyclopédie</button></div>
+<div class="topbar"><h1 class="app-title" onclick="reset()" title="Papu-Chess — retour à l'accueil">🎭 Papu-Chess</h1><button class="libbtn" onclick="openProfile()">👤 Profil</button><button class="libbtn" onclick="openEnc()">📚 Encyclopédie</button></div>
 <div class="layout">
   <div class="tabs">
-    <span class="mini-title">🎭 Coach &amp; Encyclopédie</span>
+    <span class="mini-title app-title" onclick="reset()" title="Papu-Chess — retour à l'accueil">🎭 Papu-Chess</span>
     <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Thème : auto (sombre)">🌙</button>
     <button class="pgn-toggle" id="tab-paste" onclick="togglePasteArea()">📋 PGN</button>
     <button class="pgn-toggle" onclick="openProfile()">👤 Profil</button>
