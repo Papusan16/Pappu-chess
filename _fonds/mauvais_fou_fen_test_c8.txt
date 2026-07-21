@@ -1,0 +1,61 @@
+MAUVAIS FOU — FEN DE TEST PRET A COLLER (fou c8, francaise d'avance
+fermee, verrou c5/e5)
+Verifie via vm sur la fonction reelle du fichier Papu_Chess.html.
+Rien de committe pour ce message — c'est juste le FEN de demo.
+
+===============================================================
+POSITION A COLLER DANS "Charger le texte"
+===============================================================
+
+[Event "Mauvais fou — position de test"]
+[SetUp "1"]
+[FEN "rNb2rk1/pp3ppp/2n1pq2/2PpP3/3P4/5N2/PP3PPP/R1BQK2R b - - 0 12"]
+
+*
+
+===============================================================
+CE QUE C'EST
+===============================================================
+Position CONSTRUITE (pas une partie connue) — batie pour isoler
+proprement le cas : structure francaise d'avance fermee, verrou
+c5/e5.
+
+Structure : pions noirs e6/d5 intacts, pion c noir absent (echange),
+pions blancs c5 et e5 qui verrouillent — e5 occupe directement la
+case d'avance du pion e6, c5 tient la case d'avance (b6) du pion b7.
+Fou c8 n'a qu'un coup legal (Bd7), et d7 est garde par un cavalier
+blanc en b8 sans recapture possible pour les Noirs — donc 0 case
+sure.
+
+===============================================================
+VERIFICATION (fonction REELLE du fichier, testee via vm, pas une
+reimplementation a cote)
+===============================================================
+
+Resultat :
+  [{"s":"c8","side":"Noirs","safe":0,"gene":2,"colorCount":3,"dev":1}]
+
+Detail des 4 criteres :
+  A = 0 case sure (Bd7 perd la piece net, pas de recapture)
+  B = 2 geneurs (b7, e6), tous deux fixes structurellement
+  C = 3 pions fixes sur cases claires (b7, e6, d5) — atteint le
+      seuil N=3
+  D = 1 seule case sure obtenue par le meilleur plan de
+      developpement (b6 puis Bb7) — sous le seuil 3, pas
+      d'echappatoire
+
+AUCUN FAUX POSITIF : la position contient aussi le fou blanc c1
+(encore chez lui) — il n'est PAS signale. Seul c8 apparait dans le
+resultat.
+
+===============================================================
+CE QUE LA CONSTRUCTION A REVELE (2 allers-retours necessaires)
+===============================================================
+Poser une piece quelconque (dame, cavalier) sur la case d'avance
+d'un pion-geneur — meme si un pion adverse la tient aussi — casse
+le critere B ("occupee par une piece mobile" l'emporte sur "tenue
+par un pion"). J'ai du deplacer la dame noire hors de b6 et
+l'attaquant blanc hors de f6 (qui donnait echec en prime) pour que
+la position soit a la fois legale et conforme a la definition. Ca
+illustre concretement a quel point B est strict — ce qui est le but
+recherche.
