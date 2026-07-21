@@ -3267,17 +3267,87 @@ function fouPassedPawns(mi){
   }catch(e){ return []; }
 }
 function fouBadBishopSquares(mi){
-  // Mauvais fou (Silman) : ≥2 pions GÊNEURS AMIS (premier obstacle sur chacune des 4 diagonales, et cet
-  // obstacle doit être un pion de la couleur du fou) fixés, mobilité réelle faible (≤4 cases légales).
+  // Mauvais fou — définition refondue sur la doctrine couleur de Marc (cf. _doctrine/Mauvais Fou.txt)
+  // + Silman, validée en 4 critères cumulatifs (A et B et C et D) :
+  //   A. Mobilité SÛRE nulle : aucun coup légal du fou n'est sûr (SEE 1 coup, même profondeur que
+  //      fouHangingSquares/réflexe M1) — une case n'est sûre que si le fou n'y est pas capturable
+  //      gratuitement. Une case légale mais qui hangerait n'est PAS une vraie sortie.
+  //   B. Étouffement DURABLE par des pions : ≥2 pions AMIS, premier obstacle sur leurs diagonales
+  //      respectives, et CHACUN structurellement fixé (case d'avance occupée par un pion — ami ou
+  //      ennemi —, ou tenue par un pion adverse). Une pièce mobile de passage sur la case d'avance
+  //      NE fixe PAS durablement (cf. coup 12 : un cavalier ami temporairement posté ne compte pas).
+  //   C. Comptage de COULEUR (doctrine Marc, pas de seuil chiffré dans la source — calibré ici) :
+  //      au moins COLOR_COUNT_THRESHOLD pions amis fixés sur des cases de LA MÊME COULEUR que le fou.
+  //      C'est le marqueur structurel réel : « double emploi » entre le fou et ses propres pions.
+  //   D. Pas d'échappatoire de développement à court terme : si pousser un pion gêneur ADJACENT
+  //      (distance 1) — puis, éventuellement, y relocaliser le fou (motif fianchetto) — donne une
+  //      mobilité sûre nettement meilleure (≥ DEV_THRESHOLD), le fou a un potentiel intact et n'est
+  //      PAS signalé (ex. f8 via ...g6 puis ...Bg7 vers la grande diagonale). Plan joué « à soi »,
+  //      réplique adverse non modélisée entre les deux demi-coups — simplification assumée, cohérente
+  //      avec B.
+  // Seuils calibrables séparément (aucune source doctrinale chiffrée, choix d'ingénierie) :
+  var COLOR_COUNT_THRESHOLD = 3; // N : pions amis fixés sur la couleur du fou
+  var DEV_THRESHOLD = 3;         // cases sûres à atteindre pour qu'un plan de développement compte comme une vraie échappatoire
   try{
+    var VAL={p:1,n:3,b:3,r:5,q:9,k:0};
     var g=new Chess();
     for(var k=0;k<=mi;k++){ var fm=fullMoves[k]; if(!fm) return []; g.move({from:fm.from,to:fm.to,promotion:fm.promotion||'q'}); }
     var board=g.board(), files='abcdefgh', res=[];
     var DIAGS=[[1,1],[1,-1],[-1,1],[-1,-1]];
+
+    function sqColor(sq){ var f=sq.charCodeAt(0)-97, r=parseInt(sq[1],10)-1; return ((f+r)%2===0)?'dark':'light'; }
+    // Un pion (f,rank) est-il structurellement fixé ? (case d'avance occupée par un PION, ou tenue par un pion adverse)
+    function pawnAdvanceFixed(f, rank, color){
+      var enemyCol=(color==='w')?'b':'w';
+      var aheadRank=(color==='w')?rank+1:rank-1;
+      if(aheadRank<1||aheadRank>8) return true; // bord du plateau : traité comme fixé
+      var occ=board[8-aheadRank][f];
+      if(occ && occ.type==='p') return true; // case d'avance occupée par un pion (ami ou ennemi)
+      if(occ) return false; // occupée par une PIÈCE MOBILE : transitoire, pas une fixation durable
+      var pr=(enemyCol==='w')?aheadRank-1:aheadRank+1;
+      if(pr<1||pr>8) return false;
+      for(var df=-1; df<=1; df+=2){
+        var ff=f+df; if(ff<0||ff>7) continue;
+        var pp=board[8-pr][ff];
+        if(pp&&pp.type==='p'&&pp.color===enemyCol) return true; // verrou de chaîne
+      }
+      return false;
+    }
+    // SEE 1 coup (même profondeur que fouHangingSquares) : poser une pièce en `to` est-il sûr ?
+    function isSafeDestination(fenBefore, from, to, pieceVal){
+      var gg=new Chess(fenBefore);
+      var mv=gg.move({from:from, to:to, promotion:'q'});
+      if(!mv) return false;
+      var caps=gg.moves({verbose:true}).filter(function(m){return m.to===to && m.captured;});
+      if(!caps.length) return true;
+      var cheapest=caps.reduce(function(a,b){return (VAL[a.piece]||0)<=(VAL[b.piece]||0)?a:b;});
+      var attackerVal=VAL[cheapest.piece]||0;
+      var gg2=new Chess(gg.fen());
+      gg2.move({from:cheapest.from, to:cheapest.to, promotion:'q'});
+      var canRecap=gg2.moves({verbose:true}).some(function(m){return m.to===to && m.captured;});
+      var net = canRecap ? (attackerVal-pieceVal) : (-pieceVal);
+      return net>=0;
+    }
+    // Nombre de coups légaux du fou (depuis `sq`, sur la position `fenAt`) qui sont SÛRS.
+    function safeMobility(fenAt, sq, color){
+      var parts=fenAt.split(' '); parts[1]=color; // force le trait pour interroger CE fou
+      var forced=parts.join(' ');
+      var moves=new Chess(forced).moves({square:sq, verbose:true});
+      var n=0;
+      moves.forEach(function(m){ if(isSafeDestination(forced, sq, m.to, VAL.b)) n++; });
+      return n;
+    }
+
     for(var row=0;row<8;row++)for(var c=0;c<8;c++){
       var p=board[row][c]; if(!p||p.type!=='b') continue;
       var color=p.color, sq=files[c]+(8-row);
-      // 1) pions GÊNEURS : premier pion ami rencontré sur chacune des 4 diagonales du fou (local, pas global)
+      var fenNow=g.fen();
+
+      // A — mobilité sûre nulle
+      var safeCount=safeMobility(fenNow, sq, color);
+      if(safeCount>0) continue;
+
+      // B — pions gêneurs (premier obstacle par diagonale, pion ami), tous fixés durablement
       var blockers=[];
       DIAGS.forEach(function(d){
         for(var dist=1; dist<8; dist++){
@@ -3285,47 +3355,47 @@ function fouBadBishopSquares(mi){
           if(rr<0||rr>7||cc<0||cc>7) break;
           var pp=board[rr][cc];
           if(!pp) continue; // case vide : la diagonale continue
-          if(pp.type==='p'&&pp.color===color) blockers.push({f:cc, rank:8-rr});
+          if(pp.type==='p'&&pp.color===color) blockers.push({f:cc, rank:8-rr, dist:dist});
           break; // première pièce rencontrée (amie ou ennemie) bouche cette diagonale
         }
       });
       if(blockers.length<2) continue;
-      // 2) mobilité réelle : peu de cases légalement accessibles
-      var mob=0;
-      try{
-        var fen1=g.fen().split(' '); fen1[1]=color; // copie : force le trait pour interroger CE fou, ne touche jamais g/game
-        mob=new Chess(fen1.join(' ')).moves({square:sq, verbose:true}).length;
-      }catch(e){ continue; }
-      if(mob>4) continue;
-      // 3) ces pions gêneurs (et EUX SEULS) sont-ils TOUS fixés ?
-      var oppMoves=[];
-      try{
-        var fen2=g.fen().split(' '); fen2[1]=(color==='w'?'b':'w'); // copie également
-        oppMoves=new Chess(fen2.join(' ')).moves({verbose:true});
-      }catch(e){}
-      var enemyCol=(color==='w')?'b':'w';
-      function pawnHoldsSquare(f, rank){ // un pion ENNEMI attaque-t-il (f,rank) ? → verrou de structure
-        var pr=(enemyCol==='w')?rank-1:rank+1; // rangée du pion ennemi qui tiendrait cette case
-        if(pr<1||pr>8) return false;
-        for(var df=-1; df<=1; df+=2){
-          var ff=f+df; if(ff<0||ff>7) continue;
-          var pp=board[8-pr][ff];
-          if(pp&&pp.type==='p'&&pp.color===enemyCol) return true;
-        }
-        return false;
+      if(!blockers.every(function(pw){ return pawnAdvanceFixed(pw.f, pw.rank, color); })) continue;
+
+      // C — comptage de couleur : pions amis fixés sur la couleur du fou
+      var bColor=sqColor(sq), sameColorFixed=0;
+      for(var r2=0;r2<8;r2++)for(var c2=0;c2<8;c2++){
+        var pp2=board[r2][c2]; if(!pp2||pp2.type!=='p'||pp2.color!==color) continue;
+        var psq=files[c2]+(8-r2);
+        if(sqColor(psq)===bColor && pawnAdvanceFixed(c2, 8-r2, color)) sameColorFixed++;
       }
-      var allFixed = blockers.every(function(pw){
-        var aheadRank=(color==='w')?pw.rank+1:pw.rank-1;
-        if(aheadRank<1||aheadRank>8) return true; // pion en bord de tableau : traité comme fixé
-        if(board[8-aheadRank][pw.f]) return true; // case d'avance occupée
-        if(pawnHoldsSquare(pw.f, aheadRank)) return true; // case d'avance tenue par un pion adverse (verrou)
-        var aheadSq=files[pw.f]+aheadRank;
-        return oppMoves.some(function(m){return m.to===aheadSq;}); // ou atteignable par un coup adverse
+      if(sameColorFixed<COLOR_COUNT_THRESHOLD) continue;
+
+      // D — potentiel de développement à court terme (pion gêneur adjacent qui peut pousser, avec
+      // motif extension et motif fianchetto)
+      var bestDev=0;
+      blockers.filter(function(pw){ return pw.dist===1; }).forEach(function(pw){
+        var blockerSq=files[pw.f]+pw.rank;
+        var parts1=fenNow.split(' '); parts1[1]=color;
+        var gPush=new Chess(parts1.join(' '));
+        var pushMoves=gPush.moves({square:blockerSq, verbose:true}).filter(function(m){return !m.captured;});
+        pushMoves.forEach(function(pm){
+          var g3=new Chess(gPush.fen());
+          g3.move({from:pm.from, to:pm.to});
+          bestDev=Math.max(bestDev, safeMobility(g3.fen(), sq, color)); // motif extension
+          var parts3=g3.fen().split(' '); parts3[1]=color;
+          var g4=new Chess(parts3.join(' '));
+          if(g4.moves({square:sq, verbose:true}).some(function(m){return m.to===blockerSq;})){
+            g4.move({from:sq, to:blockerSq});
+            bestDev=Math.max(bestDev, safeMobility(g4.fen(), blockerSq, color)); // motif fianchetto
+          }
+        });
       });
-      if(!allFixed) continue; // un des gêneurs peut encore avancer → il libérera le fou, pas mauvais
-      res.push({s:sq, side:(color==='w')?'Blancs':'Noirs', mob:mob, gene:blockers.length});
+      if(bestDev>=DEV_THRESHOLD) continue;
+
+      res.push({s:sq, side:(color==='w')?'Blancs':'Noirs', safe:safeCount, gene:blockers.length, colorCount:sameColorFixed, dev:bestDev});
     }
-    res.sort(function(a,b){return a.mob-b.mob;});
+    res.sort(function(a,b){return b.colorCount-a.colorCount;});
     return res;
   }catch(e){ return []; }
 }

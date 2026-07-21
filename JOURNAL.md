@@ -153,19 +153,26 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   jamais `new Chess(startFen)` — sans effet sur une partie normale, mais un
   PGN `[SetUp]/[FEN]` non standard AVEC des coups serait mal rejoué. Les
   deux points notés dans `_fonds/RESTE_A_FAIRE.md`.
-- Détection du mauvais fou re-vérifiée hors UI (Node, chess.js 0.10.3
-  embarqué, fouBadBishopSquares extraite verbatim) sur une séquence
-  construite (Française, Variante d'Avance, 14 coups) : après ...cxd4/cxd4
-  libère c5, 13.Nb3-c5 (dame noire ayant été chassée en a7 par 11.a5 plutôt
-  qu'en d8) prive le fou c8 de sa seule case légale (Bd7, non défendue) —
-  mobilité sûre nulle, e6 fixé par e5, b7 fixé par le verrou a5, 5 pions
-  fixés sur la couleur du fou, aucune échappatoire de développement
-  suffisante. `fouBadBishopSquares` renvoie bien `c8` (seul candidat,
-  fouOutpostSquares/fouPassedPawns vides sur cette position). PGN prêt à
-  coller dans « Charger le texte » : `1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6
-  5. Nf3 Qb6 6. a3 Nh6 7. Bd3 Be7 8. O-O O-O 9. a4 cxd4 10. cxd4 a6 11. a5
-  Qa7 12. Nbd2 Re8 13. Nb3 Kh8 14. Nc5` — cercle visible en naviguant au
-  dernier coup (⏭ Fin ou clic sur 14.Nc5).
+- Détecteur de MAUVAIS FOU REFONDU (4 critères cumulatifs A+B+C+D — mobilité
+  SÛRE nulle/SEE 1 coup, étouffement DURABLE par ≥2 pions fixés, comptage de
+  couleur seuil N=3, pas d'échappatoire de développement seuil 3) et VALIDÉ À
+  L'ÉCRAN sur deux cas :
+  - PGN Française d'Avance construite (14 coups, cxd4/cxd4 libère c5,
+    13.Nb3-c5 prive le fou c8 de sa seule case légale Bd7, non défendue —
+    dame chassée en a7 plutôt qu'en d8) : re-vérifiée hors UI (Node, chess.js
+    0.10.3 embarqué, fouBadBishopSquares extraite verbatim — `c8` seul
+    candidat, fouOutpostSquares/fouPassedPawns vides) PUIS collée dans
+    « Charger le texte » et confirmée à l'écran : cercle sur c8 au dernier
+    coup. PGN : `1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Qb6 6. a3 Nh6
+    7. Bd3 Be7 8. O-O O-O 9. a4 cxd4 10. cxd4 a6 11. a5 Qa7 12. Nbd2 Re8
+    13. Nb3 Kh8 14. Nc5` (⏭ Fin ou clic sur 14.Nc5).
+  - Partie chess.com importée par l'utilisateur, coup 14 : le fou personnel
+    de l'utilisateur, que l'ancienne définition (mobilité brute ≤4 cases,
+    sans notion de sûreté ni de comptage de couleur) aurait signalé à tort,
+    n'est plus entouré avec la nouvelle définition — faux positif éliminé,
+    confirmé à l'écran.
+  Limite FEN-statique et bug latent startFen (ci-dessus) inchangés, toujours
+  d'actualité avec cette refonte.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
