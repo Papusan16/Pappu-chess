@@ -140,6 +140,33 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   matché, flipped=true, colorChosen=true. Cas témoin sans pseudo
   correspondant → aucun flip (pas de faux positif).
 
+- Limite du détecteur de mauvais fou (et de fouOutpostSquares/fouPassedPawns/
+  fouHangingSquares) confirmée puis consignée : ces fonctions rejouent
+  `fullMoves[0..mi]` (rempli par syncFull()/game.history()) ; sur une position
+  FEN statique importée SANS aucun coup, `fullMoves` est vide et les deux
+  points d'appel du cercle (commentAnalyzedMove, panneau coach gaté par
+  `cursor>0`) restent silencieux par construction — pas un bug isolé, une
+  propriété actuelle de l'architecture (mi/cursor = seule notion de position
+  courante). Il faut au moins un coup à naviguer pour voir un cercle
+  structurel. Bug latent distinct repéré en marge (non corrigé) : ces 4
+  fonctions rejouent toujours depuis `new Chess()` (position standard),
+  jamais `new Chess(startFen)` — sans effet sur une partie normale, mais un
+  PGN `[SetUp]/[FEN]` non standard AVEC des coups serait mal rejoué. Les
+  deux points notés dans `_fonds/RESTE_A_FAIRE.md`.
+- Détection du mauvais fou re-vérifiée hors UI (Node, chess.js 0.10.3
+  embarqué, fouBadBishopSquares extraite verbatim) sur une séquence
+  construite (Française, Variante d'Avance, 14 coups) : après ...cxd4/cxd4
+  libère c5, 13.Nb3-c5 (dame noire ayant été chassée en a7 par 11.a5 plutôt
+  qu'en d8) prive le fou c8 de sa seule case légale (Bd7, non défendue) —
+  mobilité sûre nulle, e6 fixé par e5, b7 fixé par le verrou a5, 5 pions
+  fixés sur la couleur du fou, aucune échappatoire de développement
+  suffisante. `fouBadBishopSquares` renvoie bien `c8` (seul candidat,
+  fouOutpostSquares/fouPassedPawns vides sur cette position). PGN prêt à
+  coller dans « Charger le texte » : `1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6
+  5. Nf3 Qb6 6. a3 Nh6 7. Bd3 Be7 8. O-O O-O 9. a4 cxd4 10. cxd4 a6 11. a5
+  Qa7 12. Nbd2 Re8 13. Nb3 Kh8 14. Nc5` — cercle visible en naviguant au
+  dernier coup (⏭ Fin ou clic sur 14.Nc5).
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
