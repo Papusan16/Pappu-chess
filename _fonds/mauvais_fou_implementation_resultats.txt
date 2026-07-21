@@ -1,0 +1,115 @@
+MAUVAIS FOU — IMPLEMENTATION DE LA DEFINITION VALIDEE (A+B+C+D)
+Resultats chiffres. Rien n'est committe. Fichier reel modifie mais en
+attente de validation a l'ecran avant commit.
+
+===============================================================
+CE QUI A ETE FAIT
+===============================================================
+
+fouBadBishopSquares() refondue dans Papu_Chess.html selon le
+pseudocode valide :
+
+  A. Mobilite SURE nulle (SEE 1 coup, meme profondeur que
+     fouHangingSquares) : aucun coup legal du fou n'est sur.
+  B. Etouffement DURABLE par des pions : >=2 pions amis, premier
+     obstacle sur leurs diagonales, chacun structurellement fixe
+     (case d'avance occupee par un pion, ou tenue par un pion
+     adverse). Une piece mobile de passage ne fixe pas.
+  C. Comptage de couleur (doctrine Marc) : au moins
+     COLOR_COUNT_THRESHOLD (=3) pions amis fixes sur la couleur du
+     fou.
+  D. Pas d'echappatoire de developpement a court terme : pousser un
+     pion geneur adjacent (+ relocaliser le fou dessus, motif
+     fianchetto) ne doit pas donner >= DEV_THRESHOLD (=3) cases
+     sures.
+
+Les deux seuils sont des constantes nommees separees en haut de la
+fonction :
+    var COLOR_COUNT_THRESHOLD = 3;
+    var DEV_THRESHOLD = 3;
+
+===============================================================
+1) TABLEAU VALIDE — PGN chess.com, fou f8 aux coups 7/12/14/15
+===============================================================
+Teste via vm sur la fonction REELLE extraite du fichier (pas une
+reimplementation a cote).
+
+  coup 7  (mi=13) -> []   f8 detecte ? false   ATTENDU false   OK
+  coup 12 (mi=22) -> []   f8 detecte ? false   ATTENDU false   OK
+  coup 14 (mi=27) -> []   f8 detecte ? false   ATTENDU false   OK
+  coup 15 (mi=28) -> []   f8 detecte ? false   ATTENDU false   OK
+
+===============================================================
+2) FRANCAISE FERMEE (verrou c5/e5 construit) — fou c8
+===============================================================
+  -> [{"s":"c8","side":"Noirs","safe":0,"gene":2,"colorCount":3,"dev":2}]
+  ATTENDU : c8 detecte   OK
+
+===============================================================
+3) MAUVAIS FOUS CLASSIQUES ADDITIONNELS
+===============================================================
+
+(a) Est-Indienne (fou g7, fianchetto, derriere chaine e5/d6/c5) :
+    -> []   NON DETECTE — ECHEC attendu, mais diagnostic clair :
+
+    A. safeCount=1 (case "h8" jugee sure). h8 est un coin totalement
+       passif (aucune portee reelle) mais materiellement "sur" (pas
+       de piece adverse qui le prend gratuitement) -> le critere A
+       actuel confond "surete materielle" et "utilite reelle". Un
+       coin inutile suffit a faire echouer le gate A.
+
+    B. blockers=[] (AUCUN pion trouve comme premier obstacle). Motif
+       decouvert : un fou fianchetto (g7, g2, b7, b2) a 4 diagonales
+       (pas 2 comme un fou de coin c1/f1/c8/f8). Trois de ces quatre
+       diagonales sont courtes et touchent le bord du plateau (h8,
+       f8, h6 pour g7) ou il n'y a quasiment jamais de pion — seule
+       LA GRANDE DIAGONALE peut avoir un blocage par un pion (ici
+       e5). Resultat : gene>=2 est quasi impossible a satisfaire
+       pour un fou fianchetto, meme quand il est reellement mauvais
+       positionnellement.
+
+    CONCLUSION IMPORTANTE : la definition actuelle (B exige >=2
+    diagonales bloquees par des pions) ne peut structurellement
+    quasiment jamais detecter un mauvais fou fianchetto. Or l'exemple
+    SOURCE de Marc dans la doctrine (_doctrine/Mauvais Fou.txt) est
+    LUI-MEME un fou fianchetto (g7, "papillon 5,6", bloque par h4 et
+    c5) — donc la definition actuelle rate potentiellement le cas
+    canonique de la doctrine. C'est un vrai trou, pas juste un souci
+    de construction de ma part.
+
+(b) Francaise avancee : deja couverte par le cas (2) ci-dessus
+    (construction directe, verrou c5/e5). Une position atteinte par
+    une vraie sequence de coups tres precoce (3.e5, ~9 demi-coups) ne
+    donne aucun hit — normal, la structure n'est pas encore assez
+    figee (pas assez de pions colores fixes) a ce stade. Pas
+    d'anomalie ici.
+
+===============================================================
+4) SCAN COMPLET DE LA PARTIE CHESS.COM — aucun faux positif
+===============================================================
+  85 demi-coups scannes un par un.
+  -> AUCUN hit nulle part sur toute la partie.
+  Aucun autre fou (des deux camps, a aucun moment de la partie)
+  n'est signale a tort.
+
+===============================================================
+BILAN
+===============================================================
+- Tableau valide (f8 x4 + francaise) : 5/5 corrects.
+- Scan complet partie reelle : 0 faux positif sur 85 positions.
+- Trou reel decouvert : les fous fianchetto (g7/g2/b7/b2) ne peuvent
+  quasiment jamais satisfaire le critere B tel quel, y compris sur
+  l'exemple SOURCE de la doctrine de Marc. A trancher avant de
+  considerer la definition complete : soit on l'assume (le detecteur
+  ne couvre que les fous de coin, cas le plus frequent et le plus
+  sur a detecter), soit on retouche B pour les fous a 4 diagonales
+  (ex: compter les diagonales courtes cul-de-sac comme "geneurs" au
+  meme titre qu'un pion, ou traiter la grande diagonale seule avec un
+  poids different).
+
+RIEN N'EST COMMITTE. Le fichier reel (Papu_Chess.html) contient deja
+le nouveau code, pret a etre teste a l'ecran : charger la partie PGN,
+aller au coup 14 (plus de cercle sur le fou), puis charger une
+position de vrai mauvais fou de coin (ex. la francaise fermee ci-
+dessus, ou toute position avec un fou de coin c1/f1/c8/f8 verrouille)
+pour confirmer que le cercle apparait bien.
