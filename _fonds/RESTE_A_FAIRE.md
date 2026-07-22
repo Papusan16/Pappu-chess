@@ -94,3 +94,9 @@ on en est sans avoir à reconstituer l'historique. À relire à côté de
   français. La verbalisation du plan reste le travail du Fou, inspiré de la
   méthode de Marc, arbitré par Flavien. Leela/Maia n'apportent que de la
   matière (lignes candidates, erreurs probables), jamais la leçon.
+
+- Moteur du Fou : architecture consignée dans `_fonds/moteur_du_fou.md`
+  (5 types de déclencheurs, 2 régimes commentaire/démonstration, 3
+  postures). À implémenter : moteur de sélection généralisant le patron
+  du mauvais fou ; premier réflexe de type contexte (nom d'ouverture →
+  plan enseigné).
