@@ -174,6 +174,34 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   Limite FEN-statique et bug latent startFen (ci-dessus) inchangés, toujours
   d'actualité avec cette refonte.
 
+- Message du mauvais fou (`fouBadBishopMsg`) adapté au PROPRIÉTAIRE du fou
+  détecté (commit `99317b5`, poussé sur origin/main après un crash du
+  laptop qui avait fait perdre le commit initial — vérifié par
+  `git log -S "fouBadBishopMsg"` avant de recommit) : 3 messages selon
+  comparaison side du fou / couleur utilisateur (`playMode?playerColor
+  :(colorChosen?myColor:null)`) — fou perso → invitation à l'échanger ou
+  l'activer (« cherche à », pas un ordre) ; fou adverse → garder enfermé et
+  exploiter ; camp indéterminé → neutre, sans « ton »/« adverse ». Les deux
+  cas orientés VALIDÉS via Node/vm (chess.js 0.10.3 + fouBadBishopSquares/
+  fouBadBishopMsg extraits verbatim du fichier réel, aucune modif du
+  fichier) :
+  - Fou personnel (Française d'avance, c8 Noirs) : même PGN que la refonte
+    A+B+C+D ci-dessus (`1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Qb6
+    6. a3 Nh6 7. Bd3 Be7 8. O-O O-O 9. a4 cxd4 10. cxd4 a6 11. a5 Qa7
+    12. Nbd2 Re8 13. Nb3 Kh8 14. Nc5`), utilisateur déclaré Noir → message
+    "Ton fou en c8…".
+  - Fou adverse (fou blanc c1) : PGN construit spécifiquement — Blancs
+    jouent un système passif (1.c3/2.e3, cavalier b1 dérouté a3-c2-e5 pour
+    ne pas défendre/débloquer d2) qui laisse le fou c1 muré derrière b2/d2
+    jamais bougés, fixés par le pion noir c4 poussé tôt (`1. c3 c5 2. e3
+    Nc6 3. Nf3 Nf6 4. Be2 e6 5. O-O Be7 6. Na3 O-O 7. Re1 d5 8. Nc2 c4
+    9. Ne5 Qc7 10. f4 Bd7 11. Bf3 Rad8 12. Qe2 Ne4 13. Kh1`), utilisateur
+    déclaré Noir → message "Le fou adverse en c1…". Détecteur confirmé :
+    `{s:"c1",side:"Blancs",safe:0,gene:2,colorCount:4,dev:2}`.
+  Pas encore chargés à l'écran par l'utilisateur (fournis, prêts à coller
+  dans « Charger le texte ») — seule la vérification Node est faite à ce
+  stade.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
