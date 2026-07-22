@@ -2059,14 +2059,32 @@ button.ctrl:active{transform:scale(.93)}
 .toggle-arrows{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text-muted);margin-top:1px;cursor:pointer;user-select:none}
 .toggle-arrows input{accent-color:var(--gold)}
 /* Plaques de joueur autour de l'échiquier : savoir qui est en haut / en bas.
-   justify-content:center + padding symétrique : centrées sur la largeur du plateau
-   (avant : padding-left:20px sans centrage, donc calées à gauche). */
-.player-plate{display:flex;align-items:center;justify-content:center;gap:7px;font-size:.8rem;font-weight:700;color:var(--text-input);padding:3px 6px;min-height:20px;width:100%;box-sizing:border-box}
-.player-plate .pp-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+   Disposition à 3 zones (pp-left / pp-name / pp-right), chacune flex:1 1 0 :
+   le nom reste optiquement centré sur la largeur de la plaque même quand le
+   bloc de captures (à gauche) ou l'elo/badge (à droite) ont des largeurs
+   différentes — même principe qu'un bandeau de sous-titres à 3 colonnes. */
+.player-plate{display:flex;align-items:center;gap:0;font-size:.8rem;font-weight:700;color:var(--text-input);padding:3px 6px;min-height:20px;width:100%;box-sizing:border-box}
+/* min-width:max-content sur les côtés : jamais comprimés sous leur taille naturelle (le
+   bloc de captures ne doit jamais se réduire à 0 et disparaître) — c'est le NOM, seul
+   élément à largeur non bornée, qui absorbe la compression en passant à la ligne. */
+.player-plate .pp-side{flex:1 1 0;min-width:max-content;display:flex;align-items:center;gap:3px}
+.player-plate .pp-side.pp-left{justify-content:flex-end}
+.player-plate .pp-side.pp-right{justify-content:flex-start}
+/* Pas de troncature : un nom long (ex. « Praggnanandhaa Rameshbabu ») passe
+   à la ligne plutôt que d'être coupé ou de chevaucher les captures. */
+.player-plate .pp-name{flex:1 1 auto;white-space:normal;word-break:break-word;text-align:center;min-width:0;padding:0 4px;line-height:1.15}
 .player-plate .pp-elo{font-weight:600;color:var(--text-muted);font-size:.72rem}
 .player-plate .pp-dot{width:12px;height:12px;border-radius:3px;border:1px solid var(--border-dashed);flex:0 0 auto}
 .player-plate.you .pp-name{color:var(--text-gold-light)}
 .player-plate .pp-you-badge{font-size:.6rem;background:var(--arrow-main);color:var(--white);border-radius:5px;padding:1px 5px;font-weight:700;flex:0 0 auto}
+/* Pièces capturées (convention Lichess) : glyphe de la couleur CAPTURÉE, léger
+   chevauchement façon pile de jetons ; +N réservé au camp qui MÈNE au matériel. */
+.player-plate .cap-row{display:inline-flex;align-items:center;flex:0 0 auto}
+.player-plate .cap-pc{font-size:.92em;line-height:1;margin-left:-.38em}
+.player-plate .cap-pc:first-child{margin-left:0}
+.player-plate .cap-pc.w{color:var(--white);text-shadow:0 0 1px var(--black),-1px -1px 0 var(--black),1px -1px 0 var(--black),-1px 1px 0 var(--black),1px 1px 0 var(--black)}
+.player-plate .cap-pc.b{color:var(--piece-black);text-shadow:0 0 1px var(--white),-1px -1px 0 var(--white),1px -1px 0 var(--white),-1px 1px 0 var(--white),1px 1px 0 var(--white)}
+.player-plate .pp-score{font-size:.72rem;font-weight:800;color:var(--text-gold-light);margin-left:2px;flex:0 0 auto}
 #playerTop{border-bottom:1px solid var(--border-a2);margin-bottom:3px}
 #playerBottom{border-top:1px solid var(--border-a2);margin-top:3px}
 
@@ -2645,20 +2663,68 @@ function playerNameFor(color){
   var you=mine.some(function(p){ return pseudoMatches(p,nm); });
   return {name:nm, elo:(el?String(el):''), you:you};
 }
-function fillPlate(id,color){
+// Pièces capturées + score matériel, convention Lichess : par DIFFÉRENCE entre
+// l'effectif de départ (8P/2N/2B/2R/1Q par camp) et la position COURANTE (game,
+// au curseur affiché) — jamais un compteur incrémental poussé/dépilé à chaque
+// coup, qui dériverait au premier "Annuler" oublié. Un pion manquant sans
+// capture correspondante (promotion propre) est neutralisé via fullMoves
+// (comptage des coups à promotion déjà joués par ce camp), sinon une dame
+// fraîchement promue ferait passer à tort son propre pion pour "capturé".
+function materialCaptures(){
+  try{
+    var board=game.board();
+    var counts={w:{p:0,n:0,b:0,r:0,q:0},b:{p:0,n:0,b:0,r:0,q:0}};
+    board.forEach(function(row){ row.forEach(function(sq){ if(sq&&sq.type!=='k') counts[sq.color][sq.type]++; }); });
+    var promo={w:0,b:0};
+    for(var i=0;i<cursor;i++){ var m=fullMoves[i]; if(m&&m.promotion) promo[m.color]=(promo[m.color]||0)+1; }
+    var STD={p:8,n:2,b:2,r:2,q:1}, ORDER=['p','n','b','r','q'], VAL={p:1,n:3,b:3,r:5,q:9};
+    var missing={w:{},b:{}};
+    ORDER.forEach(function(t){
+      ['w','b'].forEach(function(c){
+        var base=STD[t]; if(t==='p') base-=(promo[c]||0);
+        missing[c][t]=Math.max(0, base-(counts[c][t]||0));
+      });
+    });
+    // ce que W a pris = pièces NOIRES manquantes (et inversement)
+    var capturedByW=missing.b, capturedByB=missing.w;
+    function matValue(caps){ var v=0; ORDER.forEach(function(t){v+=caps[t]*VAL[t];}); return v; }
+    var wMat=matValue(capturedByW), bMat=matValue(capturedByB);
+    return {w:{caps:capturedByW, lead:Math.max(0,wMat-bMat)}, b:{caps:capturedByB, lead:Math.max(0,bMat-wMat)}};
+  }catch(e){
+    var empty={p:0,n:0,b:0,r:0,q:0};
+    return {w:{caps:empty,lead:0}, b:{caps:empty,lead:0}};
+  }
+}
+function capturesHtmlFor(color, matData){
+  var d=matData[color], ORDER=['p','n','b','r','q'];
+  var glyphColor = color==='w' ? 'b' : 'w'; // pièces adverses capturées : glyphe de LEUR couleur
+  var icons='';
+  ORDER.forEach(function(t){
+    var n=d.caps[t]||0;
+    for(var i=0;i<n;i++){ icons+='<span class="cap-pc '+glyphColor+'">'+PIECES[glyphColor==='w'?t.toUpperCase():t]+'</span>'; }
+  });
+  var row = icons ? ('<span class="cap-row">'+icons+'</span>') : '';
+  var score = d.lead>0 ? ('<span class="pp-score">+'+d.lead+'</span>') : '';
+  return row+score;
+}
+function fillPlate(id,color,matData){
   var el=document.getElementById(id); if(!el) return;
   var info=playerNameFor(color);
   var dot='<span class="pp-dot" style="background:'+(color==='w'?'var(--swatch-white)':'var(--swatch-black)')+'"></span>';
   var elo=info.elo?('<span class="pp-elo">('+info.elo+')</span>'):'';
   var badge=info.you?'<span class="pp-you-badge">toi</span>':'';
+  var caps=capturesHtmlFor(color, matData);
   el.className='player-plate'+(info.you?' you':'');
-  el.innerHTML=dot+'<span class="pp-name">'+escapeHtml(info.name)+'</span>'+elo+badge;
+  el.innerHTML='<span class="pp-side pp-left">'+dot+caps+'</span>'+
+    '<span class="pp-name">'+escapeHtml(info.name)+'</span>'+
+    '<span class="pp-side pp-right">'+elo+badge+'</span>';
 }
 function updatePlayerPlates(){
   var bottom=currentPerspective();       // couleur affichée en bas
   var top=(bottom==='w')?'b':'w';
-  fillPlate('playerTop',top);
-  fillPlate('playerBottom',bottom);
+  var matData=materialCaptures();
+  fillPlate('playerTop',top,matData);
+  fillPlate('playerBottom',bottom,matData);
   var bar=document.getElementById('evalbar');   // la barre d'éval suit aussi le camp du bas
   if(bar) bar.classList.toggle('flip', bottom!=='w');
 }
@@ -3076,6 +3142,7 @@ function render(animate){
     if(legal.includes(sq.dataset.sq)){const d=document.createElement('div');d.className='dot';sq.appendChild(d);}});
   document.getElementById('turnInd').textContent='Trait aux '+(game.turn()==='w'?'Blancs':'Noirs');
   updateMoves();identify(animate);drawArrows();refreshEval();
+  if(typeof updatePlayerPlates==='function') updatePlayerPlates(); // captures + score matériel : toujours au diapason du curseur affiché
 }
 function syncFull(){ // reconstruit fullMoves depuis game et place le curseur à la fin
   fullMoves=game.history({verbose:true}); cursor=fullMoves.length;
