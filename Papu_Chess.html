@@ -3399,6 +3399,21 @@ function fouBadBishopSquares(mi){
     return res;
   }catch(e){ return []; }
 }
+function fouBadBishopMsg(bad){
+  // Message adapté au PROPRIÉTAIRE du fou détecté : l'échange est le réflexe général
+  // (doctrine Marc, _doctrine/Mauvais Fou.txt), pas une loi absolue — nuancé par
+  // l'activation (le fou change de valeur selon sa case) et par la prudence à ne pas
+  // faciliter l'échange d'une mauvaise pièce adverse.
+  var sq=bad.s, sideColor=(bad.side==='Blancs')?'w':'b';
+  var uc = playMode ? playerColor : (colorChosen ? myColor : null); // couleur de l'utilisateur si déterminable
+  if(uc===sideColor){
+    return '🃏 Ton fou en <b>'+sq+'</b> est mauvais, coincé par tes propres pions — cherche à l\'échanger, ou à l\'activer en libérant sa diagonale.';
+  }
+  if(uc){
+    return '🃏 Le fou adverse en <b>'+sq+'</b> est mauvais : garde-le enfermé, ne facilite pas son échange, et joue pour exploiter cette faiblesse.';
+  }
+  return '🃏 Fou en <b>'+sq+'</b> ('+bad.side+') : coincé par ses propres pions.';
+}
 function commentAnalyzedMove(mi){
   var r = gameAnalysis.perMove[mi];
   if(!r) return;
@@ -3448,7 +3463,7 @@ function commentAnalyzedMove(mi){
       circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">🃏 Pion passé en <b>'+pass[0].s+'</b> ('+pass[0].side+') : aucun pion adverse ne peut l\'arrêter. À pousser — ou à bloquer d\'urgence.</div>';
     } else if(bad.length){
       fouCircles=[{s:bad[0].s, col:'var(--fou)'}];
-      circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">🃏 Fou en <b>'+bad[0].s+'</b> ('+bad[0].side+') : coincé par ses propres pions fixés, mobilité famélique. Un candidat naturel à l\'échange.</div>';
+      circMsg='<div class="stext" style="margin-top:5px;color:var(--fou-text);font-style:italic">'+fouBadBishopMsg(bad[0])+'</div>';
     }
   }
   sp.innerHTML='<div class="stitle">'+who+' · coup '+(Math.floor(mi/2)+1)+'</div><div class="stext" style="line-height:1.45">'+msg+'</div>'+pedHtml+circMsg;
@@ -3680,7 +3695,7 @@ function identify(animate){
       _sNote='🃏 Pion passé en <b>'+_pass[0].s+'</b> ('+_pass[0].side+') : aucun pion adverse ne peut l\'arrêter. À pousser — ou à bloquer d\'urgence.';
     } else if(_bad.length){
       fouCircles=[{s:_bad[0].s, col:'var(--fou)'}];
-      _sNote='🃏 Fou en <b>'+_bad[0].s+'</b> ('+_bad[0].side+') : coincé par ses propres pions fixés, mobilité famélique. Un candidat naturel à l\'échange.';
+      _sNote=fouBadBishopMsg(_bad[0]);
     }
     if(_sNote) html+='<div class="stext" style="margin-top:7px;color:var(--fou-text);font-style:italic">'+_sNote+'</div>';
   }
