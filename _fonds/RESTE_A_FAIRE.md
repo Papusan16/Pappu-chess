@@ -63,3 +63,34 @@ on en est sans avoir à reconstituer l'historique. À relire à côté de
   la doctrine qualitative de Marc y est intacte (mauvais fou = fou de la
   couleur de ses pions, remède = échanger son mauvais fou contre le bon
   fou adverse), mais aucun seuil chiffré n'y est donné.
+
+- [260722] Piste explorée : Leela & Maia comme outils d'auteur (PAS runtime).
+  Contexte : discussion sur Stockfish et ses concurrents. Piste à réévaluer
+  plus tard, consignée pour ne pas la perdre.
+  Cadre non négociable : Leela (Lc0) NE PEUT PAS remplacer Stockfish comme
+  moteur embarqué. Raison : modèle de déploiement navigateur (HTML + WASM
+  lite mono-thread). Leela = réseau lourd conçu pour GPU, poids de plusieurs
+  Mo à dizaines de Mo, support WebGPU inégal → casse la légèreté de l'app.
+  Le runtime reste stockfish-18-lite-single. Point fermé.
+  Deux fils distincts à instruire :
+  - FIL 1 — Leela en authoring (outil local, hors temps réel) : Lc0 tourné
+    en local sur Ubuntu (CPU seul suffit, lenteur sans importance),
+    interrogé sur les positions des démonstrations pour récupérer des
+    lignes plus « principielles » que Stockfish (coup positionnellement
+    propre là où SF part parfois en ligne computer-only injouable pour un
+    humain). Contenu figé dans le fonds. Cohérent avec la règle « données
+    séparées du code ». Leela = filtre de plausibilité pédagogique, PAS
+    générateur de leçon.
+  - FIL 2 — Maia comme modèle de l'élève (pour l'onglet S'exercer /
+    École) : Maia = dérivé de Leela entraîné à prédire le coup qu'un humain
+    d'un Elo donné jouerait (Maia-1100, 1500, 1900...), erreurs comprises.
+    Permet d'anticiper l'erreur probable de l'élève à un niveau ciblé →
+    construire des pièges calibrés pour l'onglet École (« mettez en pause,
+    que joueriez-vous ? »). Attention : Maia prédit le coup humain, ce
+    n'est PAS un oracle du meilleur coup. Outil pour MODÉLISER l'élève, pas
+    pour lui montrer la vérité.
+  Garde-fou transversal : aucun moteur ne verbalise un plan. Ni SF ni Leela
+  ne sortent « contrôle de la colonne c, majorité à l'aile dame » en
+  français. La verbalisation du plan reste le travail du Fou, inspiré de la
+  méthode de Marc, arbitré par Flavien. Leela/Maia n'apportent que de la
+  matière (lignes candidates, erreurs probables), jamais la leçon.
