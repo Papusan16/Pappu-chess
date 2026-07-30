@@ -56,3 +56,7 @@ décisions futures. À relire au début de chaque session.
 - Papu_Chess.html dans le dépôt est LA source de vérité, pas les
   conversations ni la mémoire de Claude. Toujours livrer le fichier
   complet et à jour.
+- Les réponses de Claude Code sont consignées dans `_sessions/`
+  (un fichier par jour, append horodaté) et poussées, pour que
+  Claude-conversation les lise DEPUIS LE DÉPÔT au lieu qu'elles soient
+  copiées à la main (et tronquées). Voir `_sessions/README.md`.
