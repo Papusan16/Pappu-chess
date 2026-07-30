@@ -12,8 +12,20 @@ décisions futures. À relire au début de chaque session.
   position (dernier coup, roi en échec / halo rouge) est porté par
   l'échiquier et survit au mode Éteint. Ce qui est la voix du Fou
   (cercles et flèches violets, commentaires) disparaît avec lui.
-- Inspiration, pas imitation : le Fou absorbe la MÉTHODE de Marc
-  Quenehen (et plus tard Julien Song), jamais sa voix ni ses mots.
+- DOUBLE FILIATION : le Fou est la FUSION de deux pédagogies : Marc
+  Quenehen et Julien Song. Ce n'est pas un socle Marc avec Julien en
+  appoint : les deux sont constitutifs de son identité.
+  - La fusion est une SYNTHÈSE en une voix unique, pas une
+    juxtaposition. Marc est un pédagogue de l'improvisation qui
+    dramatise l'échec en direct ; Julien un pédagogue de la structure
+    qui pré-empte la confusion. Sur un même objet, ils n'expliquent
+    pas pareil : la synthèse relève d'un arbitrage éditorial humain
+    (Flavien), entrée par entrée.
+  - Le fonds est MULTI-SOURCES PAR CONCEPTION : toute entrée porte sa
+    ou ses sources (Marc / Julien / les deux, avec vidéo + timecode).
+    Aucune structure du fonds ne doit supposer une source unique.
+  - Règle absolue inchangée : inspiration, pas imitation — la
+    MÉTHODE, jamais la voix ni les mots.
 
 ## Les trois postures de l'utilisateur
 - JOUER : contre le Fou, moteur Stockfish WASM local. L'utilisateur

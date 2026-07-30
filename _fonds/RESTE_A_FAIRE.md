@@ -96,7 +96,34 @@ on en est sans avoir à reconstituer l'historique. À relire à côté de
   matière (lignes candidates, erreurs probables), jamais la leçon.
 
 - Moteur du Fou : architecture consignée dans `_fonds/moteur_du_fou.md`
-  (5 types de déclencheurs, 2 régimes commentaire/démonstration, 3
-  postures). À implémenter : moteur de sélection généralisant le patron
-  du mauvais fou ; premier réflexe de type contexte (nom d'ouverture →
-  plan enseigné).
+  (5 types de déclencheurs, 3 régimes commentaire/démonstration/
+  consultation, 3 postures). À implémenter : moteur de sélection
+  généralisant le patron du mauvais fou ; premier réflexe de type
+  contexte (nom d'ouverture → plan enseigné).
+
+- Feuille de route de l'encyclopédie (régime CONSULTATION, cf.
+  `_fonds/moteur_du_fou.md`), dans cet ordre de dépendance :
+  - Phase 1 : FIGER LE FORMAT D'UNE ENTRÉE d'encyclopédie (identifiant,
+    rayon, explication à angles ouverts, démonstration(s) annotées
+    ramifiables, sources multi-auteurs). Clé de voûte : le lecteur le
+    lira, l'arbitrage le remplira. À faire avant tout code et avant
+    tout arbitrage de masse.
+  - Phase 2 : UNE ENTRÉE PILOTE complète, écrite au format, sans
+    lecteur — crash-test du format.
+  - Phase 3 : LECTEUR D'ÉTAPES RAMIFIÉ (étendre le lecteur linéaire de
+    `demonstrations/nataf_decouverte.pgn` aux embranchements),
+    développé contre l'entrée pilote réelle.
+  - Phase 4 : BRANCHER LA CONSULTATION (interroger le Fou hors partie,
+    afficher l'entrée) — chantier léger, à sa fin l'encyclopédie est
+    entière à une entrée.
+  - Phase 5 : REMPLISSAGE (arbitrage entrée par entrée depuis le
+    corpus ; le corpus de Julien s'insère par le même pipeline).
+  - Risques identifiés à garder en vue : asymétrie Marc/Julien
+    (pipeline calibré sur Marc, corpus Julien non récolté — prévoir un
+    lot-test Julien tôt) ; coût de l'arbitrage éditorial des entrées
+    bi-sources ; volume d'arbitrage = vrai mur (prioriser par ce que le
+    corpus traite le plus) ; pas de critère d'arrêt de la complétude →
+    convention : une entrée est publiable quand elle dit ce que ses
+    sources disent, la complétude est bornée par le corpus ; poids du
+    mono-fichier à surveiller (parade déjà prévue dans PRINCIPES :
+    fonds servable par API).

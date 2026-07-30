@@ -39,7 +39,7 @@ fonds Marc).
   demande (« Idée du prof ») ou dans un exercice d'École construit
   exprès.
 
-## Deux régimes du Fou
+## Trois régimes du Fou
 
 - **COMMENTAIRE** (flux : pendant qu'on joue ou navigue) : le Fou dit
   UNE chose, la plus pertinente, pour ne pas noyer. Gouvernance :
@@ -56,6 +56,33 @@ fonds Marc).
   RAMIFIER en variantes. Le passage commentaire→démonstration se fait
   quand la position dépasse un seuil de richesse (seuil à définir plus
   tard).
+- **CONSULTATION** — le Fou comme ENCYCLOPÉDIE VIVANTE. Déclencheur :
+  l'utilisateur interroge le Fou (le déclencheur vient de lui, pas du
+  jeu). Portée : n'importe quel objet du savoir échiquéen, dans les
+  cinq rayons — ouverture, structure, finale, tactique, principe
+  stratégique, figure historique, question de jeu pratique, etc. La
+  liste des objets n'est pas fermée.
+  - Pour chaque objet, le Fou en donne une EXPLICATION COMPLÈTE puis
+    la DÉMONTRE sur l'échiquier. « Complète » = ce qu'un excellent
+    professeur jugerait nécessaire de dire sur ce sujet précis : sa
+    nature, le pourquoi du comment, ses forces et avantages, ses
+    faiblesses et écueils, ses plans, son histoire — la liste des
+    angles n'est PAS fixée d'avance et ne doit jamais être figée en
+    champs obligatoires. Elle dépend de l'objet et de ce que les
+    sources en disent.
+  - Principe directeur : l'encyclopédie n'est rien d'autre que le
+    fonds des cinq rayons rendu interrogeable. Ce que le Fou sait = le
+    fonds ; comment on le lui demande = la consultation. Une seule
+    mécanique (question → recherche de l'entrée → explication +
+    démonstration), cinq rayons de contenu, un nombre indéfini
+    d'entrées.
+  - Conséquence sur la valeur : la mécanique est simple ; la richesse
+    de l'app tient à la QUANTITÉ et à la JUSTESSE des entrées
+    arbitrées. Chaque arbitrage déjà fait (réflexes M1-M4, doctrine du
+    mauvais fou, fiches repertoire_C, personnes.md) est déjà une
+    future entrée de cette encyclopédie.
+  - Distinction avec l'onglet École : l'École TESTE (« mets en pause,
+    que joues-tu ? »), la consultation RENSEIGNE (« explique-moi »).
 
 ## Trois postures (habillent le même réflexe)
 
