@@ -20,10 +20,40 @@ autre, et l'affichage doit tolérer cette hétérogénéité.
 
 Un fichier par entrée, dans `_fonds/encyclopedie/`, nommé d'après
 l'identifiant (`caro-kann.md`, `avant-poste.md`, `morphy.md`). Format :
-Markdown avec en-tête structuré (attributs machine-lisibles en tête,
-explication en prose Markdown ensuite). Un fichier par entrée pour
-faciliter l'écriture à la main, la relecture, le diff par entrée, et un
-service par API plus tard.
+Markdown avec en-tête **YAML front-matter** (attributs machine-lisibles
+en tête, explication en prose Markdown ensuite). Un fichier par entrée
+pour faciliter l'écriture à la main, la relecture, le diff par entrée, et
+un service par API plus tard.
+
+Syntaxe de l'en-tête (entérinée) : un bloc **YAML délimité par `---`**,
+en tout début de fichier, avant le premier titre Markdown. Toutes les
+entrées s'y conforment (sinon deux entrées auraient des en-têtes de forme
+différente, illisibles par la machine). Exemple d'en-tête complet :
+
+```yaml
+---
+id: mauvais-fou
+nom: Le mauvais fou
+rayons: [Technique, Méthode]
+phase: milieu
+alias:
+  - mauvais fou
+  - fou de la couleur de ses pions
+sources:
+  - nature: heritee
+    auteur: Marc Quenehen
+    video: "Europe Échecs — mini-stratégie « Le mauvais fou »"
+    fichier: _doctrine/Mauvais Fou.txt
+    timecodes:
+      - "1:20–1:32 — définition"
+  - nature: elaboree
+    auteur: Fonds (arbitrage — Flavien)
+    fichier: _fonds/mauvais_fou_definition_proposee.md
+liens:
+  - bon-fou
+  - francaise-avance
+---
+```
 
 ## En-tête (attributs stables)
 
@@ -35,9 +65,22 @@ service par API plus tard.
 - **alias** : liste de formes sous lesquelles l'utilisateur peut
   interroger l'entrée (« caro kann », « défense caro-kann »,
   « 1.e4 c6 »). Sert à la recherche de la consultation.
-- **sources** : LISTE — chaque source porte l'auteur (Marc / Julien), la
-  vidéo, le timecode. Multi-sources par conception (cf. `PRINCIPES.md`) :
-  aucune entrée ne suppose une source unique.
+- **sources** : LISTE — multi-sources par conception (cf.
+  `PRINCIPES.md`), aucune entrée ne suppose une source unique. Chaque
+  source porte une **nature** parmi trois, plus l'auteur, et selon la
+  nature une vidéo + timecode ou un fichier :
+  - `heritee` — Marc Quenehen ou Julien Song, le socle pédagogique du
+    Fou (vidéo + timecode).
+  - `externe` — autre matériel pédagogique (cours, livre, article)
+    utilisé comme appui.
+  - `elaboree` — élaboration interne du fonds, arbitrée par Flavien
+    (ex. les critères A/B/C/D du mauvais fou, le seuil N=3 sans source
+    doctrinale).
+
+  Une entrée peut mêler les trois natures. Cette distinction protège la
+  règle « inspiration, pas imitation » (cf. `PRINCIPES.md`) en séparant
+  nettement ce qui vient de Marc/Julien de ce qui vient de l'arbitrage
+  propre au projet.
 - **liens** : liste d'id d'autres entrées (la Caro-Kann renvoie à
   `mauvais-fou`, `francaise`, `caro`). C'est ce qui fait de
   l'encyclopédie un RÉSEAU et non une liste : le Fou peut dire « ça
@@ -58,6 +101,11 @@ célèbre ». Ces exemples ne sont PAS des champs à reproduire.
 Une liste (souvent une, parfois plusieurs) de séquences jouables. Chaque
 séquence :
 
+- un **rôle** parmi `exemple` (l'objet est présent — on le montre) ou
+  `contre-exemple` (l'objet n'est PAS là — on montre ce qui n'en est
+  pas un). Montrer ce qu'une notion n'est PAS est un geste pédagogique
+  de premier ordre (cf. le fou f8 développable, qui n'est pas un mauvais
+  fou) ;
 - une position de départ (FEN, ou coups depuis la position initiale) ;
 - une suite d'ÉTAPES annotées, chacune avec ses annotations `%cal`/`%csl`
   cumulatives et le texte que le Fou dit (même patron que
