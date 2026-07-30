@@ -163,17 +163,57 @@ détecte de toute façon presque jamais un fou fianchetto (voir crash-test,
 point 4) — cette démonstration est aussi le contre-exemple qui documente
 ce trou.
 
-### Démonstration 3 — Contre-exemple : le fou f8 qui n'est PAS mauvais — À_COMPLÉTER
+### Démonstration 3 — Contre-exemple : le fou f8 qui n'est PAS mauvais
 
 `role: contre-exemple`
 
-Dans une partie chess.com réelle, le fou f8 aux coups 7/12/14/15 n'est
-**pas** signalé, alors qu'au coup 12 il a déjà 0 case sûre : le critère
-de développement le sauve (g6 puis Fg7 → grande diagonale, 4 cases
-sûres). Démonstration idéale pour montrer ce que « mauvais » N'EST pas.
-**Bloqué : le PGN de la partie n'est pas dans le corpus** (seuls les
-verdicts chiffrés le sont, `mauvais_fou_implementation_resultats.txt`).
-À écrire dès que le PGN source est fourni.
+Partie réelle **kanukmjj – Papu_san**, chess.com, 2026-07-11
+(`Analyse/260711_kanukmjj_vs_Papu_san.pgn`,
+<https://www.chess.com/game/171412766004>). Un fou f8 resté au repos que
+l'**ancien** détecteur (mobilité brute ≤ 4 cases, sans notion de sûreté
+ni de couleur) signalait à tort comme mauvais fou — faux positif éliminé
+par la définition A/B/C/D (confirmé à l'écran, cf. `JOURNAL.md`). Montrer
+ce qui N'EST PAS un mauvais fou est le geste pédagogique du
+contre-exemple.
+
+Position au coup 14, **trait aux Noirs** (rejeu vérifié avec le chess.js
+0.10.3 du dépôt) :
+
+```
+FEN: 2kr1b1r/ppp3pp/8/3p1b2/2Bn2nq/BPN3NP/P1PP1PP1/R3QRK1 b - - 2 14
+```
+
+Convention : R rouge = le fou soupçonné, Y jaune = la diagonale qui le
+sauve, G vert = cases et coup de travail. Annotations CUMULATIVES.
+
+**ÉTAPE 1 — le soupçon**
+`[%csl Rf8]`
+Le Fou : « Un fou encore chez lui, en f8. L'ancien réflexe criait au
+mauvais fou : au repos, donc enterré. Piège. »
+
+**ÉTAPE 2 — la diagonale est ouverte**
+`[%csl Rf8][%cal Yf8a3]`
+Le Fou : « Regardez la diagonale f8–a3 : e7 et d6 sont vides. Elle est
+grande ouverte — rien n'enferme ce fou. »
+
+**ÉTAPE 3 — les cases réellement disponibles**
+`[%csl Rf8,Ge7,Gd6,Gc5,Gb4][%cal Yf8a3]`
+Le Fou : « Fe7, Fd6, Fc5, Fb4 : quatre cases sûres d'un coup. Un mauvais
+fou n'en a aucune ; celui-ci croule sous les choix. »
+
+**ÉTAPE 4 — le clou : il gagne même une pièce**
+`[%csl Rf8,Ga3][%cal Gf8a3]`
+Le Fou : « Et il prend au bout : Fxa3, le fou blanc est indéfendu — une
+pièce nette. Le "suspect" est en réalité l'agresseur. »
+
+**ÉTAPE 5 — la morale**
+`[%csl Ge7,Gd6,Gc5,Gb4,Ga3]`
+Le Fou : « Un fou au repos n'est pas un mauvais fou. Ce qui compte, c'est
+la couleur de ses pions et une diagonale fermée — ici, ni l'un ni
+l'autre. »
+
+**ÉTAPE 6 — réinitialisation** (aucune annotation ; l'échiquier redevient
+nu).
 
 ### Démonstration 4 — Finale « bon cavalier contre mauvais fou » — À_COMPLÉTER
 
@@ -210,15 +250,23 @@ Endroits où `FORMAT.md` a coincé, résisté ou manqué. Frictions 1, 2 et 5
    prévoir explicitement des sources partiellement connues (timecode oui,
    URL non).
 
-4. **Démonstrations sans échiquier.** Trois des quatre démonstrations
-   demandées n'ont **pas de position reconstructible** dans le corpus
-   (transcripts en prose, PGN absent). Le format exige une position de
-   départ (FEN ou coups) ; le corpus de Marc, lui, est surtout du
-   TRANSCRIT. C'est exactement le risque « asymétrie corpus / format »
-   noté dans `RESTE_A_FAIRE.md`. Convention proposée pour le lecteur :
-   une démonstration `À_COMPLÉTER` (sans FEN) est licite et affichée
-   comme « à venir », l'entrée reste publiable si au moins une
+4. **Démonstrations sans échiquier.** Deux des quatre démonstrations
+   (démos 2 et 4) n'ont **pas de position reconstructible** dans le
+   corpus (transcripts en prose, pas de FEN). Le format exige une
+   position de départ (FEN ou coups) ; le corpus de Marc, lui, est
+   surtout du TRANSCRIT. C'est exactement le risque « asymétrie corpus /
+   format » noté dans `RESTE_A_FAIRE.md`. Convention proposée pour le
+   lecteur : une démonstration `À_COMPLÉTER` (sans FEN) est licite et
+   affichée comme « à venir », l'entrée reste publiable si au moins une
    démonstration est board-complète.
+
+   Sous-cas révélateur, résolu par le rejeu (démo 3) : le PGN visé
+   « ounkar6 vs Papu_san » n'existait pas, et la partie réellement
+   disponible (kanukmjj) ne portait PAS la leçon supposée (g6/Fg7). Rejeu
+   avec le chess.js du dépôt → la vraie leçon (diagonale f8–a3 ouverte,
+   Fxa3 gagne une pièce). Leçon de méthode : **ne jamais écrire une
+   démonstration sans rejouer la position** ; le format doit être nourri
+   de FEN vérifiés, pas de souvenirs de partie.
 
 5. **[RÉSOLU — FORMAT v2] La démo qui NIE l'objet.** La démonstration 3
    (un fou qui n'est PAS mauvais) est pédagogiquement essentielle mais
