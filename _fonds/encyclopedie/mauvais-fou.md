@@ -163,18 +163,68 @@ détecte de toute façon presque jamais un fou fianchetto (voir crash-test,
 point 4) — cette démonstration est aussi le contre-exemple qui documente
 ce trou.
 
-### Démonstration 3 — Contre-exemple : le fou f8 qui n'est PAS mauvais
+### Démonstration 3 — Contre-exemple 1 : le fou qui a un PLAN DE DÉVELOPPEMENT
+
+`role: contre-exemple`
+
+Partie réelle **ounkar6 – Papu_san**, chess.com, 2026-07-18
+(`_fonds/parties_test/ounkar6-papu_san-2026-07-18.pgn`,
+<https://www.chess.com/game/live/171753536982>). C'est la partie qui a
+servi à valider tout le détecteur de mauvais fou. Illustre le **critère
+de développement (D)** : un fou qui n'a AUCUNE case sûre à l'instant
+présent (A=0) mais qui possède un plan pour respirer — donc pas un
+mauvais fou.
+
+Position au **coup 12** (après 12…Qe4), trait aux Blancs ; on regarde le
+plan latent des Noirs (rejeu vérifié avec le chess.js 0.10.3 du dépôt) :
+
+```
+FEN: r3kb1r/p1p1n1pp/8/2ppN3/4q1P1/2P5/PP1PQ1PP/RNB1K2R w KQkq - 1 13
+```
+
+Convention : R rouge = le fou soupçonné, Y jaune = ce qui le bloque puis
+la grande diagonale visée, G vert = coups et cases de travail.
+Annotations CUMULATIVES.
+
+**ÉTAPE 1 — le soupçon**
+`[%csl Rf8]`
+Le Fou : « Le fou f8 n'a aucune case : zéro coup légal. À première vue, un
+mauvais fou muré. »
+
+**ÉTAPE 2 — ce qui le bloque, c'est lui-même**
+`[%csl Rf8,Ye7,Yg7]`
+Le Fou : « Mais ce sont ses PROPRES pièces qui l'enferment : son cavalier
+e7 devant, son pion g7 sur le flanc. Rien de définitif. »
+
+**ÉTAPE 3 — le plan : pousser g6**
+`[%csl Rf8,Ye7,Yg7][%cal Gg7g6]`
+Le Fou : « Premier temps : …g6, qui ouvre la case g7. »
+
+**ÉTAPE 4 — puis le fianchetto Fg7**
+`[%csl Rf8,Ye7,Yg7][%cal Gg7g6,Gf8g7]`
+Le Fou : « Deuxième temps : …Fg7, le fou file au fianchetto. »
+
+**ÉTAPE 5 — la grande diagonale conquise**
+`[%csl Gh6,Gf6,Ge5][%cal Yg7e5]`
+Le Fou : « Depuis g7 il rayonne : f6 et e5 sur la grande diagonale, plus
+h6 et le retour f8 — quatre cases sûres. Le critère de développement le
+sauve : pas un mauvais fou. »
+
+**ÉTAPE 6 — réinitialisation** (aucune annotation ; l'échiquier redevient
+nu).
+
+### Démonstration 4 — Contre-exemple 2 : le fou dont la DIAGONALE EST DÉJÀ OUVERTE
 
 `role: contre-exemple`
 
 Partie réelle **kanukmjj – Papu_san**, chess.com, 2026-07-11
-(`Analyse/260711_kanukmjj_vs_Papu_san.pgn`,
+(`_fonds/parties_test/kanukmjj-papu_san-2026-07-11.pgn`,
 <https://www.chess.com/game/171412766004>). Un fou f8 resté au repos que
 l'**ancien** détecteur (mobilité brute ≤ 4 cases, sans notion de sûreté
 ni de couleur) signalait à tort comme mauvais fou — faux positif éliminé
-par la définition A/B/C/D (confirmé à l'écran, cf. `JOURNAL.md`). Montrer
-ce qui N'EST PAS un mauvais fou est le geste pédagogique du
-contre-exemple.
+par la définition A/B/C/D (confirmé à l'écran, cf. `JOURNAL.md`).
+Illustre le **critère A (mobilité sûre)** : ici la diagonale est déjà
+ouverte, aucun plan n'est même nécessaire.
 
 Position au coup 14, **trait aux Noirs** (rejeu vérifié avec le chess.js
 0.10.3 du dépôt) :
@@ -215,7 +265,7 @@ l'autre. »
 **ÉTAPE 6 — réinitialisation** (aucune annotation ; l'échiquier redevient
 nu).
 
-### Démonstration 4 — Finale « bon cavalier contre mauvais fou » — À_COMPLÉTER
+### Démonstration 5 — Finale « bon cavalier contre mauvais fou » — À_COMPLÉTER
 
 `role: exemple`
 
@@ -250,8 +300,8 @@ Endroits où `FORMAT.md` a coincé, résisté ou manqué. Frictions 1, 2 et 5
    prévoir explicitement des sources partiellement connues (timecode oui,
    URL non).
 
-4. **Démonstrations sans échiquier.** Deux des quatre démonstrations
-   (démos 2 et 4) n'ont **pas de position reconstructible** dans le
+4. **Démonstrations sans échiquier.** Deux des cinq démonstrations
+   (démos 2 et 5) n'ont **pas de position reconstructible** dans le
    corpus (transcripts en prose, pas de FEN). Le format exige une
    position de départ (FEN ou coups) ; le corpus de Marc, lui, est
    surtout du TRANSCRIT. C'est exactement le risque « asymétrie corpus /
@@ -260,16 +310,21 @@ Endroits où `FORMAT.md` a coincé, résisté ou manqué. Frictions 1, 2 et 5
    affichée comme « à venir », l'entrée reste publiable si au moins une
    démonstration est board-complète.
 
-   Sous-cas révélateur, résolu par le rejeu (démo 3) : le PGN visé
-   « ounkar6 vs Papu_san » n'existait pas, et la partie réellement
-   disponible (kanukmjj) ne portait PAS la leçon supposée (g6/Fg7). Rejeu
-   avec le chess.js du dépôt → la vraie leçon (diagonale f8–a3 ouverte,
-   Fxa3 gagne une pièce). Leçon de méthode : **ne jamais écrire une
-   démonstration sans rejouer la position** ; le format doit être nourri
-   de FEN vérifiés, pas de souvenirs de partie.
+   Sous-cas révélateur, résolu par le rejeu : le PGN visé « ounkar6 vs
+   Papu_san » avait d'abord été jugé absent, et un substitut (kanukmjj)
+   avait été rejoué à la place. La vraie partie ounkar6 est ensuite
+   apparue et a été versionnée (`_fonds/parties_test/`). Rejeu des DEUX :
+   ounkar6 au coup 12 porte la leçon du critère de développement (g6/Fg7
+   → grande diagonale) ; kanukmjj au coup 14 porte celle du critère A
+   (diagonale déjà ouverte, Fxa3 gagne une pièce). Leçon de méthode :
+   **ne jamais écrire une démonstration sans rejouer la position** ; le
+   format doit être nourri de FEN vérifiés, pas de souvenirs de partie,
+   et les PGN sont désormais versionnés dans `_fonds/parties_test/`.
 
-5. **[RÉSOLU — FORMAT v2] La démo qui NIE l'objet.** La démonstration 3
-   (un fou qui n'est PAS mauvais) est pédagogiquement essentielle mais
-   n'entrait dans aucune catégorie. Résolution : chaque démonstration
-   porte un `role` — `exemple` ou `contre-exemple` — entériné dans
-   FORMAT.md. La démo 3 est marquée `contre-exemple`.
+5. **[RÉSOLU — FORMAT v2] La démo qui NIE l'objet.** Un fou qui n'est PAS
+   mauvais est pédagogiquement essentiel mais n'entrait dans aucune
+   catégorie. Résolution : chaque démonstration porte un `role` —
+   `exemple` ou `contre-exemple` — entériné dans FORMAT.md. L'entrée a
+   DEUX contre-exemples distincts, nommés par leur mécanisme : démo 3
+   (critère de développement, ounkar6 coup 12) et démo 4 (critère A,
+   kanukmjj coup 14).
