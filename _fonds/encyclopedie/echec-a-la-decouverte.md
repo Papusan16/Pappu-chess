@@ -174,6 +174,8 @@ Trois choses que l'exemple porte mieux que l'énoncé général :
 ## Démonstration — la découverte de Nataf
 
 **Rôle** : `exemple`
+**Nature (racine)** : `heritee` — sauf indication contraire portée par une
+branche ou une étape.
 **Source** : Marc Quenehen, « Le Cavalier à l'attaque du Roi ! »,
 position 1, 0:32–2:16. Igor Nataf a les Blancs.
 **Trait aux Blancs.**
@@ -189,9 +191,25 @@ position 1, 0:32–2:16. Igor Nataf a les Blancs.
 > seule case du roi ; `Cd6` est **mat**.
 > Le pion noir reste en **c7** — voir « Crash-test », friction 1.
 
-Convention de couleur, reprise de `nataf_decouverte.pgn` : **R** rouge =
-cible, **Y** jaune = ligne d'attaque, **G** vert = case ou coup de
-travail.
+```yaml
+verification:
+  outil: "chess.js 0.10.3 (celui embarqué dans Papu_Chess.html)"
+  date: 2026-08-01
+  invariants:
+    - "Ce4+ est légal et donne échec"
+    - "après Ce4+, les Noirs n'ont que trois coups légaux : Rc8, Df6, De7"
+    - "Rc8 est le SEUL coup de roi"
+    - "Cd6 est mat, zéro échappatoire"
+    - "depuis e8 aussi : Ce8+ Rc8 Cd6 est mat"
+    - "Ce8+ ne permet PAS Rxe8 (la dame c6 défend e8)"
+    - "branche A.1 : Ce4+ De7 Fxe7+ est légal et donne échec"
+    - "branche A.2 : Ce4+ Df6 Fxf6+ Rc8 Fxh8 est jouable jusqu'au bout"
+```
+
+Convention de couleur, reprise de `nataf_decouverte.pgn` et entérinée en
+FORMAT v3 : **R** rouge = cible, **Y** jaune = ligne d'attaque, **G**
+vert = case ou coup **à l'étude, quel qu'en soit le camp** — y compris
+une réponse noire.
 
 ### Mise en place — position fixe, annotations cumulatives
 
@@ -254,7 +272,10 @@ Regardons les deux. »
 
 ### Branche A — « La dame s'interpose »
 
+`nature: elaboree` — sauf l'étape A1, `heritee`.
 Position de branche : `1r1k3r/pbp2q2/1pQ5/3Pp2p/3PN2B/P7/1PP5/1K1R4 b - - 1 1`
+(dérivable par rejeu depuis la racine : identique au FEN obtenu après
+1. Ce4+, contrôlé.)
 
 Marc écarte cette branche en trois secondes (1:41–1:45) : « si la dame
 vient en e7 ou en f6, bien sûr elle va être attrapée sur échec par le
@@ -263,6 +284,7 @@ fou ». Le fonds la développe un cran plus loin, parce qu'elle explique
 
 ```
 ÉTAPE A1
+nature: heritee
 coup: 1… De7 (ou 1… Df6)
 [%csl Rd8][%cal Yh4d8,Gf7e7,Gf7f6]
 Le Fou : « Les deux cases marchent pour boucher la diagonale — c'est
@@ -273,6 +295,10 @@ quand un fou la garde, c'est la donner. »
 Les deux interpositions ne se valent pas. La branche ré-embranche.
 
 #### Sous-branche A.1 — « en e7 »
+
+`nature: elaboree` (Marc s'arrête à « attrapée sur échec par le fou »).
+Sœur de A.2 : les deux repartent des annotations de A1, jamais l'une de
+l'autre.
 
 ```
 ÉTAPE A1.1
@@ -293,6 +319,8 @@ pas. »
 ```
 
 #### Sous-branche A.2 — « en f6 »
+
+`nature: elaboree`. Sœur de A.1 : elle repart de A1, PAS de A1.2.
 
 ```
 ÉTAPE A2.1
@@ -324,7 +352,11 @@ est encore pire que la première. »
 
 ### Branche B — « Le roi fuit »
 
+`nature: heritee` sur toute la branche — c'est celle que Marc déroule
+en entier, mat et anatomie du mat compris.
 Position de branche : `1r1k3r/pbp2q2/1pQ5/3Pp2p/3PN2B/P7/1PP5/1K1R4 b - - 1 1`
+(même position que la branche A : les deux sœurs repartent de l'étape 8,
+et n'héritent rien l'une de l'autre.)
 
 C'est la branche que Marc suit (1:48–2:13), et celle qui finit en mat.
 
@@ -352,6 +384,9 @@ fou h4. Et b8 et b7 ? Ce sont la tour et le fou noirs eux-mêmes qui
 bouchent les deux dernières issues de leur roi. »
 
 ÉTAPE B4 — la fourchette
+nature: heritee (2:01, « le cavalier fait des fourchettes, il attaque
+plusieurs pièces en même temps » — seul le nom « fourchette royale » est
+de nous)
 coup: —
 [%csl Rc8,Rf7,Gd6][%cal Rd6c8,Rd6f7]
 Le Fou : « Et note ce que fait le cavalier en arrivant : il attaque le
@@ -399,67 +434,62 @@ vidéo (quelle tour Marc désigne-t-il à l'écran ?).
 
 ## Crash-test du format — variantes ramifiées
 
-Frictions rencontrées en écrivant la première entrée ramifiée. C'est le
-livrable de cette entrée pour la phase 3, au même titre que son contenu.
+Frictions rencontrées en écrivant la première entrée ramifiée. C'était
+le livrable de cette entrée pour la phase 3, au même titre que son
+contenu. **Les sept ont été entérinées dans `FORMAT.md` v3
+(2026-08-01)** ; cette section garde la trace de ce qui les a fait
+apparaître, et l'entrée est conforme à v3.
 
-**1. Un FEN faux ne se voit pas — il faut un rejeu obligatoire.** Le FEN
+**1 → v3 « Rejeu obligatoire », clé `verification`.** Le FEN
 initialement consigné dans `nataf_decouverte.pgn` était faux sur trois
 points (pion f5 fantôme, fou en c8 au lieu de b7). La correction
 proposée sur captures déplaçait en outre le pion c7 en d7 : elle ne
 passait pas le rejeu, `Rc8` restant illégal — la dame c6 tenait la
 colonne c dès lors que c7 était vide, et `Ce8+` permettait même `Rxe8`.
 Le pion doit rester en **c7** : c'est lui qui bouche la colonne pour
-autoriser Rc8, et c'est lui que Marc décrit comme cloué. Aucun de ces
-trois FEN n'est distinguable à l'œil dans un fichier texte.
-**Conséquence pour le format** : toute démonstration doit être rejouable
-et **rejouée** (`assert` sur les coups clés) avant d'être consignée. Il
-manque un champ pour ça — proposition : une clé `verification:` listant
-les invariants (« Ce4+ légal », « Rc8 unique coup de roi », « Cd6 mat »).
+autoriser Rc8, et c'est lui que Marc décrit comme cloué. **Aucun des
+trois FEN n'était distinguable à l'œil** dans un fichier texte, et le
+troisième ne cassait qu'un coup sur quatre, à trois demi-coups de
+profondeur. D'où la règle : toute démonstration est rejouée avant
+consignation, et porte ses invariants. Ceux de cette démonstration sont
+en tête de la section « Démonstration ».
 
-**2. Le format mélange deux régimes d'étape.** Les étapes 1 à 6 ne
-jouent aucun coup (position fixe, annotations cumulatives) ; les étapes
-7 et suivantes jouent des coups. Le lecteur doit savoir lequel des deux
-il traite, sinon il rejoue la position à chaque annotation. J'ai ajouté
-une ligne `coup:` à chaque étape (`—` quand il n'y a pas de coup). À
-entériner ou à remplacer.
+**2 → v3 clé `coup:`.** Les étapes 1 à 6 ne jouent aucun coup (position
+fixe, annotations cumulatives) ; les étapes 7 et suivantes jouent des
+coups. Sans marque, un lecteur qui rejoue rejouerait la position à
+chaque annotation. Chaque étape porte désormais `coup:` (`—` si aucun).
 
-**3. Le cumul des annotations se casse à la ramification.** La règle
-« chaque étape reprend les `%cal/%csl` de la précédente » est claire en
-ligne droite. À l'embranchement, elle ne dit pas si une branche hérite
-des annotations de l'étape de ramification, ni si la sous-branche A.2
-hérite de A.1 (elle ne doit pas : ce sont des alternatives, pas une
-suite). J'ai tranché : **une branche repart des annotations de l'étape
-qui l'a ouverte, et deux branches sœurs ne s'héritent jamais**. À
-entériner.
+**3 → v3 règle de cumul à l'embranchement.** « Chaque étape reprend les
+`%cal/%csl` de la précédente » est clair en ligne droite, muet à
+l'embranchement. Entériné : une branche repart des annotations de
+l'étape qui l'a ouverte ; **deux branches sœurs n'héritent jamais l'une
+de l'autre** ; chaque branche se termine par une réinitialisation. Ici :
+A.1 et A.2 repartent toutes deux de l'étape A1, et A et B toutes deux de
+l'étape 8.
 
-**4. Chaque branche a besoin de sa position d'entrée.** J'ai redonné un
-FEN en tête de chaque branche. C'est redondant avec le rejeu des coups
-depuis la racine, mais ça rend chaque branche atteignable directement et
-vérifiable isolément. Le lecteur ramifié doit accepter les deux (FEN
-explicite, ou dérivation par rejeu) — sinon une branche mal recopiée
-diverge en silence.
+**4 → v3 FEN d'entrée de branche.** Chaque branche porte son FEN, en
+plus d'être dérivable par rejeu. Redondance voulue : sans elle, une
+branche mal recopiée diverge en silence et la démonstration continue de
+« marcher » sur autre chose. Les deux FEN de branche de cette entrée ont
+été contrôlés identiques au FEN dérivé après 1. Ce4+.
 
-**5. La convention de couleur n'a pas de couleur pour l'adversaire.**
-R = cible, Y = ligne, G = case de travail. Rien pour « coup que
-l'ADVERSAIRE peut jouer ». À l'étape 8, les trois réponses noires sont
-en vert, ce qui contredit « case de travail » (celle du camp qui joue).
-Il faudrait soit une quatrième couleur, soit dire explicitement que G
-désigne le coup à l'étude, quel qu'en soit le camp.
+**5 → v3 : trois couleurs, G redéfini.** R = cible, Y = ligne, G = case
+ou coup **à l'étude**. Pas de quatrième couleur : à l'étape 8, les trois
+réponses NOIRES sont en vert, et c'est correct — G ne désigne pas le
+camp qui joue, il désigne ce qu'on regarde.
 
-**6. Marc s'arrête avant le fonds.** Sur la branche A, Marc donne quatre
-mots (« attrapée sur échec par le fou ») là où une étape jouable a
-besoin d'un coup nommé et d'une conclusion. Une entrée ramifiée fabrique
-donc mécaniquement de l'`elaboree` : c'est structurel, pas accidentel.
-Le format le supporte (la nature est portée par la source), mais rien ne
-permet d'attribuer une nature **étape par étape**. J'ai dû le faire en
-prose, dans des blocs de citation. Proposition : une clé `nature:` sur
-l'étape ou sur la branche.
+**6 → v3 clé `nature:` au grain fin.** Sur la branche A, Marc donne
+quatre mots (« attrapée sur échec par le fou ») là où une étape jouable
+a besoin d'un coup nommé et d'une conclusion. Une entrée ramifiée
+fabrique donc de l'`elaboree` par construction : la source suit une
+branche et écarte les autres. La `nature` est désormais portable par une
+branche ou par une étape. Ici : branche A `elaboree` (sauf A1), branche
+B `heritee` de bout en bout.
 
-**7. Le réseau de liens est encore vide.** Les cinq `liens` de cette
+**7 → v3 : le lien mort est une amorce.** Les cinq `liens` de cette
 entrée (`fourchette`, `clouage`, `double-echec`, `deviation`,
 `batterie`) pointent tous vers des entrées **inexistantes** — seule
 `mauvais-fou` existe, et elle n'a rien à voir avec ce motif ; la lier
-aurait été un lien de complaisance. Le réseau annoncé par `FORMAT.md`
-n'existera qu'à partir de la troisième ou quatrième entrée. Il faut
-décider si un lien mort est une erreur ou une amorce assumée — je l'ai
-traité comme une amorce.
+aurait été un lien de complaisance. Entériné : le réseau précède les
+nœuds, un lien mort s'affiche non cliquable et ne fait échouer aucune
+validation.

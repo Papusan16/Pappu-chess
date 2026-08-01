@@ -13,6 +13,16 @@ on en est sans avoir à reconstituer l'historique. À relire à côté de
 - Vérifier que le lexique de normalisation attrape toutes les variantes
   phonétiques de « cavalier » (cahier, café, caviar…).
 
+- **Signalement dynamique des pièces en prise** (idée pour plus tard).
+  Faire réagir discrètement — alternance subreptice de couleur, pulse —
+  les pièces mises en prise par le dernier coup. C'est un **FAIT DE
+  POSITION, pas une annotation pédagogique** : même famille que le halo
+  d'échec, donc **survit au mode Éteint** (cf. `PRINCIPES.md` : ce qui
+  est fait de position est porté par l'échiquier ; ce qui est la voix du
+  Fou s'éteint). À distinguer nettement des cercles et flèches du Fou.
+  Utile en jeu comme en analyse, et **indépendant de l'encyclopédie** —
+  ce chantier ne dépend d'aucune phase de la feuille de route.
+
 - Normalisation des coordonnées mal transcrites par YouTube : lettre de
   colonne perdue ou phonétisée (« note 4 » → e4, « le 4 » → e4,
   « 9 8 » → f8) — chantier pour le pipeline video→PGN et la lecture des
