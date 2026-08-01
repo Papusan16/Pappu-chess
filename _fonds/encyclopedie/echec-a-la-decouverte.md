@@ -204,6 +204,9 @@ verification:
     - "Ce8+ ne permet PAS Rxe8 (la dame c6 défend e8)"
     - "branche A.1 : Ce4+ De7 Fxe7+ est légal et donne échec"
     - "branche A.2 : Ce4+ Df6 Fxf6+ Rc8 Fxh8 est jouable jusqu'au bout"
+    - "sous-branches A.1/A.2 : FEN d'entrée explicite (après 1…De7 /
+      1…Df6) contrôlé identique au FEN dérivé par rejeu depuis la
+      racine — ajouté phase 3, voir note sous chaque sous-branche"
 ```
 
 Convention de couleur, reprise de `nataf_decouverte.pgn` et entérinée en
@@ -285,29 +288,48 @@ fou ». Le fonds la développe un cran plus loin, parce qu'elle explique
 ```
 ÉTAPE A1
 nature: heritee
-coup: 1… De7 (ou 1… Df6)
+coup: —
 [%csl Rd8][%cal Yh4d8,Gf7e7,Gf7f6]
 Le Fou : « Les deux cases marchent pour boucher la diagonale — c'est
 tout ce que la dame peut faire. Mais boucher une diagonale avec sa dame
 quand un fou la garde, c'est la donner. »
 ```
 
+> **Corrigé phase 3** : cette étape jouait auparavant `coup: 1… De7 (ou
+> 1… Df6)` — deux coups à la fois, ce que la clé `coup:` (F2 de v3)
+> interdit. Elle est désormais une étape d'ANNOTATION pure (`coup: —`) :
+> elle montre les deux cases candidates sans en jouer aucune. Le coup
+> réel est déplacé en tête de chaque sous-branche, avec son propre FEN
+> d'entrée explicite (F4 de v3, qui manquait aux deux sous-branches).
+
 Les deux interpositions ne se valent pas. La branche ré-embranche.
 
 #### Sous-branche A.1 — « en e7 »
 
-`nature: elaboree` (Marc s'arrête à « attrapée sur échec par le fou »).
-Sœur de A.2 : les deux repartent des annotations de A1, jamais l'une de
-l'autre.
+`nature: elaboree` — sauf sa première étape (le coup de la dame),
+`heritee` comme A1 : Marc nomme la case, ce qu'il en dit s'arrête à
+« attrapée sur échec par le fou ». Sœur de A.2 : les deux repartent des
+annotations de A1, jamais l'une de l'autre.
+Position de branche : `1r1k3r/pbp2q2/1pQ5/3Pp2p/3PN2B/P7/1PP5/1K1R4 b - - 1 1`
+(identique au FEN de Branche A : la dame n'a pas encore bougé à
+l'entrée de cette sous-branche, c'est l'étape A1.1 qui joue le coup.
+Dérivable par rejeu depuis la racine : 1. Ce4+, contrôlé.)
 
 ```
 ÉTAPE A1.1
+nature: heritee
+coup: 1… De7
+[%csl Rd8][%cal Yh4d8,Gf7e7]
+Le Fou : « La dame va en e7 — elle bouche la diagonale, mais elle se
+met dans la ligne du fou. »
+
+ÉTAPE A1.2
 coup: 2. Fxe7+
 [%csl Rd8][%cal Gh4e7]
 Le Fou : « Le fou la prend, et il la prend AVEC ÉCHEC — les Noirs n'ont
 même pas le temps de souffler. »
 
-ÉTAPE A1.2
+ÉTAPE A1.3
 coup: —
 [%csl Rd8,Ge7]
 Le Fou : « Les Noirs reprennent le fou (2… Rxe7) ou fuient en c8. Dans
@@ -315,28 +337,39 @@ les deux cas les Blancs ont donné un fou et gagné une dame. La partie
 est jouée, mais il n'y a pas de mat : c'est pour ça que Marc n'insiste
 pas. »
 
-ÉTAPE A1.3 — réinitialisation.
+ÉTAPE A1.4 — réinitialisation.
 ```
 
 #### Sous-branche A.2 — « en f6 »
 
-`nature: elaboree`. Sœur de A.1 : elle repart de A1, PAS de A1.2.
+`nature: elaboree` — sauf sa première étape (le coup de la dame),
+`heritee` comme A1. Sœur de A.1 : elle repart de A1, PAS de A1.3.
+Position de branche : `1r1k3r/pbp2q2/1pQ5/3Pp2p/3PN2B/P7/1PP5/1K1R4 b - - 1 1`
+(identique au FEN de Branche A, même raison qu'en A.1 : c'est l'étape
+A2.1 qui joue le coup. Dérivable par rejeu depuis la racine : 1. Ce4+,
+contrôlé.)
 
 ```
 ÉTAPE A2.1
+nature: heritee
+coup: 1… Df6
+[%csl Rd8][%cal Yh4d8,Gf7f6]
+Le Fou : « La dame va en f6, même idée. »
+
+ÉTAPE A2.2
 coup: 2. Fxf6+
 [%csl Rd8][%cal Gh4f6]
 Le Fou : « Même prise, avec échec là encore. Mais regarde plus loin sur
 la diagonale… »
 
-ÉTAPE A2.2
+ÉTAPE A2.3
 coup: —
 [%csl Rd8,Rh8][%cal Yf6h8]
 Le Fou : « …la tour h8 est au bout. Le roi n'a que c8, et après 2… Rc8
 le fou se sert : 3. Fxh8. Une dame ET une tour. La deuxième interposition
 est encore pire que la première. »
 
-ÉTAPE A2.3 — réinitialisation.
+ÉTAPE A2.4 — réinitialisation.
 ```
 
 > Le prolongement de la sous-branche A.2 (Fxf6+ attaque aussi la tour

@@ -2003,6 +2003,16 @@ button.ctrl:active{transform:scale(.93)}
 .moves-played{width:100%;background:var(--surface-1);border:1px solid var(--border-2);border-radius:10px;padding:9px;font-size:.8rem;font-family:ui-monospace,monospace;color:var(--text-code);min-height:38px;line-height:1.6}
 .moves-played b{color:var(--text-dim)}.moves-played .mv{color:var(--text-gold-soft)}
 .hint{font-size:.72rem;color:var(--text-dim);text-align:center;line-height:1.4}
+/* Lecteur d'étapes ramifié (encyclopédie, phase 3) — vit dans #movesPlayed pendant encyMode */
+.ency-title{font-family:ui-serif,Georgia,serif;font-size:.86rem;font-weight:800;color:var(--text-gold);margin-bottom:4px}
+.ency-status{font-size:.7rem;font-weight:700;padding:5px 8px;border-radius:8px;margin-bottom:7px;font-family:ui-serif,Georgia,serif}
+.ency-status.ok{background:var(--tone-green-bg);color:var(--success)}
+.ency-status.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
+.ency-crumb{font-size:.74rem;color:var(--text-soft);margin-bottom:8px;font-family:ui-serif,Georgia,serif}
+.ency-branches{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.ency-branches button{flex:1;min-width:110px;background:linear-gradient(180deg,var(--btn-teach-top),var(--btn-teach-bottom));border:1px solid var(--arrow-alt);border-radius:9px;color:var(--btn-colorpick-text);font-size:.76rem;font-weight:700;padding:8px 6px;cursor:pointer;font-family:ui-sans-serif,system-ui,sans-serif}
+.ency-back,.ency-close{width:100%;margin-top:4px;border-radius:8px;padding:8px;font-size:.74rem;font-weight:700;cursor:pointer;border:1px solid var(--border-a);background:var(--surface);color:var(--text-muted);font-family:ui-sans-serif,system-ui,sans-serif}
+.ency-close{color:var(--burgundy-text,var(--text-muted))}
 /* OVERLAY ENCYCLO */
 .overlay{position:fixed;inset:0;background:var(--overlay-bg);backdrop-filter:blur(3px);z-index:100;display:none;flex-direction:column;padding:12px 10px;overflow:hidden}
 .overlay.show{display:flex;animation:fade .25s}
@@ -2368,6 +2378,19 @@ button.ctrl:active{transform:scale(.93)}
       <br>Astuce : sur Lichess copie l'URL de la partie ; sur Chess.com utilise ton pseudo (accès direct par lien bloqué par le site).
     </div>
     <input type="file" id="pgnFile" accept=".pgn,.txt" style="display:none" onchange="importPgnFile(this)">
+    <hr style="border:none;border-top:1px solid var(--border-2);margin:10px 0 8px">
+    <div style="font-size:.72rem;color:var(--text-dim);margin-bottom:5px">📖 Encyclopédie — lecteur d'étapes (prototype)</div>
+    <div style="display:flex;gap:6px">
+      <input id="encyId" placeholder="id de l'entrée" value="echec-a-la-decouverte" autocomplete="off" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border-a);border-radius:8px;color:var(--text-input);padding:8px;font-size:.78rem">
+      <button class="ctrl" onclick="encyFetchAndLoad()" style="white-space:nowrap">▶️ Charger</button>
+    </div>
+    <textarea id="encyPaste" placeholder="…ou colle ici le Markdown de l'entrée" style="margin-top:6px;min-height:64px"></textarea>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button class="ctrl" onclick="encyLoadFromTextarea()" style="flex:1">▶️ Charger le texte collé</button>
+      <button class="ctrl" onclick="document.getElementById('encyFile').click()" style="flex:1">📂 Fichier .md</button>
+    </div>
+    <input type="file" id="encyFile" accept=".md,.markdown,.txt" style="display:none" onchange="encyImportFile(this)">
+    <div id="encyImportStatus" style="font-size:.68rem;color:var(--text-muted);margin-top:5px;min-height:1em"></div>
   </div>
   <div class="board-eval-wrap">
     <div class="evalbar" id="evalbar">
@@ -2524,6 +2547,12 @@ let startFen=null; // position de départ imposée par un PGN ([SetUp "1"]/[FEN 
 let initialComment='', initialAnno={arrows:[],circles:[]}; // commentaire/annotations attachés à la position de départ, avant le premier coup
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
 let fouCircles=[]; // cases que le Fou entoure → cercles violets pointillés (pièce en prise, avant-poste…)
+// ===== Lecteur d'étapes ramifié (encyclopédie, phase 3) =====
+let encyMode=false;      // une démonstration d'encyclopédie est chargée et affichée
+let encyEntry=null;      // entrée parsée (front-matter + liste de démonstrations)
+let encyDemo=null;       // démonstration actuellement jouée : {title, role, fenRoot, root, verification}
+let encyPath=[];         // chemin depuis la racine : [{name,label}, ...]
+let encyStep=0;          // index de l'étape courante dans le nœud (branche) actuel
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
 let userElo=320; // niveau réel de l'utilisateur (Elo Chess.com ou FIDE) — le Fou calibre ses conseils dessus
 function setUserLevel(v){ var n=parseInt(v,10); if(!isNaN(n)&&n>0) userElo=n; }
@@ -3149,6 +3178,7 @@ function syncFull(){ // reconstruit fullMoves depuis game et place le curseur à
 }
 function atLiveEnd(){ return cursor===fullMoves.length; }
 function click(name){
+  if(encyMode) return; // lecture seule : une démonstration d'encyclopédie ne se joue pas à la main
   // si on regarde le passé, jouer un coup = proposer une nouvelle ligne
   if(!atLiveEnd()){
     if(confirm('Tu es revenu en arrière. Jouer ce coup effacera les coups suivants et repartira d\'ici. Continuer ?')){
@@ -3552,10 +3582,10 @@ function uciToSan(r, mi){
     return mv?mv.san:uci;
   }catch(e){ return r.best; }
 }
-function navStart(){ if(fullMoves.length){ rebuildTo(0);} }
-function navPrev(){ if(cursor>0){ rebuildTo(cursor-1);} }
-function navNext(){ if(cursor<fullMoves.length){ rebuildTo(cursor+1);} }
-function navEnd(){ if(fullMoves.length){ rebuildTo(fullMoves.length);} }
+function navStart(){ if(encyMode){ encyStep=0; encyGoto(); return; } if(fullMoves.length){ rebuildTo(0);} }
+function navPrev(){ if(encyMode){ if(encyStep>0){ encyStep--; encyGoto(); } return; } if(cursor>0){ rebuildTo(cursor-1);} }
+function navNext(){ if(encyMode){ var n=encyCurrentNode(); if(encyStep<n.steps.length-1){ encyStep++; encyGoto(); } return; } if(cursor<fullMoves.length){ rebuildTo(cursor+1);} }
+function navEnd(){ if(encyMode){ var n=encyCurrentNode(); encyStep=n.steps.length-1; encyGoto(); return; } if(fullMoves.length){ rebuildTo(fullMoves.length);} }
 function undo(){
   // supprime définitivement le dernier coup de la partie
   if(fullMoves.length){
@@ -3610,6 +3640,7 @@ function flipBoard(){flipped=!flipped;buildBoard();
   identify(false);
 }
 function updateMoves(){const el=document.getElementById('movesPlayed');
+  if(encyMode){ encyRenderPanel(); return; }
   if(!fullMoves.length){el.innerHTML='<span class="hint">Les coups joués apparaîtront ici…</span>';return;}
   let s='';
   for(let i=0;i<fullMoves.length;i++){
@@ -3640,8 +3671,11 @@ function identify(animate){
   if(fouMode==='off'){ return; }
   // MODE DISCRET : le Fou ne se manifeste PAS spontanément à chaque coup.
   // Il garde son message et n'affiche un conseil que si on le sollicite (Idée du prof).
-  // Exception : le mode PGN commenté et l'analyse restent actifs (ce sont des demandes explicites).
-  if(fouMode==='discret' && !pgnMode && !gameAnalysis){ return; }
+  // Exception : le mode PGN commenté, l'analyse et le lecteur d'encyclopédie restent actifs (demandes explicites).
+  if(fouMode==='discret' && !pgnMode && !gameAnalysis && !encyMode){ return; }
+  // LECTEUR D'ÉTAPES RAMIFIÉ (encyclopédie, phase 3) : une entrée est chargée, priorité sur tout le reste
+  // (ouverture/ECO, accueil, coach de partie) — c'est une consultation explicite de l'utilisateur.
+  if(encyMode && encyDemo){ encyIdentify(sp, animate); return; }
   // MODE PGN COMMENTÉ, position de départ (avant le premier coup) : commentaire/annotations attachés au FEN importé
   if(pgnMode && cursor===0 && (initialComment || initialAnno.arrows.length || initialAnno.circles.length)){
     fouArrows = initialAnno.arrows.slice();
@@ -4502,7 +4536,7 @@ function drawArrows(){
   // 1) Flèches "recommandées" (livre d'ouverture / moteur) — masquées en mode Jouer (anti-triche)
   // et masquées dès qu'une position de départ est imposée (FEN) ou qu'on est en mode PGN/démonstration :
   // le livre/moteur n'a rien à dire sur une position posée pour l'exemple, seules les %cal/%csl du commentaire comptent.
-  if(!playMode && arrowsOn && !startFen && !pgnMode){
+  if(!playMode && arrowsOn && !startFen && !pgnMode && !encyMode){
     var seq=getUciSeq();
     var opts=BOOK[seq.join(' ')];
     if(opts && opts.length){ drawArrowList(opts,false); }
@@ -4563,6 +4597,320 @@ function drawFouCircles(){
     layer.appendChild(circ);
   });
 }
+
+/* ===== LECTEUR D'ÉTAPES RAMIFIÉ (encyclopédie, phase 3) =====
+   Parse une entrée d'encyclopédie (_fonds/encyclopedie/*.md, FORMAT.md v3),
+   résout l'arbre de la démonstration une fois au chargement (FEN de chaque
+   nœud/étape par rejeu chess.js), puis la navigation n'est que de la
+   lecture d'index. Front-matter : extraction minimale (id/nom/phase/
+   rayons/alias/liens) ; `sources` non structuré, réservé à la phase 4
+   (consultation). `nature:` est capturé par étape/branche mais pas encore
+   affiché — disponible pour plus tard. */
+
+function encyParseFrontMatter(md){
+  var m = md.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  if(!m) return {meta:{}, body:md};
+  var body = md.slice(m[0].length);
+  var lines = m[1].split('\n');
+  function scalarValue(v){
+    v=v.trim();
+    if(/^\[.*\]$/.test(v)) return v.slice(1,-1).split(',').map(function(s){return s.trim();}).filter(Boolean);
+    if(/^"(.*)"$/.test(v)) return v.replace(/^"|"$/g,'');
+    return v;
+  }
+  var meta={}, i=0;
+  while(i<lines.length){
+    var mm=lines[i].match(/^([a-zA-Z_]+):\s*(.*)$/);
+    if(mm){
+      var key=mm[1], rest=mm[2];
+      if(rest && rest.trim()!==''){ meta[key]=scalarValue(rest); i++; }
+      else{
+        var items=[]; i++;
+        while(i<lines.length && /^\s+\S/.test(lines[i])){
+          var lm=lines[i].match(/^\s*-\s*(.*)$/);
+          if(lm) items.push(scalarValue(lm[1]));
+          i++;
+        }
+        meta[key]=items;
+      }
+    } else i++;
+  }
+  return {meta:meta, body:body};
+}
+function encyFrSan(s){
+  // notation française (R=Roi, D=Dame, T=Tour, F=Fou, C=Cavalier) → SAN anglais pour chess.js.
+  // ATTENTION : R français = Roi (K), pas Tour — ne jamais passer du SAN français brut à chess.js.
+  return s.replace(/\b([RDTFC])(?=[a-h1-8x])/g, function(m,p){ return {R:'K',D:'Q',T:'R',F:'B',C:'N'}[p]; });
+}
+function encyStripMoveNum(s){
+  return s.replace(/^\d+(\.|…)+\s*/,'').replace(/\s*\([^)]*\)\s*$/,'').trim();
+}
+function encyParseStep(paragraph){
+  var lines=paragraph.split('\n');
+  var hm=lines[0].match(/^ÉTAPE\s+([A-Za-z0-9.]+)\s*(?:[—-]\s*(.*))?$/);
+  var id = hm ? hm[1] : String(lines[0]).trim();
+  var label = hm && hm[2] ? hm[2].trim() : '';
+  var isReset = /réinitialisation/i.test(label);
+  var rest = lines.slice(1), idx=0, nature=null, coupRaw='—', annoLine=null, fouLines=[];
+  if(rest[idx] && /^nature:/i.test(rest[idx])){ nature=rest[idx].replace(/^nature:\s*/i,'').trim(); idx++; }
+  if(!isReset && rest[idx] && /^coup:/i.test(rest[idx])){ coupRaw=rest[idx].replace(/^coup:\s*/i,'').trim(); idx++; }
+  if(rest[idx] && /^\[%(csl|cal)/i.test(rest[idx])){ annoLine=rest[idx]; idx++; }
+  for(; idx<rest.length; idx++){
+    fouLines.push(rest[idx].replace(/^Le Fou\s*:\s*«\s*/,'').replace(/»\s*$/,''));
+  }
+  return {
+    id:id, label:label, isReset:isReset, nature:nature,
+    coupRaw:coupRaw, anno: annoLine ? extractVisuals(annoLine) : {arrows:[],circles:[]},
+    fouText: fouLines.join(' ').replace(/\s+/g,' ').trim()
+  };
+}
+function encyExtractSteps(text){
+  var steps=[], re=/```[^\n]*\n([\s\S]*?)```/g, fm;
+  while((fm=re.exec(text))){
+    fm[1].split(/\n\s*\n/).map(function(p){return p.trim();}).filter(Boolean).forEach(function(p){
+      if(/^ÉTAPE\s/.test(p)) steps.push(encyParseStep(p));
+    });
+  }
+  return steps;
+}
+function encyParseDemoTree(sectionText, rootFen){
+  var lines=sectionText.split('\n'), blocks=[], cur=null;
+  lines.forEach(function(line){
+    var h=line.match(/^(#{3,4})\s+(.*)$/);
+    if(h){ cur={level:h[1].length, title:h[2].trim(), lines:[]}; blocks.push(cur); }
+    else if(cur) cur.lines.push(line);
+  });
+  var root={name:null, label:'Racine', steps:[], children:[], declaredFen:null};
+  var lastAtLevel={2:root};
+  var branchRe=/^(?:Sous-)?[Bb]ranche\s+([^\s—-]+)\s*(?:[—-]\s*(.*))?$/;
+  blocks.forEach(function(b){
+    var mb=b.title.match(branchRe);
+    var blockText=b.lines.join('\n');
+    var steps=encyExtractSteps(blockText);
+    if(mb){
+      var fenM=blockText.match(/Position de branche\s*:\s*`([^`]+)`/);
+      var label=mb[2]?mb[2].replace(/^«\s*|\s*»$/g,'').trim():b.title;
+      var node={name:mb[1], label:label, steps:steps, children:[], declaredFen: fenM?fenM[1]:null};
+      var parent=lastAtLevel[b.level-1]||root;
+      parent.children.push(node);
+      lastAtLevel[b.level]=node;
+    } else {
+      root.steps=root.steps.concat(steps);
+    }
+  });
+  return root;
+}
+function encyParseDemo(sectionText){
+  var tm=sectionText.match(/^##\s*Démonstration\s*(?:—\s*(.*))?$/m);
+  var title = tm && tm[1] ? tm[1].trim() : 'Démonstration';
+  var fenM=sectionText.match(/\*\*FEN\*\*\s*:\s*`([^`]+)`/);
+  var fenRoot = fenM ? fenM[1] : null;
+  var yM=sectionText.match(/```yaml\s*\n([\s\S]*?)```/);
+  var declared={outil:null,date:null,invariants:[]};
+  if(yM){
+    yM[1].split('\n').forEach(function(l){
+      var om=l.match(/^\s*outil:\s*"?(.*?)"?\s*$/); if(om) declared.outil=om[1];
+      var dm=l.match(/^\s*date:\s*(.*)$/); if(dm) declared.date=dm[1].trim();
+      var im=l.match(/^\s*-\s*"(.*)"\s*$/); if(im) declared.invariants.push(im[1]);
+    });
+  }
+  return {title:title, fenRoot:fenRoot, declared:declared, root: encyParseDemoTree(sectionText, fenRoot)};
+}
+function encyParseEntry(mdText){
+  var fm=encyParseFrontMatter(mdText);
+  var parts=fm.body.split(/^##\s+Démonstration/m);
+  var demos=[];
+  for(var i=1;i<parts.length;i++){
+    var sectionText='## Démonstration'+parts[i];
+    var cut=sectionText.search(/\n##\s+(?!Démonstration)/);
+    if(cut>=0) sectionText=sectionText.slice(0,cut);
+    demos.push(encyParseDemo(sectionText));
+  }
+  return {id:fm.meta.id, nom:fm.meta.nom, rayons:fm.meta.rayons, phase:fm.meta.phase,
+    alias:fm.meta.alias, liens:fm.meta.liens, demos:demos};
+}
+function encyResolveTree(root, rootFen){
+  var issues=[], checksRun=0;
+  // Coups d'ouverture "réels" couverts par un nœud, en descendant récursivement dans ses
+  // propres enfants si ses étapes ne jouent elles-mêmes aucun coup (nœud purement
+  // organisationnel, ex. Branche A ici : son étape A1 n'est qu'une annotation, ce sont ses
+  // sous-branches A.1/A.2 qui jouent). Renvoie null si irrésoluble (coup illégal, ou ni coup
+  // ni enfant à explorer) — dans ce cas le contrôle de complétude est sauté, pas mis en échec.
+  function firstMovesOf(node, fen){
+    for(var i=0;i<node.steps.length;i++){
+      var s=node.steps[i];
+      if(s.coupRaw && s.coupRaw!=='—'){
+        var g=new Chess(fen), mv=g.move(encyFrSan(encyStripMoveNum(s.coupRaw)),{sloppy:true});
+        return mv ? [mv.san] : null;
+      }
+    }
+    if(node.children && node.children.length){
+      var all=[];
+      for(var j=0;j<node.children.length;j++){
+        var sub=firstMovesOf(node.children[j], fen);
+        if(sub===null) return null;
+        all=all.concat(sub);
+      }
+      return all;
+    }
+    return null;
+  }
+  function resolveNode(node, entryFen){
+    node.entryFen = node.declaredFen || entryFen;
+    if(node.declaredFen){
+      checksRun++;
+      if(node.declaredFen!==entryFen) issues.push('Branche « '+node.label+' » : FEN déclaré différent du FEN dérivé par rejeu.');
+    }
+    var fen=node.entryFen;
+    node.steps.forEach(function(step){
+      if(step.coupRaw && step.coupRaw!=='—'){
+        var g=new Chess(fen);
+        var mv=g.move(encyFrSan(encyStripMoveNum(step.coupRaw)), {sloppy:true});
+        checksRun++;
+        if(!mv){
+          issues.push('Étape '+step.id+' : coup « '+step.coupRaw+' » illégal depuis la position affichée.');
+          step.fen=fen; step.legal=false; step.giveCheck=false; step.isMate=false;
+        } else {
+          step.from=mv.from; step.to=mv.to; step.legal=true;
+          step.giveCheck=/\+/.test(mv.san); step.isMate=/#/.test(mv.san);
+          if(step.giveCheck){ checksRun++; if(!g.in_check()) issues.push('Étape '+step.id+' : « + » annoncé mais pas échec.'); }
+          if(step.isMate){ checksRun++; if(!g.in_checkmate()) issues.push('Étape '+step.id+' : « # » annoncé mais pas mat.'); }
+          fen=g.fen(); step.fen=fen;
+        }
+      } else { step.fen=fen; step.legal=true; step.giveCheck=false; step.isMate=false; }
+    });
+    // Complétude à un embranchement : seulement quand CE nœud a lui-même consommé au moins un
+    // coup (fen a changé) — sinon c'est un regroupement organisationnel sur la MÊME position
+    // que son parent, déjà couvert par le contrôle du parent (cf. firstMovesOf, qui descend
+    // dedans). Sans cette garde, un nœud comme Branche A serait comparé à tort à TOUS les coups
+    // légaux de la position, alors qu'il n'en couvre qu'une partie (le reste revient à Branche B).
+    if(node.children.length && fen!==node.entryFen){
+      var openers=[], resolvable=true;
+      node.children.forEach(function(ch){
+        var sub=firstMovesOf(ch, fen);
+        if(sub===null) resolvable=false; else openers=openers.concat(sub);
+      });
+      if(resolvable){
+        checksRun++;
+        var legal=new Chess(fen).moves().slice().sort(), got=openers.slice().sort();
+        if(JSON.stringify(legal)!==JSON.stringify(got)){
+          issues.push('Embranchement après « '+(node.label||'la racine')+' » : les branches ('+got.join(', ')+') ne couvrent pas tous les coups légaux ('+legal.join(', ')+').');
+        }
+      }
+    }
+    node.children.forEach(function(ch){ resolveNode(ch, fen); });
+  }
+  resolveNode(root, rootFen);
+  return {ok: issues.length===0, issues:issues, checksRun:checksRun};
+}
+function encyCurrentNode(){
+  var node=encyDemo.root;
+  for(var i=0;i<encyPath.length;i++){
+    var found=node.children.filter(function(c){return c.name===encyPath[i].name;})[0];
+    if(!found) break;
+    node=found;
+  }
+  return node;
+}
+function encyGoto(){
+  var node=encyCurrentNode();
+  if(encyStep<0) encyStep=0;
+  if(encyStep>=node.steps.length) encyStep=Math.max(0,node.steps.length-1);
+  var step=node.steps[encyStep];
+  game=new Chess(step.fen);
+  lastFrom=step.from||null; lastTo=step.to||null; sel=null; legal=[];
+  render(false);
+  fitBoardSoon();
+}
+function encyIdentify(sp, animate){
+  var node=encyCurrentNode(), step=node.steps[encyStep];
+  fouArrows=step.anno.arrows.slice();
+  fouCircles=step.anno.circles.slice();
+  setMood(step.isMate?'wow':(step.giveCheck?'joy':'happy'), animate);
+  var html='<div class="stitle">📖 '+(encyDemo.title||'Démonstration')+'</div>';
+  html+='<div class="fam">'+(step.label?step.label:('Étape '+step.id))+'</div>';
+  if(step.fouText) html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+md(step.fouText)+'</div>';
+  else if(step.isReset) html+='<div class="stext" style="font-style:italic">Fin de cette branche — reviens à l\'embranchement pour explorer la sœur.</div>';
+  sp.innerHTML=html;
+}
+function encyRenderPanel(){
+  var el=document.getElementById('movesPlayed'); if(!el || !encyDemo) return;
+  var node=encyCurrentNode(), v=encyDemo.verification;
+  var html='';
+  if(v){ html+='<div class="ency-status '+(v.ok?'ok':'warn')+'">'+(v.ok?'✅':'⚠️')+' Vérification (contrôles mécaniques) : '+v.issues.length+' anomalie(s) sur '+v.checksRun+' contrôle(s).'+
+    (v.issues.length? '<br>'+v.issues.map(function(s){return '· '+s;}).join('<br>') : '')+'</div>'; }
+  var crumbs=['Racine'].concat(encyPath.map(function(p){return p.label;}));
+  html+='<div class="ency-crumb">'+crumbs.join(' › ')+' — étape '+(encyStep+1)+'/'+node.steps.length+'</div>';
+  var atLast=(encyStep===node.steps.length-1);
+  if(atLast && node.children.length){
+    html+='<div class="ency-branches">';
+    node.children.forEach(function(ch){
+      html+='<button onclick="encyChooseBranch(\''+ch.name.replace(/'/g,"\\'")+'\')">→ '+ch.label+'</button>';
+    });
+    html+='</div>';
+  }
+  if(encyPath.length) html+='<button class="ency-back" onclick="encyBackToFork()">🔼 Revenir à l\'embranchement</button>';
+  html+='<button class="ency-close" onclick="encyClose()">✕ Fermer la démonstration</button>';
+  el.innerHTML=html;
+}
+function encyChooseBranch(name){
+  var node=encyCurrentNode();
+  var ch=node.children.filter(function(c){return c.name===name;})[0];
+  if(!ch) return;
+  encyPath.push({name:ch.name, label:ch.label});
+  encyStep=0;
+  encyGoto();
+}
+function encyBackToFork(){
+  if(!encyPath.length) return;
+  encyPath.pop();
+  var node=encyCurrentNode();
+  encyStep=node.steps.length-1;
+  encyGoto();
+}
+function encyClose(){
+  encyMode=false; encyEntry=null; encyDemo=null; encyPath=[]; encyStep=0;
+  reset();
+}
+function encyLoadEntry(mdText){
+  var entry;
+  try{ entry=encyParseEntry(mdText); }
+  catch(e){ var st=document.getElementById('encyImportStatus'); if(st) st.textContent='Erreur de lecture : '+e.message; return; }
+  if(!entry.demos.length){ var st2=document.getElementById('encyImportStatus'); if(st2) st2.textContent='Aucune démonstration trouvée dans ce texte.'; return; }
+  var demo=entry.demos[0]; // prototype : une seule démo jouée pour l'instant ; sélecteur à ajouter s'il y en a plusieurs
+  demo.verification=encyResolveTree(demo.root, demo.fenRoot);
+  encyEntry=entry; encyDemo=demo; encyPath=[]; encyStep=0; encyMode=true;
+  fullMoves=[]; cursor=0; gameAnalysis=null; moveComments=[]; moveAnnotations=[];
+  pgnMode=false; startFen=null;
+  setPlayMode(false);
+  var pa=document.getElementById('pasteArea'); if(pa) pa.style.display='none';
+  var st3=document.getElementById('encyImportStatus'); if(st3) st3.textContent='';
+  encyGoto();
+}
+function encyFetchAndLoad(){
+  var id=(document.getElementById('encyId').value||'').trim();
+  var st=document.getElementById('encyImportStatus');
+  if(!id) return;
+  if(st) st.textContent='Chargement…';
+  fetch('_fonds/encyclopedie/'+id+'.md').then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(txt){ encyLoadEntry(txt); }).catch(function(e){
+    if(st) st.textContent='Échec (fetch : '+e.message+') — colle le texte ou choisis un fichier.';
+  });
+}
+function encyLoadFromTextarea(){
+  var txt=(document.getElementById('encyPaste').value||'');
+  if(!txt.trim()) return;
+  encyLoadEntry(txt);
+}
+function encyImportFile(input){
+  var f=input.files && input.files[0]; if(!f) return;
+  var reader=new FileReader();
+  reader.onload=function(){ encyLoadEntry(String(reader.result)); };
+  reader.readAsText(f);
+}
+
 function fitBoard(){
   try{
     var wrap = document.querySelector('.board-eval-wrap');
