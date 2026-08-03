@@ -2079,6 +2079,14 @@ button.ctrl:active{transform:scale(.93)}
 .ent-vrf{font-size:.68rem;font-weight:700;margin-top:4px;padding:4px 8px;border-radius:7px;display:inline-block}
 .ent-vrf.ok{background:var(--tone-green-bg);color:var(--success)}
 .ent-vrf.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
+/* Liens internes : cliquable quand la cible existe, AMORCE visible et inerte sinon
+   (FORMAT v3 : « le réseau précède les nœuds » — un lien mort n'est pas une erreur). */
+.lien-enc{color:var(--arrow-alt);font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lien-amorce{color:var(--enc-caret);border-bottom:1px dotted var(--enc-caret);opacity:.8;cursor:default}
+.ent-liens{margin-top:13px;padding-top:10px;border-top:1px solid var(--enc-border);display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.76rem}
+.ent-liens-t{font-weight:800;color:var(--text-on-light)}
+.ent-liens .lien-enc{padding:3px 9px;border-radius:8px;background:var(--tone-blue-bg);text-decoration:none}
+.ent-liens .lien-amorce{padding:3px 9px;border-radius:8px;border:1px dashed var(--enc-border);border-bottom-style:dashed}
 .ent-note{font-size:.72rem;color:var(--enc-detail-text);background:var(--warn-bg);border-left:3px solid var(--warn-border);padding:7px 9px;border-radius:7px;margin-top:9px;line-height:1.45}
 .enc-msg{max-width:460px;margin:0 auto 8px;width:100%;font-size:.72rem;color:var(--text-muted);background:var(--surface-note);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px;line-height:1.45}
 .enc-loader{max-width:460px;margin:6px auto 0;width:100%;font-size:.74rem;color:var(--text-muted)}
@@ -3873,7 +3881,7 @@ let encMsg='';            // message discret en tête de liste (dégradation)
 
 function encIndexBuild(list){
   encIndex=Array.isArray(list)?list:[];
-  encById={}; encByReplaced={};
+  encById={}; encByReplaced={}; encLex=null; // le lexique d'auto-liage dépend du manifeste
   encIndex.forEach(function(m){
     if(!m || !m.id) return;
     encById[m.id]=m;
@@ -3897,20 +3905,130 @@ function encRichFor(id){
   return (m && !encBroken[m.id]) ? m : null;
 }
 
+/* --- Liens internes ------------------------------------------------------
+   Trois formes, UN SEUL résolveur : le champ `liens:` de l'en-tête, la syntaxe
+   [[id]] écrite dans la prose, et les noms cités en toutes lettres (auto-liage).
+   Ordre de résolution : entrée riche > fiche en dur > AMORCE. Une amorce (cible
+   pas encore écrite) reste VISIBLE et NON CLIQUABLE : c'est une promesse, pas une
+   erreur — le réseau précède les nœuds (FORMAT v3). */
+
+let encHard=null; // index des fiches en dur : id → {sec, nom}
+function encHardIndex(){
+  if(encHard) return encHard;
+  encHard={};
+  SECTIONS.forEach(function(s){
+    if(s.type==='people'){ Object.keys(PEOPLE).forEach(function(k){ encHard[k]={sec:s.id, nom:PEOPLE[k].name}; }); }
+    else if(s.data){ s.data.forEach(function(o){ if(o && o.id) encHard[o.id]={sec:s.id, nom:o.name}; }); }
+  });
+  return encHard;
+}
+function encResolveTarget(id){
+  if(!id) return null;
+  var m=encById[id]||encByReplaced[id];          // l'entrée riche prime, y compris via `remplace`
+  if(m && !encBroken[m.id]) return {type:'entry', id:m.id, nom:m.nom||m.id};
+  var d=encHardIndex()[id];
+  if(d) return {type:'fiche', id:id, sec:d.sec, nom:d.nom};
+  return null;                                    // amorce
+}
+function encLinkHtml(id, texte){
+  var t=encResolveTarget(id);
+  if(!t) return '<span class="lien-amorce" title="Entrée à écrire — le lien est une amorce assumée">'+encEsc(texte||id)+'</span>';
+  return '<a class="lien-enc" href="#" title="'+encEsc(t.nom)+'" onclick="return encGoTo(\''+String(id).replace(/'/g,"\\'")+'\')">'+encEsc(texte||t.nom)+'</a>';
+}
+function encGoTo(id){
+  var t=encResolveTarget(id);
+  if(!t) return false;
+  if(t.type==='entry'){ encOpenEntry(t.id); return false; }
+  curSec=t.sec; focusId=t.id;
+  encView='list'; encEntryShown=null; encEntryId=null;
+  buildSecTabs(); renderEnc();
+  return false;
+}
+// Auto-liage : formes de surface connues (nom + alias des entrées, noms des fiches en
+// dur). Les formes courtes ou trop génériques sont écartées — un texte d'échecs dit
+// « batterie » ou « fou » à tout bout de champ ; qui veut le lien à cet endroit précis
+// écrit [[batterie]]. Les alias écartés ici restent utiles à la RECHERCHE.
+const ENC_LIEN_MIN=5;
+const ENC_LIEN_STOP={'batterie':1,'centre':1,'échec':1,'echec':1,'double échec':1,'abandon':1,
+  'fou passif':1,'fou enterré':1,'pièce masquante':1,'ouverture':1,'finale':1,'milieu':1};
+let encLex=null;
+function encLexicon(){
+  if(encLex) return encLex;
+  var formes=[];
+  function ajoute(forme, id){
+    if(!forme) return;
+    // on retient la forme SANS son article : « voir la fourchette » doit lier « fourchette »
+    // et laisser « la » dehors, plutôt que de souligner l'article avec.
+    var f=String(forme).trim().replace(/^(l['’]|le |la |les )/i,'').trim();
+    if(f.length<ENC_LIEN_MIN || ENC_LIEN_STOP[f.toLowerCase()]) return;
+    formes.push({forme:f, id:id});
+  }
+  encIndex.forEach(function(m){ ajoute(m.nom,m.id); (m.alias||[]).forEach(function(a){ ajoute(a,m.id); }); });
+  var dur=encHardIndex();
+  Object.keys(dur).forEach(function(k){ ajoute(dur[k].nom,k); });
+  var vu={}; encLex=[];
+  formes.sort(function(a,b){ return b.forme.length-a.forme.length; }).forEach(function(f){
+    var k=f.forme.toLowerCase(); if(vu[k]) return; vu[k]=1;
+    var lettre='A-Za-zÀ-ÖØ-öø-ÿ0-9-';
+    encLex.push({id:f.id, re:new RegExp('(^|[^'+lettre+'])('+f.forme.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')(?![' +lettre+ '])','i')});
+  });
+  return encLex;
+}
+// Ne travaille QUE sur du texte (jamais sur du HTML) : on repère la première forme
+// connue, on coupe, on recommence sur la suite. Le fragment déjà produit n'est jamais
+// re-balayé, donc aucun risque de réécrire une balise ou un attribut.
+function encAutoLinkText(txt, selfId, vus){
+  if(!txt || !/[A-Za-zÀ-ÿ]/.test(txt)) return txt;
+  var lex=encLexicon(), best=null;
+  for(var i=0;i<lex.length;i++){
+    var e=lex[i];
+    if(e.id===selfId || vus[e.id]) continue;
+    var m=e.re.exec(txt); if(!m) continue;
+    var pos=m.index+m[1].length;
+    if(!encResolveTarget(e.id)) continue;        // l'auto-liage ne révèle que ce qui existe
+    if(!best || pos<best.pos) best={pos:pos, mot:m[2], id:e.id};
+  }
+  if(!best) return txt;
+  vus[best.id]=1;                                 // une seule occurrence par section
+  return txt.slice(0,best.pos)+encLinkHtml(best.id,best.mot)+
+         encAutoLinkText(txt.slice(best.pos+best.mot.length), selfId, vus);
+}
+// Applique l'auto-liage aux seuls segments de TEXTE d'un fragment déjà balisé par nos
+// soins, en sautant l'intérieur des liens et du code.
+function encLinkify(html, ctx){
+  var parts=html.split(/(<[^>]+>)/), prof=0;
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i];
+    if(p.charAt(0)==='<'){
+      if(/^<(a|code)\b/i.test(p) || /class="lien-amorce"/.test(p)) prof++;
+      else if(/^<\/(a|code|span)>/i.test(p) && prof>0) prof--;
+      continue;
+    }
+    if(prof===0) parts[i]=encAutoLinkText(p, ctx.selfId, ctx.vus);
+  }
+  return parts.join('');
+}
+
 /* --- État « entrée » : rendu de la prose --------------------------------- */
 
-function encEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function encInline(s){
-  return encEsc(s)
+function encEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function encInline(s, ctx){
+  var h=encEsc(s)
     .replace(/`([^`]+)`/g,'<code>$1</code>')
+    // [[id]] ou [[id|texte affiché]] : la forme explicite, déjà employée dans les entrées
+    .replace(/\[\[([^\]]+)\]\]/g, function(m,dedans){
+      var bout=dedans.split('|');
+      return encLinkHtml(bout[0].trim(), bout[1]?bout[1].trim():null);
+    })
     .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
     .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<i>$2</i>');
+  return ctx ? encLinkify(h, ctx) : h;
 }
 // Rendu Markdown modeste, suffisant pour l'explication libre d'une entrée :
 // titres, paragraphes, listes, citations, filets, gras/italique/code.
-function encProse(text){
+function encProse(text, ctx){
   var lines=String(text).split('\n'), out=[], para=[], liste=null;
-  function fermerPara(){ if(para.length){ out.push('<p>'+encInline(para.join(' '))+'</p>'); para=[]; } }
+  function fermerPara(){ if(para.length){ out.push('<p>'+encInline(para.join(' '), ctx)+'</p>'); para=[]; } }
   function fermerListe(){ if(liste){ out.push('</'+liste+'>'); liste=null; } }
   function ouvrirListe(t){ if(liste!==t){ fermerListe(); out.push('<'+t+'>'); liste=t; } }
   lines.forEach(function(raw){
@@ -3920,12 +4038,12 @@ function encProse(text){
     if(h){ fermerPara(); fermerListe(); out.push(h[1].length<=3?'<h3>'+encInline(h[2])+'</h3>':'<h4>'+encInline(h[2])+'</h4>'); return; }
     if(/^---+$/.test(l.trim())){ fermerPara(); fermerListe(); out.push('<hr>'); return; }
     var q=l.match(/^>\s?(.*)$/);
-    if(q){ fermerPara(); fermerListe(); out.push('<blockquote>'+encInline(q[1])+'</blockquote>'); return; }
+    if(q){ fermerPara(); fermerListe(); out.push('<blockquote>'+encInline(q[1], ctx)+'</blockquote>'); return; }
     var puce=l.match(/^\s*[-*]\s+(.*)$/);
-    if(puce){ fermerPara(); ouvrirListe('ul'); out.push('<li>'+encInline(puce[1])+'</li>'); return; }
+    if(puce){ fermerPara(); ouvrirListe('ul'); out.push('<li>'+encInline(puce[1], ctx)+'</li>'); return; }
     var num=l.match(/^\s*\d+[.)]\s+(.*)$/);
-    if(num){ fermerPara(); ouvrirListe('ol'); out.push('<li>'+encInline(num[1])+'</li>'); return; }
-    if(liste && /^\s+\S/.test(raw)){ out[out.length-1]=out[out.length-1].replace(/<\/li>$/,' '+encInline(l.trim())+'</li>'); return; }
+    if(num){ fermerPara(); ouvrirListe('ol'); out.push('<li>'+encInline(num[1], ctx)+'</li>'); return; }
+    if(liste && /^\s+\S/.test(raw)){ out[out.length-1]=out[out.length-1].replace(/<\/li>$/,' '+encInline(l.trim(), ctx)+'</li>'); return; }
     para.push(l.trim());
   });
   fermerPara(); fermerListe();
@@ -3981,7 +4099,8 @@ function encRenderEntry(){
   if(chips.length) h+='<div class="ent-meta">'+chips.join('')+'</div>';
   h+='<div class="ent-prose">';
   encSplitBody(e.body).forEach(function(bl){
-    if(bl.type==='prose'){ h+=encProse(bl.text); return; }
+    // `vus` repart à chaque section : un lien par notion et par section, pas une tapisserie
+    if(bl.type==='prose'){ h+=encProse(bl.text, {selfId:e.id, vus:{}}); return; }
     var d=e.demos[bl.i];
     if(!encyDemoPlayable(d)){
       h+='<h3>'+encEsc(bl.titre)+'</h3><div class="ent-note">Démonstration non jouable en l\'état : le lecteur d\'étapes n\'y a pas trouvé de position de départ et d\'étapes au format attendu. Le texte de l\'entrée reste consultable.</div>';
@@ -3991,7 +4110,14 @@ function encRenderEntry(){
     h+='<button class="ent-demo" onclick="encPlayDemo('+bl.i+')">▶️ Dérouler la démonstration — '+encEsc(d.title||bl.titre)+'</button>';
     if(v) h+='<div class="ent-vrf '+(v.ok?'ok':'warn')+'">'+(v.ok?'✅':'⚠️')+' vérification : '+v.issues.length+' anomalie(s) / '+v.checksRun+' contrôle(s)</div>';
   });
-  h+='</div></div>';
+  h+='</div>';
+  // Le champ `liens:` — ce qui fait de l'encyclopédie un réseau. Les cibles pas encore
+  // écrites restent affichées, en amorce : elles disent à l'arbitrage quoi rédiger ensuite.
+  if((e.liens||[]).length){
+    h+='<div class="ent-liens"><span class="ent-liens-t">Ça rejoint :</span>'+
+       e.liens.map(function(id){ return encLinkHtml(id, null); }).join('')+'</div>';
+  }
+  h+='</div>';
   list.innerHTML=h;
   list.scrollTop=0;
 }
@@ -4053,6 +4179,13 @@ function encMatch(filter, ...morceaux){
   if(!filter) return true;
   return morceaux.filter(Boolean).join(' ').toLowerCase().includes(filter);
 }
+// Fiche visée par un lien interne : on la déplie et on la signale (même geste que
+// le person-link des ouvertures, jusqu'ici réservé à l'onglet Personnages).
+function encFocus(it, id){
+  if(id!==focusId) return;
+  it.classList.add('open');
+  setTimeout(()=>{it.classList.add('target');it.scrollIntoView({block:'center'});setTimeout(()=>it.classList.remove('target'),1500);},50);
+}
 function renderEnc(){
   encChrome();
   if(encView==='entry'){ encRenderEntry(); return; }
@@ -4073,24 +4206,26 @@ function renderEnc(){
       const rich=encRichFor(o.id);
       if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.moves,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
       if(filter&&!(o.name+' '+o.moves+' '+o.short).toLowerCase().includes(filter))continue;
-      const it=document.createElement('div');it.className='enc-item';
+      const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea"><b>Idée.</b> '+o.idea+'</div><div class="blk blk-reply"><b>Comment réagir.</b> '+o.reply+'</div>';
       if(o.trap)d+='<div class="blk blk-trap"><b>À savoir.</b> '+o.trap+'</div>';
       if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();curSec=\'people\';focusId=\''+o.person+'\';buildSecTabs();renderEnc();">📜 Voir : '+PEOPLE[o.person].name+'</span>';
       it.innerHTML='<div class="eh"><span class="en">'+o.name+'</span>'+freqLabel(o.freq)+'</div><div class="emoves" style="margin-top:3px">'+o.moves+'</div><div class="eshort">'+o.short+'</div><span class="ecaret">▾ Détails</span><div class="edetail">'+d+'</div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
+      encFocus(it,o.id);
     }
   } else {
     for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
       const rich=encRichFor(o.id);
       if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
       if(filter&&!(o.name+' '+o.short+' '+o.full).toLowerCase().includes(filter))continue;
-      const it=document.createElement('div');it.className='enc-item';
+      const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea">'+o.full+'</div>';
       if(o.signal)d+='<div class="blk blk-signal"><b>Comment le repérer.</b> '+o.signal+'</div>';
       if(o.ex)d+='<div class="blk blk-ex"><b>Exemple.</b> '+o.ex+'</div>';
       it.innerHTML='<div class="eh"><span class="en">'+o.name+'</span>'+freqLabel(o.freq)+'</div><div class="eshort">'+o.short+'</div><span class="ecaret">▾ Détails</span><div class="edetail">'+d+'</div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
+      encFocus(it,o.id);
     }
   }
   if(!list.children.length)list.innerHTML='<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:.85rem">Aucun résultat.</div>';
