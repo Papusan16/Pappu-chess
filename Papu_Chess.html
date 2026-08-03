@@ -2059,6 +2059,35 @@ button.ctrl:active{transform:scale(.93)}
 .blk-ex{background:var(--tone-purple-bg);border-left:3px solid var(--tone-purple-border);font-style:italic}
 .blk b{color:var(--speech-eco-bg)}
 .enc-item .person-link{margin-top:8px;display:inline-block;font-size:.74rem;color:var(--tone-gold-text);font-weight:700;text-decoration:underline}
+/* Entrée riche (_fonds/encyclopedie/*.md) : pastille dans la liste, puis état « entrée » de l'overlay */
+.enc-item .erich{font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:8px;background:var(--tone-purple-border);color:var(--white)}
+.ent-back{background:var(--surface);border:1px solid var(--border-a);border-radius:9px;color:var(--text-soft);font-size:.78rem;font-weight:700;padding:8px 12px;cursor:pointer;align-self:flex-start;font-family:inherit}
+.ent-card{background:linear-gradient(135deg,var(--enc-bg-1),var(--enc-bg-2));color:var(--text-on-light);border-radius:11px;padding:13px 15px;border:1px solid var(--enc-border)}
+.ent-name{font-family:ui-serif,Georgia,serif;font-size:1.08rem;font-weight:800;line-height:1.3}
+.ent-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.ent-chip{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--tone-blue-bg);color:var(--enc-detail-text)}
+.ent-prose{font-size:.84rem;line-height:1.55;color:var(--enc-detail-text);margin-top:10px}
+.ent-prose h3{font-family:ui-serif,Georgia,serif;font-size:.92rem;font-weight:800;color:var(--text-on-light);margin:14px 0 5px}
+.ent-prose h4{font-size:.84rem;font-weight:800;color:var(--text-on-light);margin:11px 0 4px}
+.ent-prose p{margin:6px 0}
+.ent-prose ul,.ent-prose ol{margin:6px 0 6px 18px;padding:0}
+.ent-prose li{margin:3px 0}
+.ent-prose code{font-family:ui-monospace,monospace;font-size:.78rem;background:var(--tone-blue-bg);padding:1px 4px;border-radius:4px;word-break:break-all}
+.ent-prose blockquote{margin:7px 0;padding:6px 10px;border-left:3px solid var(--tone-purple-border);background:var(--tone-purple-bg);font-style:italic}
+.ent-prose hr{border:none;border-top:1px solid var(--enc-border);margin:11px 0}
+.ent-demo{width:100%;margin-top:11px;background:linear-gradient(180deg,var(--btn-teach-top),var(--btn-teach-bottom));border:1px solid var(--arrow-alt);border-radius:9px;color:var(--btn-colorpick-text);font-size:.82rem;font-weight:700;padding:11px 9px;cursor:pointer;text-align:left;font-family:inherit}
+.ent-vrf{font-size:.68rem;font-weight:700;margin-top:4px;padding:4px 8px;border-radius:7px;display:inline-block}
+.ent-vrf.ok{background:var(--tone-green-bg);color:var(--success)}
+.ent-vrf.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
+.ent-note{font-size:.72rem;color:var(--enc-detail-text);background:var(--warn-bg);border-left:3px solid var(--warn-border);padding:7px 9px;border-radius:7px;margin-top:9px;line-height:1.45}
+.enc-msg{max-width:460px;margin:0 auto 8px;width:100%;font-size:.72rem;color:var(--text-muted);background:var(--surface-note);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px;line-height:1.45}
+.enc-loader{max-width:460px;margin:6px auto 0;width:100%;font-size:.74rem;color:var(--text-muted)}
+.enc-loader summary{cursor:pointer;padding:6px 2px;color:var(--text-dim)}
+.enc-loader-body{display:flex;flex-direction:column;gap:6px;padding-bottom:6px}
+.enc-loader textarea{min-height:70px;background:var(--surface);border:1px solid var(--border-a);border-radius:8px;color:var(--text-input);padding:8px;font-size:.76rem;font-family:ui-monospace,monospace;resize:vertical}
+.enc-loader-row{display:flex;gap:8px}
+.enc-loader-row .ctrl{flex:1}
+#encyImportStatus{font-size:.68rem;color:var(--text-muted);min-height:1em}
 .target{box-shadow:0 0 0 3px var(--gold-light),0 6px 22px var(--cible-glow)!important;animation:flash 1.4s}
 @keyframes flash{0%,100%{box-shadow:0 0 0 3px var(--gold-light)}50%{box-shadow:0 0 0 6px var(--gold-light)}}
 
@@ -2378,19 +2407,6 @@ button.ctrl:active{transform:scale(.93)}
       <br>Astuce : sur Lichess copie l'URL de la partie ; sur Chess.com utilise ton pseudo (accès direct par lien bloqué par le site).
     </div>
     <input type="file" id="pgnFile" accept=".pgn,.txt" style="display:none" onchange="importPgnFile(this)">
-    <hr style="border:none;border-top:1px solid var(--border-2);margin:10px 0 8px">
-    <div style="font-size:.72rem;color:var(--text-dim);margin-bottom:5px">📖 Encyclopédie — lecteur d'étapes (prototype)</div>
-    <div style="display:flex;gap:6px">
-      <input id="encyId" placeholder="id de l'entrée" value="echec-a-la-decouverte" autocomplete="off" style="flex:1;min-width:0;background:var(--surface);border:1px solid var(--border-a);border-radius:8px;color:var(--text-input);padding:8px;font-size:.78rem">
-      <button class="ctrl" onclick="encyFetchAndLoad()" style="white-space:nowrap">▶️ Charger</button>
-    </div>
-    <textarea id="encyPaste" placeholder="…ou colle ici le Markdown de l'entrée" style="margin-top:6px;min-height:64px"></textarea>
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <button class="ctrl" onclick="encyLoadFromTextarea()" style="flex:1">▶️ Charger le texte collé</button>
-      <button class="ctrl" onclick="document.getElementById('encyFile').click()" style="flex:1">📂 Fichier .md</button>
-    </div>
-    <input type="file" id="encyFile" accept=".md,.markdown,.txt" style="display:none" onchange="encyImportFile(this)">
-    <div id="encyImportStatus" style="font-size:.68rem;color:var(--text-muted);margin-top:5px;min-height:1em"></div>
   </div>
   <div class="board-eval-wrap">
     <div class="evalbar" id="evalbar">
@@ -2503,8 +2519,20 @@ button.ctrl:active{transform:scale(.93)}
 <div class="overlay" id="overlay">
   <div class="ov-head"><span class="ov-title">📚 Encyclopédie</span><button class="closebtn" onclick="closeEnc()">✕</button></div>
   <div class="sec-tabs" id="secTabs"></div>
-  <div class="ov-search"><input id="encSearch" placeholder="Rechercher…" oninput="renderEnc()"></div>
+  <div class="ov-search" id="encSearchWrap"><input id="encSearch" placeholder="Rechercher…" oninput="renderEnc()"></div>
   <div class="enc-list" id="encList"></div>
+  <details class="enc-loader" id="encLoader">
+    <summary>✍️ Rédaction — charger une entrée collée</summary>
+    <div class="enc-loader-body">
+      <textarea id="encyPaste" placeholder="Colle ici le Markdown d'une entrée en cours de rédaction, pas encore posée dans _fonds/…"></textarea>
+      <div class="enc-loader-row">
+        <button class="ctrl" onclick="encyLoadFromTextarea()">▶️ Charger le texte collé</button>
+        <button class="ctrl" onclick="document.getElementById('encyFile').click()">📂 Fichier .md</button>
+      </div>
+      <input type="file" id="encyFile" accept=".md,.markdown,.txt" style="display:none" onchange="encyImportFile(this)">
+      <div id="encyImportStatus"></div>
+    </div>
+  </details>
 </div>
 <div class="overlay" id="profileOverlay">
   <div class="ov-head"><span class="ov-title">👤 Ma fiche joueur</span><button class="closebtn" onclick="closeProfile()">✕</button></div>
@@ -3823,7 +3851,182 @@ function identify(animate){
 }
 function tog(id){const el=document.getElementById(id);if(!el)return;if(openDetail&&openDetail!==id){const o=document.getElementById(openDetail);if(o)o.classList.remove('show');}el.classList.toggle('show');openDetail=el.classList.contains('show')?id:null;}
 
-/* ENCYCLOPÉDIE */
+/* ENCYCLOPÉDIE — l'overlay est la PORTE UNIQUE.
+   Une fiche de la liste peut être servie de deux façons :
+   - fiche courte EN DUR (ENC/OPS/PEOPLE), comme depuis toujours ;
+   - ENTRÉE RICHE (_fonds/encyclopedie/<id>.md) quand elle existe, avec sa prose
+     et ses démonstrations jouables.
+   Le manifeste INDEX.json dit lesquelles existent ; le fetch du .md au clic reste la
+   vérité. Toute défaillance (manifeste absent, 404, Markdown illisible) redonne la
+   fiche en dur : on ne perd jamais un contenu, au pire une pastille. */
+const ENCY_DIR='_fonds/encyclopedie/';
+let encIndex=[];          // manifeste (cache d'affichage), [] si absent
+let encIndexState='vierge'; // vierge | tente — un seul essai par session
+let encById={};           // id d'entrée riche → méta du manifeste
+let encByReplaced={};     // id de fiche en dur → méta de l'entrée qui la périme
+let encBroken={};         // entrées dont le chargement a échoué → on redonne la fiche en dur
+let encView='list';       // état de l'overlay : list | entry
+let encEntryCache={};     // id → entrée résolue (un seul fetch par entrée et par session)
+let encEntryShown=null;   // entrée affichée dans l'état « entrée »
+let encEntryId=null;      // son id (connu avant même que le fetch réponde)
+let encMsg='';            // message discret en tête de liste (dégradation)
+
+function encIndexBuild(list){
+  encIndex=Array.isArray(list)?list:[];
+  encById={}; encByReplaced={};
+  encIndex.forEach(function(m){
+    if(!m || !m.id) return;
+    encById[m.id]=m;
+    (m.remplace||[]).forEach(function(f){ encByReplaced[f]=m; });
+  });
+}
+function encLoadIndex(){
+  if(encIndexState!=='vierge') return Promise.resolve();
+  encIndexState='tente';
+  return fetch(ENCY_DIR+'INDEX.json').then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(list){ encIndexBuild(list); }).catch(function(){
+    // Pas de manifeste : l'encyclopédie fonctionne exactement comme avant.
+    encIndexBuild([]);
+  });
+}
+// L'entrée riche qui périme cette fiche en dur, si elle existe et n'a pas échoué.
+function encRichFor(id){
+  var m=encByReplaced[id];
+  return (m && !encBroken[m.id]) ? m : null;
+}
+
+/* --- État « entrée » : rendu de la prose --------------------------------- */
+
+function encEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function encInline(s){
+  return encEsc(s)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<i>$2</i>');
+}
+// Rendu Markdown modeste, suffisant pour l'explication libre d'une entrée :
+// titres, paragraphes, listes, citations, filets, gras/italique/code.
+function encProse(text){
+  var lines=String(text).split('\n'), out=[], para=[], liste=null;
+  function fermerPara(){ if(para.length){ out.push('<p>'+encInline(para.join(' '))+'</p>'); para=[]; } }
+  function fermerListe(){ if(liste){ out.push('</'+liste+'>'); liste=null; } }
+  function ouvrirListe(t){ if(liste!==t){ fermerListe(); out.push('<'+t+'>'); liste=t; } }
+  lines.forEach(function(raw){
+    var l=raw.replace(/\s+$/,'');
+    if(!l.trim()){ fermerPara(); fermerListe(); return; }
+    var h=l.match(/^(#{2,6})\s+(.*)$/);
+    if(h){ fermerPara(); fermerListe(); out.push(h[1].length<=3?'<h3>'+encInline(h[2])+'</h3>':'<h4>'+encInline(h[2])+'</h4>'); return; }
+    if(/^---+$/.test(l.trim())){ fermerPara(); fermerListe(); out.push('<hr>'); return; }
+    var q=l.match(/^>\s?(.*)$/);
+    if(q){ fermerPara(); fermerListe(); out.push('<blockquote>'+encInline(q[1])+'</blockquote>'); return; }
+    var puce=l.match(/^\s*[-*]\s+(.*)$/);
+    if(puce){ fermerPara(); ouvrirListe('ul'); out.push('<li>'+encInline(puce[1])+'</li>'); return; }
+    var num=l.match(/^\s*\d+[.)]\s+(.*)$/);
+    if(num){ fermerPara(); ouvrirListe('ol'); out.push('<li>'+encInline(num[1])+'</li>'); return; }
+    if(liste && /^\s+\S/.test(raw)){ out[out.length-1]=out[out.length-1].replace(/<\/li>$/,' '+encInline(l.trim())+'</li>'); return; }
+    para.push(l.trim());
+  });
+  fermerPara(); fermerListe();
+  return out.join('');
+}
+// Une démonstration n'est jouable que si le lecteur a su en tirer une position et des
+// étapes. Sinon (entrée d'un format antérieur, section incomplète) on affiche la prose
+// et on le dit — une entrée dont la démo ne se lit pas doit rester lisible.
+function encyDemoPlayable(d){ return !!(d && d.fenRoot && d.root && d.root.steps && d.root.steps.length); }
+
+// Découpe le corps de l'entrée en sections de niveau 2, dans l'ordre du document.
+// Les sections « Démonstration… » deviennent un bouton à leur place ; les autres, de la prose.
+function encSplitBody(body){
+  var out=[], parts=String(body||'').split(/^##\s+/m), demoNo=0;
+  parts.forEach(function(p,i){
+    if(!p.trim()) return;
+    if(i===0){ // avant le premier ##, on saute le titre h1 (le nom est déjà affiché)
+      var t=p.replace(/^#\s+.*$/m,'').trim();
+      if(t) out.push({type:'prose', text:t});
+      return;
+    }
+    var nl=p.indexOf('\n');
+    var titre=(nl<0?p:p.slice(0,nl)).trim(), corps=nl<0?'':p.slice(nl+1);
+    if(/^Démonstrations?\b/.test(titre)){
+      // le chapeau « ## Démonstrations » d'une entrée qui les liste en ### : on garde sa prose
+      var sousDemos=corps.split(/^###\s+/m);
+      if(/^Démonstrations\b/.test(titre) && sousDemos.length>1){
+        if(sousDemos[0].trim()) out.push({type:'prose', text:sousDemos[0]});
+        sousDemos.slice(1).forEach(function(sd){
+          var n2=sd.indexOf('\n');
+          out.push({type:'demo', i:demoNo++, titre:(n2<0?sd:sd.slice(0,n2)).trim()});
+        });
+      } else {
+        out.push({type:'demo', i:demoNo++, titre:titre});
+      }
+      return;
+    }
+    out.push({type:'prose', text:'## '+titre+'\n'+corps});
+  });
+  return out;
+}
+function encRenderEntry(){
+  var list=document.getElementById('encList');
+  var e=encEntryShown;
+  if(!e){ list.innerHTML='<button class="ent-back" onclick="encBackToList()">← Retour à la liste</button>'+
+    '<div class="ent-card"><div class="ent-prose">Chargement de l\'entrée…</div></div>'; return; }
+  var h='<button class="ent-back" onclick="encBackToList()">← Retour à la liste</button>';
+  h+='<div class="ent-card">';
+  h+='<div class="ent-name">'+encEsc(e.nom||e.id||'')+'</div>';
+  var chips=[];
+  (e.rayons||[]).forEach(function(r){ chips.push('<span class="ent-chip">'+encEsc(r)+'</span>'); });
+  if(e.phase) chips.push('<span class="ent-chip">'+encEsc(e.phase)+'</span>');
+  if(chips.length) h+='<div class="ent-meta">'+chips.join('')+'</div>';
+  h+='<div class="ent-prose">';
+  encSplitBody(e.body).forEach(function(bl){
+    if(bl.type==='prose'){ h+=encProse(bl.text); return; }
+    var d=e.demos[bl.i];
+    if(!encyDemoPlayable(d)){
+      h+='<h3>'+encEsc(bl.titre)+'</h3><div class="ent-note">Démonstration non jouable en l\'état : le lecteur d\'étapes n\'y a pas trouvé de position de départ et d\'étapes au format attendu. Le texte de l\'entrée reste consultable.</div>';
+      return;
+    }
+    var v=d.verification;
+    h+='<button class="ent-demo" onclick="encPlayDemo('+bl.i+')">▶️ Dérouler la démonstration — '+encEsc(d.title||bl.titre)+'</button>';
+    if(v) h+='<div class="ent-vrf '+(v.ok?'ok':'warn')+'">'+(v.ok?'✅':'⚠️')+' vérification : '+v.issues.length+' anomalie(s) / '+v.checksRun+' contrôle(s)</div>';
+  });
+  h+='</div></div>';
+  list.innerHTML=h;
+  list.scrollTop=0;
+}
+function encPlayDemo(i){
+  if(!encEntryShown) return;
+  // retour : la fermeture de la démonstration rouvrira l'overlay SUR cette entrée
+  if(encyStartDemo(encEntryShown, i, {sec:curSec, entry:encEntryId})) closeEnc();
+}
+function encOpenEntry(id){
+  encEntryId=id;
+  if(encEntryCache[id]){ encEntryShown=encEntryCache[id]; encView='entry'; renderEnc(); return; }
+  encEntryShown=null; encView='entry'; renderEnc();
+  fetch(ENCY_DIR+id+'.md').then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(txt){
+    var e=encyResolveEntry(txt);
+    encEntryCache[id]=e;
+    if(encEntryId===id){ encEntryShown=e; renderEnc(); }
+  }).catch(function(err){
+    // Dégradation : l'entrée riche est indisponible, la fiche en dur reprend sa place.
+    encBroken[id]=true;
+    encMsg='« '+id+' » : entrée détaillée indisponible ('+err.message+'). La fiche courte est affichée.';
+    encBackToList();
+  });
+}
+function encBackToList(){ encView='list'; encEntryShown=null; encEntryId=null; renderEnc(); }
+function encChrome(){
+  var liste=(encView==='list');
+  var t=document.getElementById('secTabs'), s=document.getElementById('encSearchWrap'), l=document.getElementById('encLoader');
+  if(t) t.style.display=liste?'':'none';
+  if(s) s.style.display=liste?'':'none';
+  if(l) l.style.display=liste?'':'none';
+}
+
 const SECTIONS=[
   {id:'tactics',label:'⚔️ Tactiques',data:ENC.tactics,type:'enc'},
   {id:'strategy',label:'♟️ Stratégie',data:ENC.strategy,type:'enc'},
@@ -3835,18 +4038,41 @@ const SECTIONS=[
 let curSec='tactics',focusId=null;
 function buildSecTabs(){const el=document.getElementById('secTabs');el.innerHTML='';SECTIONS.forEach(s=>{const d=document.createElement('div');d.className='sec-tab'+(s.id===curSec?' active':'');d.textContent=s.label;d.onclick=()=>{curSec=s.id;focusId=null;buildSecTabs();renderEnc();};el.appendChild(d);});}
 function freqLabel(f){return f===3?'<span class="efreq f3">Très courant</span>':f===2?'<span class="efreq f2">Courant</span>':'<span class="efreq f1">Occasionnel</span>';}
+// Item de liste servi par une entrée riche : même carte, une pastille en plus, et le
+// clic ouvre l'entrée au lieu de déplier l'accordéon. `court` vient de la fiche en dur
+// qu'elle périme — c'est son résumé d'une ligne, il reste juste.
+function encRichItem(meta, court){
+  const it=document.createElement('div');it.className='enc-item';it.id='enc-'+meta.id;
+  it.innerHTML='<div class="eh"><span class="en">'+(meta.nom||meta.id)+'</span><span class="erich">📖 entrée détaillée</span></div>'+
+    (court?'<div class="eshort">'+court+'</div>':'')+
+    '<span class="ecaret">▾ Ouvrir l\'entrée'+(meta.demos?' · '+meta.demos+' démonstration'+(meta.demos>1?'s':''):'')+'</span>';
+  it.onclick=()=>encOpenEntry(meta.id);
+  return it;
+}
+function encMatch(filter, ...morceaux){
+  if(!filter) return true;
+  return morceaux.filter(Boolean).join(' ').toLowerCase().includes(filter);
+}
 function renderEnc(){
+  encChrome();
+  if(encView==='entry'){ encRenderEntry(); return; }
   const sec=SECTIONS.find(s=>s.id===curSec);const list=document.getElementById('encList');list.innerHTML='';
   const filter=(document.getElementById('encSearch').value||'').toLowerCase();
+  if(encMsg){ const m=document.createElement('div');m.className='enc-msg';m.textContent=encMsg;list.appendChild(m); }
   if(sec.type==='people'){
     for(const k of Object.keys(PEOPLE)){const p=PEOPLE[k];if(filter&&!(p.name+' '+p.country+' '+p.role+' '+(p.openings||[]).join(' ')).toLowerCase().includes(filter))continue;
+      const rich=encRichFor(k);
+      if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),p.name)) list.appendChild(encRichItem(rich,p.country+' · '+p.role)); continue; }
       const it=document.createElement('div');it.className='enc-item'+(k===focusId?' open':'');it.id='enc-'+k;
       it.innerHTML='<div class="eh"><span class="en">'+p.name+'</span><span class="emoves">'+p.life+'</span></div><div class="eshort">'+p.country+' · '+p.role+'</div><span class="ecaret">▾ Lire la fiche</span><div class="edetail">'+(p.openings?'<div class="blk blk-idea"><b>Ouvertures :</b> '+p.openings.join(' · ')+'</div>':'')+'<div class="blk blk-ex">'+p.bio+'</div></div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
       if(k===focusId)setTimeout(()=>{it.classList.add('target');it.scrollIntoView({block:'center'});setTimeout(()=>it.classList.remove('target'),1500);},50);
     }
   } else if(sec.type==='open'){
-    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){if(filter&&!(o.name+' '+o.moves+' '+o.short).toLowerCase().includes(filter))continue;
+    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
+      const rich=encRichFor(o.id);
+      if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.moves,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
+      if(filter&&!(o.name+' '+o.moves+' '+o.short).toLowerCase().includes(filter))continue;
       const it=document.createElement('div');it.className='enc-item';
       let d='<div class="blk blk-idea"><b>Idée.</b> '+o.idea+'</div><div class="blk blk-reply"><b>Comment réagir.</b> '+o.reply+'</div>';
       if(o.trap)d+='<div class="blk blk-trap"><b>À savoir.</b> '+o.trap+'</div>';
@@ -3855,7 +4081,10 @@ function renderEnc(){
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
     }
   } else {
-    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){if(filter&&!(o.name+' '+o.short+' '+o.full).toLowerCase().includes(filter))continue;
+    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
+      const rich=encRichFor(o.id);
+      if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
+      if(filter&&!(o.name+' '+o.short+' '+o.full).toLowerCase().includes(filter))continue;
       const it=document.createElement('div');it.className='enc-item';
       let d='<div class="blk blk-idea">'+o.full+'</div>';
       if(o.signal)d+='<div class="blk blk-signal"><b>Comment le repérer.</b> '+o.signal+'</div>';
@@ -3866,8 +4095,16 @@ function renderEnc(){
   }
   if(!list.children.length)list.innerHTML='<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:.85rem">Aucun résultat.</div>';
 }
-function openEnc(sec,focus){if(sec)curSec=sec;if(focus)focusId=focus;document.getElementById('encSearch').value='';buildSecTabs();renderEnc();document.getElementById('overlay').classList.add('show');}
-function closeEnc(){document.getElementById('overlay').classList.remove('show');focusId=null;}
+function openEnc(sec,focus){
+  if(sec)curSec=sec; if(focus)focusId=focus;
+  encView='list'; encEntryShown=null; encEntryId=null;
+  document.getElementById('encSearch').value='';
+  buildSecTabs();renderEnc();
+  document.getElementById('overlay').classList.add('show');
+  // Le manifeste arrive après coup : la liste se redessine quand il est là (ou pas).
+  encLoadIndex().then(function(){ if(document.getElementById('overlay').classList.contains('show') && encView==='list') renderEnc(); });
+}
+function closeEnc(){document.getElementById('overlay').classList.remove('show');focusId=null;encMsg='';}
 function fitBoardSoon(){ setTimeout(fitBoard,60); }
 function togglePasteArea(){
   var pa=document.getElementById('pasteArea');
@@ -4728,7 +4965,8 @@ function encyParseEntry(mdText){
     demos.push(encyParseDemo(sectionText));
   }
   return {id:fm.meta.id, nom:fm.meta.nom, rayons:fm.meta.rayons, phase:fm.meta.phase,
-    alias:fm.meta.alias, liens:fm.meta.liens, demos:demos};
+    alias:fm.meta.alias, liens:fm.meta.liens, remplace:fm.meta.remplace, onglet:fm.meta.onglet,
+    body:fm.body, demos:demos};
 }
 function encyResolveTree(root, rootFen){
   var issues=[], checksRun=0;
@@ -4876,7 +5114,10 @@ function encyClose(){
   // La démonstration a été lancée depuis l'encyclopédie : on y revient, au lieu de laisser
   // le joueur sur un échiquier vide. La boucle de lecture se referme (liste → entrée →
   // démonstration → entrée).
-  if(back && typeof openEnc==='function') openEnc(back.sec, back.id);
+  if(back && typeof openEnc==='function'){
+    openEnc(back.sec, back.fiche);
+    if(back.entry && typeof encOpenEntry==='function') encOpenEntry(back.entry);
+  }
 }
 
 /* --- Deux temps, séparés : résoudre / jouer -------------------------------
@@ -4914,27 +5155,17 @@ function encyLoadEntry(mdText, returnTo){
   if(st) st.textContent='';
   return encyStartDemo(entry, 0, returnTo);
 }
-function encyFetchAndLoad(){
-  var id=(document.getElementById('encyId').value||'').trim();
-  var st=document.getElementById('encyImportStatus');
-  if(!id) return;
-  if(st) st.textContent='Chargement…';
-  fetch('_fonds/encyclopedie/'+id+'.md').then(function(r){
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.text();
-  }).then(function(txt){ encyLoadEntry(txt); }).catch(function(e){
-    if(st) st.textContent='Échec (fetch : '+e.message+') — colle le texte ou choisis un fichier.';
-  });
-}
+/* Chargeur de rédaction (pied de l'overlay) : voir une entrée PAS ENCORE posée dans
+   _fonds/. Le chargement par id, lui, n'existe plus — c'est la liste qui l'assure. */
 function encyLoadFromTextarea(){
   var txt=(document.getElementById('encyPaste').value||'');
   if(!txt.trim()) return;
-  encyLoadEntry(txt);
+  if(encyLoadEntry(txt)) closeEnc();
 }
 function encyImportFile(input){
   var f=input.files && input.files[0]; if(!f) return;
   var reader=new FileReader();
-  reader.onload=function(){ encyLoadEntry(String(reader.result)); };
+  reader.onload=function(){ if(encyLoadEntry(String(reader.result))) closeEnc(); };
   reader.readAsText(f);
 }
 

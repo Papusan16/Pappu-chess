@@ -55,6 +55,8 @@ liens:
   - double-echec
   - deviation
   - batterie
+remplace:
+  - decouverte
 ---
 
 # L'échec à la découverte

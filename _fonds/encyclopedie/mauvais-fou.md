@@ -40,6 +40,8 @@ liens:
   - francaise-avance
   - finale-fou-contre-cavalier
   - controle-des-couleurs
+remplace:
+  - bon-mauvais-fou
 ---
 
 # Le mauvais fou

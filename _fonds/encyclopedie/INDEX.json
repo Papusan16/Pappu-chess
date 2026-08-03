@@ -1,0 +1,61 @@
+[
+ {
+  "id": "echec-a-la-decouverte",
+  "nom": "L'échec à la découverte",
+  "phase": "milieu",
+  "rayons": [
+   "Technique",
+   "Méthode"
+  ],
+  "alias": [
+   "découverte",
+   "decouverte",
+   "échec à la découverte",
+   "attaque à la découverte",
+   "attaque découverte",
+   "coup à la découverte",
+   "batterie",
+   "pièce masquante",
+   "double échec"
+  ],
+  "liens": [
+   "fourchette",
+   "clouage",
+   "double-echec",
+   "deviation",
+   "batterie"
+  ],
+  "remplace": [
+   "decouverte"
+  ],
+  "demos": 1
+ },
+ {
+  "id": "mauvais-fou",
+  "nom": "Le mauvais fou",
+  "phase": "milieu",
+  "rayons": [
+   "Technique",
+   "Méthode"
+  ],
+  "alias": [
+   "mauvais fou",
+   "mauvais-fou",
+   "bon fou mauvais fou",
+   "fou de la couleur de ses pions",
+   "fou enterré",
+   "fou passif"
+  ],
+  "liens": [
+   "doctrine-couleur",
+   "bon-fou",
+   "francaise-avance",
+   "finale-fou-contre-cavalier",
+   "controle-des-couleurs"
+  ],
+  "remplace": [
+   "bon-mauvais-fou"
+  ],
+  "demos": 6
+ }
+]
