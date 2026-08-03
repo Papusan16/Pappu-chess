@@ -2553,6 +2553,7 @@ let encyEntry=null;      // entrée parsée (front-matter + liste de démonstrat
 let encyDemo=null;       // démonstration actuellement jouée : {title, role, fenRoot, root, verification}
 let encyPath=[];         // chemin depuis la racine : [{name,label}, ...]
 let encyStep=0;          // index de l'étape courante dans le nœud (branche) actuel
+let encyReturn=null;     // d'où la démonstration a été lancée : {sec,id} → la fermer rouvre l'encyclopédie là
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
 let userElo=320; // niveau réel de l'utilisateur (Elo Chess.com ou FIDE) — le Fou calibre ses conseils dessus
 function setUserLevel(v){ var n=parseInt(v,10); if(!isNaN(n)&&n>0) userElo=n; }
@@ -4869,23 +4870,49 @@ function encyBackToFork(){
   encyGoto();
 }
 function encyClose(){
-  encyMode=false; encyEntry=null; encyDemo=null; encyPath=[]; encyStep=0;
+  var back=encyReturn;
+  encyMode=false; encyEntry=null; encyDemo=null; encyPath=[]; encyStep=0; encyReturn=null;
   reset();
+  // La démonstration a été lancée depuis l'encyclopédie : on y revient, au lieu de laisser
+  // le joueur sur un échiquier vide. La boucle de lecture se referme (liste → entrée →
+  // démonstration → entrée).
+  if(back && typeof openEnc==='function') openEnc(back.sec, back.id);
 }
-function encyLoadEntry(mdText){
-  var entry;
-  try{ entry=encyParseEntry(mdText); }
-  catch(e){ var st=document.getElementById('encyImportStatus'); if(st) st.textContent='Erreur de lecture : '+e.message; return; }
-  if(!entry.demos.length){ var st2=document.getElementById('encyImportStatus'); if(st2) st2.textContent='Aucune démonstration trouvée dans ce texte.'; return; }
-  var demo=entry.demos[0]; // prototype : une seule démo jouée pour l'instant ; sélecteur à ajouter s'il y en a plusieurs
-  demo.verification=encyResolveTree(demo.root, demo.fenRoot);
+
+/* --- Deux temps, séparés : résoudre / jouer -------------------------------
+   encyResolveEntry() ne fait QUE lire (parsing + rejeu de vérification) : elle ne
+   touche ni à l'échiquier, ni à l'état de partie. C'est ce que l'overlay appelle au
+   clic sur une fiche, pour afficher la prose d'une entrée sans rien lancer.
+   encyStartDemo() est la prise en main de l'échiquier, déclenchée seulement quand le
+   joueur demande à dérouler une démonstration. */
+
+function encyResolveEntry(mdText){
+  var entry=encyParseEntry(mdText);
+  // chaque démonstration porte sa propre vérification, résolue une fois ici
+  entry.demos.forEach(function(d){ d.verification=encyResolveTree(d.root, d.fenRoot); });
+  return entry;
+}
+function encyStartDemo(entry, i, returnTo){
+  var demo=entry && entry.demos ? entry.demos[i||0] : null;
+  if(!demo) return false;
   encyEntry=entry; encyDemo=demo; encyPath=[]; encyStep=0; encyMode=true;
+  encyReturn=returnTo||null;
   fullMoves=[]; cursor=0; gameAnalysis=null; moveComments=[]; moveAnnotations=[];
   pgnMode=false; startFen=null;
   setPlayMode(false);
   var pa=document.getElementById('pasteArea'); if(pa) pa.style.display='none';
-  var st3=document.getElementById('encyImportStatus'); if(st3) st3.textContent='';
   encyGoto();
+  return true;
+}
+// Chargement direct depuis du texte Markdown (chargeur de rédaction) : résout puis joue.
+function encyLoadEntry(mdText, returnTo){
+  var st=document.getElementById('encyImportStatus');
+  var entry;
+  try{ entry=encyResolveEntry(mdText); }
+  catch(e){ if(st) st.textContent='Erreur de lecture : '+e.message; return false; }
+  if(!entry.demos.length){ if(st) st.textContent='Aucune démonstration trouvée dans ce texte.'; return false; }
+  if(st) st.textContent='';
+  return encyStartDemo(entry, 0, returnTo);
 }
 function encyFetchAndLoad(){
   var id=(document.getElementById('encyId').value||'').trim();
