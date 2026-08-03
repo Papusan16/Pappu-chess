@@ -34,6 +34,7 @@
   "id": "mauvais-fou",
   "nom": "Le mauvais fou",
   "phase": "milieu",
+  "onglet": "strategy",
   "rayons": [
    "Technique",
    "Méthode"
@@ -56,6 +57,6 @@
   "remplace": [
    "bon-mauvais-fou"
   ],
-  "demos": 6
+  "demos": 5
  }
 ]

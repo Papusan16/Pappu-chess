@@ -42,6 +42,10 @@ liens:
   - controle-des-couleurs
 remplace:
   - bon-mauvais-fou
+# Dérogation de rangement, pas de classification : le rayon Technique + phase milieu
+# rangerait cette entrée en Tactiques, or le joueur la cherche en Stratégie. `onglet:`
+# ne décrit rien de l'objet et n'est pas lu par le moteur — cf. FORMAT, deux niveaux.
+onglet: strategy
 ---
 
 # Le mauvais fou

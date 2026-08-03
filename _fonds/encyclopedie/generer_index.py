@@ -61,12 +61,36 @@ def lire_front_matter(texte):
     return meta
 
 
+def onglet_derive(meta):
+    """Rayon (+ phase) → onglet d'affichage. RECOPIE de la table `encTabOf` de
+    Papu_Chess.html : les deux doivent rester d'accord (elle ne sert ici qu'à
+    signaler une incohérence, l'app reste seule maîtresse de l'affichage)."""
+    if meta.get("onglet"):
+        return meta["onglet"]
+    rayon = (meta.get("rayons") or [""])[0].lower()
+    phase = (meta.get("phase") or "").lower()
+    if rayon.startswith("histoire"):
+        return "history"
+    if rayon.startswith("pratique"):
+        return "practice"
+    if rayon.startswith("m"):
+        return "method"
+    if rayon.startswith("th"):
+        return "openings" if phase == "ouverture" else "strategy"
+    if rayon.startswith("te"):
+        return "endgames" if phase == "finale" else "tactics"
+    return "tactics"
+
+
 def ids_fiches_en_dur():
-    """Les ids de fiches en dur de l'application (ENC.*, OPS, PEOPLE)."""
+    """Les fiches en dur de l'application : id → onglet (ENC.*, OPS, PEOPLE)."""
     if not APP.exists():
         return None
     h = APP.read_text(encoding="utf-8")
-    ids = set()
+    # onglet d'origine de chaque lot de fiches, tel que SECTIONS le déclare
+    onglet_du_lot = {"tactics": "tactics", "strategy": "strategy", "endgames": "endgames",
+                     "method": "method", "OPS": "openings", "PEOPLE": "history"}
+    ids = {}
     for cle in ("ENC={", "OPS=[", "PEOPLE={"):
         i = h.find(cle)
         if i < 0:
@@ -84,12 +108,13 @@ def ids_fiches_en_dur():
             j += 1
         blob = json.loads(h[i + len(cle) - 1: j + 1])
         if isinstance(blob, dict) and cle.startswith("PEOPLE"):
-            ids |= set(blob.keys())
-        elif isinstance(blob, dict):
-            for lot in blob.values():
-                ids |= {x["id"] for x in lot if "id" in x}
-        else:
-            ids |= {x["id"] for x in blob if "id" in x}
+            ids.update({k: onglet_du_lot["PEOPLE"] for k in blob})
+        elif isinstance(blob, dict):  # ENC : un lot par onglet
+            for nom_lot, lot in blob.items():
+                ids.update({x["id"]: onglet_du_lot.get(nom_lot, nom_lot)
+                            for x in lot if "id" in x})
+        else:  # OPS
+            ids.update({x["id"]: onglet_du_lot["OPS"] for x in blob if "id" in x})
     return ids
 
 
@@ -119,10 +144,19 @@ def main():
         avertissements.append("Papu_Chess.html introuvable — `remplace:` non vérifié.")
     else:
         for e in entrees:
+            onglet = onglet_derive(e)
             for cible in e.get("remplace", []):
                 if cible not in dur:
                     avertissements.append(
                         f"{e['id']} : remplace « {cible} », qui n'est aucune fiche en dur."
+                    )
+                elif dur[cible] != onglet:
+                    # L'entrée effacerait une fiche d'un onglet pour réapparaître dans un
+                    # autre : le joueur la perdrait de vue. `onglet:` sert exactement à ça.
+                    avertissements.append(
+                        f"{e['id']} : rangée dans « {onglet} » mais périme « {cible} », "
+                        f"qui vit dans « {dur[cible]} » — ajoute `onglet: {dur[cible]}` "
+                        f"si c'est là que le joueur doit la trouver."
                     )
 
     (ICI / "INDEX.json").write_text(
@@ -130,7 +164,8 @@ def main():
     )
     print(f"INDEX.json : {len(entrees)} entrée(s).")
     for e in entrees:
-        print(f"  · {e['id']:26} démos={e['demos']} remplace={e.get('remplace', [])}")
+        print(f"  · {e['id']:26} onglet={onglet_derive(e):9} démos={e['demos']} "
+              f"remplace={e.get('remplace', [])}")
     for a in avertissements:
         print(f"  ⚠ {a}")
     return 1 if avertissements else 0

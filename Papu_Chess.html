@@ -2096,6 +2096,7 @@ button.ctrl:active{transform:scale(.93)}
 .enc-loader-row{display:flex;gap:8px}
 .enc-loader-row .ctrl{flex:1}
 #encyImportStatus{font-size:.68rem;color:var(--text-muted);min-height:1em}
+.enc-vide{color:var(--text-dim);text-align:center;padding:22px 14px;font-size:.85rem;line-height:1.5}
 .target{box-shadow:0 0 0 3px var(--gold-light),0 6px 22px var(--cible-glow)!important;animation:flash 1.4s}
 @keyframes flash{0%,100%{box-shadow:0 0 0 3px var(--gold-light)}50%{box-shadow:0 0 0 6px var(--gold-light)}}
 
@@ -3805,7 +3806,7 @@ function identify(animate){
   if(NOTES[seq[0]]&&NOTES[seq[0]].idea)html+='<span class="chip idea" onclick="tog(\'d-idea\')">'+lblIdea+'</span>';
   if(note&&note.reply)html+='<span class="chip reply" onclick="tog(\'d-reply\')">'+lblReply+'</span>';
   if(note&&note.whiteplan)html+='<span class="chip white" onclick="tog(\'d-white\')">'+lblPlan+'</span>';
-  if(pk&&PEOPLE[pk])html+='<span class="chip person" onclick="openEnc(\'people\',\''+pk+'\')">📜 '+PEOPLE[pk].name.split(/[ (]/)[0]+'</span>';
+  if(pk&&PEOPLE[pk])html+='<span class="chip person" onclick="openEnc(\'history\',\''+pk+'\')">📜 '+PEOPLE[pk].name.split(/[ (]/)[0]+'</span>';
   html+='</div>';
   if(NOTES[seq[0]]&&NOTES[seq[0]].idea)html+='<div class="detail d-idea" id="d-idea"><b>'+ttlIdea+'</b> '+NOTES[seq[0]].idea+'</div>';
   if(note&&note.reply)html+='<div class="detail '+(isWarn?'d-warn':'d-reply')+'" id="d-reply"><b>'+ttlReply+'</b> '+note.reply+'</div>';
@@ -4159,8 +4160,38 @@ const SECTIONS=[
   {id:'openings',label:'📖 Ouvertures',data:OPS,type:'open'},
   {id:'endgames',label:'👑 Finales',data:ENC.endgames,type:'enc'},
   {id:'method',label:'🧭 Méthode',data:ENC.method,type:'enc'},
-  {id:'people',label:'🎭 Personnages',data:null,type:'people'}
+  // Histoire absorbe les figures (plus d'onglet Personnages séparé) : une figure, une
+  // partie célèbre et un récit relèvent du même rayon pour le joueur qui cherche.
+  {id:'history',label:'🏛️ Histoire',data:null,type:'people'},
+  {id:'practice',label:'🎯 Pratique',data:[],type:'enc'}
 ];
+/* --- Rayon (fond, porté par l'entrée) → onglet (vue de navigation, porté par l'app) ---
+   Le rayon dit ce qu'est l'objet ; l'onglet dit où le joueur va le chercher. La clé
+   `onglet:` d'une entrée est une DÉROGATION, pas une seconde classification : elle ne
+   décrit rien, elle range — et le moteur n'a pas le droit de la lire.
+   Le partage Tactiques/Stratégie est le seul que les rayons ne tranchent pas (nos deux
+   entrées portent le même [Technique, Méthode] / milieu, l'une est tactique, l'autre
+   stratégique) : c'est là que la dérogation sert. */
+const ENC_ONGLETS={tactics:1,strategy:1,openings:1,endgames:1,method:1,history:1,practice:1};
+function encTabOf(meta){
+  if(!meta) return null;
+  if(meta.onglet && ENC_ONGLETS[meta.onglet]) return meta.onglet;
+  var rayon=((meta.rayons||[])[0]||'').toLowerCase(); // le PREMIER rayon range l'entrée
+  var phase=(meta.phase||'').toLowerCase();
+  if(rayon.indexOf('histoire')===0) return 'history';
+  if(rayon.indexOf('pratique')===0) return 'practice';
+  if(rayon.indexOf('m')===0) return 'method';                       // Méthode
+  if(rayon.indexOf('th')===0) return phase==='ouverture'?'openings':'strategy';  // Théorie
+  if(rayon.indexOf('te')===0) return phase==='finale'?'endgames':'tactics';      // Technique
+  return 'tactics';
+}
+// Entrées riches à afficher dans cet onglet : celles qui y sont rangées et qui n'y ont pas
+// déjà pris la place d'une fiche en dur (sinon elles apparaîtraient deux fois).
+function encEntriesFor(secId, dejaVues){
+  return encIndex.filter(function(m){
+    return m && m.id && !encBroken[m.id] && encTabOf(m)===secId && !dejaVues[m.id];
+  });
+}
 let curSec='tactics',focusId=null;
 function buildSecTabs(){const el=document.getElementById('secTabs');el.innerHTML='';SECTIONS.forEach(s=>{const d=document.createElement('div');d.className='sec-tab'+(s.id===curSec?' active':'');d.textContent=s.label;d.onclick=()=>{curSec=s.id;focusId=null;buildSecTabs();renderEnc();};el.appendChild(d);});}
 function freqLabel(f){return f===3?'<span class="efreq f3">Très courant</span>':f===2?'<span class="efreq f2">Courant</span>':'<span class="efreq f1">Occasionnel</span>';}
@@ -4191,11 +4222,12 @@ function renderEnc(){
   if(encView==='entry'){ encRenderEntry(); return; }
   const sec=SECTIONS.find(s=>s.id===curSec);const list=document.getElementById('encList');list.innerHTML='';
   const filter=(document.getElementById('encSearch').value||'').toLowerCase();
+  const vues={}; // entrées riches déjà posées ici à la place d'une fiche en dur
   if(encMsg){ const m=document.createElement('div');m.className='enc-msg';m.textContent=encMsg;list.appendChild(m); }
   if(sec.type==='people'){
     for(const k of Object.keys(PEOPLE)){const p=PEOPLE[k];if(filter&&!(p.name+' '+p.country+' '+p.role+' '+(p.openings||[]).join(' ')).toLowerCase().includes(filter))continue;
       const rich=encRichFor(k);
-      if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),p.name)) list.appendChild(encRichItem(rich,p.country+' · '+p.role)); continue; }
+      if(rich){ vues[rich.id]=1; if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),p.name)) list.appendChild(encRichItem(rich,p.country+' · '+p.role)); continue; }
       const it=document.createElement('div');it.className='enc-item'+(k===focusId?' open':'');it.id='enc-'+k;
       it.innerHTML='<div class="eh"><span class="en">'+p.name+'</span><span class="emoves">'+p.life+'</span></div><div class="eshort">'+p.country+' · '+p.role+'</div><span class="ecaret">▾ Lire la fiche</span><div class="edetail">'+(p.openings?'<div class="blk blk-idea"><b>Ouvertures :</b> '+p.openings.join(' · ')+'</div>':'')+'<div class="blk blk-ex">'+p.bio+'</div></div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
@@ -4204,12 +4236,12 @@ function renderEnc(){
   } else if(sec.type==='open'){
     for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
       const rich=encRichFor(o.id);
-      if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.moves,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
+      if(rich){ vues[rich.id]=1; if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.moves,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
       if(filter&&!(o.name+' '+o.moves+' '+o.short).toLowerCase().includes(filter))continue;
       const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea"><b>Idée.</b> '+o.idea+'</div><div class="blk blk-reply"><b>Comment réagir.</b> '+o.reply+'</div>';
       if(o.trap)d+='<div class="blk blk-trap"><b>À savoir.</b> '+o.trap+'</div>';
-      if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();curSec=\'people\';focusId=\''+o.person+'\';buildSecTabs();renderEnc();">📜 Voir : '+PEOPLE[o.person].name+'</span>';
+      if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();curSec=\'history\';focusId=\''+o.person+'\';buildSecTabs();renderEnc();">📜 Voir : '+PEOPLE[o.person].name+'</span>';
       it.innerHTML='<div class="eh"><span class="en">'+o.name+'</span>'+freqLabel(o.freq)+'</div><div class="emoves" style="margin-top:3px">'+o.moves+'</div><div class="eshort">'+o.short+'</div><span class="ecaret">▾ Détails</span><div class="edetail">'+d+'</div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
       encFocus(it,o.id);
@@ -4217,7 +4249,7 @@ function renderEnc(){
   } else {
     for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
       const rich=encRichFor(o.id);
-      if(rich){ if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
+      if(rich){ vues[rich.id]=1; if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
       if(filter&&!(o.name+' '+o.short+' '+o.full).toLowerCase().includes(filter))continue;
       const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea">'+o.full+'</div>';
@@ -4228,7 +4260,16 @@ function renderEnc(){
       encFocus(it,o.id);
     }
   }
-  if(!list.children.length)list.innerHTML='<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:.85rem">Aucun résultat.</div>';
+  // Entrées riches rangées dans cet onglet sans y périmer de fiche : c'est ainsi qu'une
+  // entrée sans équivalent en dur (une figure, un objet neuf) trouve sa place.
+  encEntriesFor(sec.id, vues).forEach(function(m){
+    if(encMatch(filter,m.nom,(m.alias||[]).join(' '),(m.rayons||[]).join(' '))) list.appendChild(encRichItem(m,null));
+  });
+  if(!list.children.length){
+    list.innerHTML = filter
+      ? '<div class="enc-vide">Aucun résultat.</div>'
+      : '<div class="enc-vide">Ce rayon attend ses premières entrées.<br>Une entrée d\'encyclopédie s\'y rangera dès qu\'elle en portera le rayon.</div>';
+  }
 }
 function openEnc(sec,focus){
   if(sec)curSec=sec; if(focus)focusId=focus;
