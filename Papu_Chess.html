@@ -2009,7 +2009,9 @@ button.ctrl:active{transform:scale(.93)}
 .ency-status.ok{background:var(--tone-green-bg);color:var(--success)}
 .ency-status.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
 .ency-crumb{font-size:.74rem;color:var(--text-soft);margin-bottom:8px;font-family:ui-serif,Georgia,serif}
-.ency-branches{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.ency-branch-slot{width:100%}
+.ency-branch-slot:empty{display:none}
+.ency-branches{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
 .ency-branches button{flex:1;min-width:110px;background:linear-gradient(180deg,var(--btn-teach-top),var(--btn-teach-bottom));border:1px solid var(--arrow-alt);border-radius:9px;color:var(--btn-colorpick-text);font-size:.76rem;font-weight:700;padding:8px 6px;cursor:pointer;font-family:ui-sans-serif,system-ui,sans-serif}
 .ency-back,.ency-close{width:100%;margin-top:4px;border-radius:8px;padding:8px;font-size:.74rem;font-weight:700;cursor:pointer;border:1px solid var(--border-a);background:var(--surface);color:var(--text-muted);font-family:ui-sans-serif,system-ui,sans-serif}
 .ency-close{color:var(--burgundy-text,var(--text-muted))}
@@ -2229,6 +2231,7 @@ button.ctrl:active{transform:scale(.93)}
       "board  turn"
       "board  ctrl"
       "board  nav"
+      "board  branch"
       "board  jester"
       "board  engine"
       "board  note"
@@ -2254,6 +2257,7 @@ button.ctrl:active{transform:scale(.93)}
      l'échiquier vers le bas et n'ajoute plus de hauteur sous lui (cf. fitBoard : réservation
      de la nav supprimée du calcul, elle ne vit plus dans la colonne gauche). */
   .nav-controls{grid-area:nav;margin-top:2px}
+  .ency-branch-slot{grid-area:branch}
   #engineStatus{grid-area:engine;margin-top:0 !important;text-align:right;opacity:.75}
   #offlineNote{grid-area:note}
   .paste-area{grid-area:paste}
@@ -2585,6 +2589,9 @@ button.ctrl:active{transform:scale(.93)}
     <button onclick="navNext()" title="Avancer">▶</button>
     <button onclick="navEnd()" title="Fin">⏭</button>
   </div>
+  <!-- Boutons de branche : ils vivent juste sous la navigation, parce que choisir une
+       branche à un embranchement prolonge le geste d'avancer. Rempli par encyRenderPanel. -->
+  <div class="ency-branch-slot" id="encyBranchSlot"></div>
   <div class="moves-played" id="movesPlayed"><span class="hint">Les coups joués apparaîtront ici…</span></div>
 </div>
 
@@ -3772,6 +3779,8 @@ function updateCoachState(){
 }
 function updateMoves(){const el=document.getElementById('movesPlayed');
   updateNavState(); updateCoachState();
+  var slot=document.getElementById('encyBranchSlot');
+  if(slot && !(encyMode && encyDemo)) slot.innerHTML='';
   if(encyMode){ encyRenderPanel(); return; }
   if(!fullMoves.length){el.innerHTML='<span class="hint">Les coups joués apparaîtront ici…</span>';return;}
   let s='';
@@ -5350,6 +5359,18 @@ function encyIdentify(sp, animate){
   else if(step.isReset) html+='<div class="stext" style="font-style:italic">Fin de cette branche — reviens à l\'embranchement pour explorer la sœur.</div>';
   sp.innerHTML=html;
 }
+// Les branches ne vivent PAS dans le panneau : elles s'affichent dans leur emplacement
+// propre, immédiatement sous les flèches de navigation.
+function encyRenderBranches(node){
+  var slot=document.getElementById('encyBranchSlot'); if(!slot) return;
+  var atLast=(encyStep===node.steps.length-1);
+  if(!(atLast && node.children.length)){ slot.innerHTML=''; return; }
+  var h='<div class="ency-branches">';
+  node.children.forEach(function(ch){
+    h+='<button onclick="encyChooseBranch(\''+ch.name.replace(/'/g,"\\'")+'\')">→ '+ch.label+'</button>';
+  });
+  slot.innerHTML=h+'</div>';
+}
 function encyRenderPanel(){
   var el=document.getElementById('movesPlayed'); if(!el || !encyDemo) return;
   var node=encyCurrentNode(), v=encyDemo.verification;
@@ -5358,14 +5379,7 @@ function encyRenderPanel(){
     (v.issues.length? '<br>'+v.issues.map(function(s){return '· '+s;}).join('<br>') : '')+'</div>'; }
   var crumbs=['Racine'].concat(encyPath.map(function(p){return p.label;}));
   html+='<div class="ency-crumb">'+crumbs.join(' › ')+' — étape '+(encyStep+1)+'/'+node.steps.length+'</div>';
-  var atLast=(encyStep===node.steps.length-1);
-  if(atLast && node.children.length){
-    html+='<div class="ency-branches">';
-    node.children.forEach(function(ch){
-      html+='<button onclick="encyChooseBranch(\''+ch.name.replace(/'/g,"\\'")+'\')">→ '+ch.label+'</button>';
-    });
-    html+='</div>';
-  }
+  encyRenderBranches(node);
   if(encyPath.length) html+='<button class="ency-back" onclick="encyBackToFork()">🔼 Revenir à l\'embranchement</button>';
   html+='<button class="ency-close" onclick="encyClose()">✕ Fermer la démonstration</button>';
   el.innerHTML=html;
