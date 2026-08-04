@@ -4042,6 +4042,10 @@ function encLinkHtml(id, texte){
 function encGoTo(id){
   var t=encResolveTarget(id);
   if(!t) return false;
+  // Un lien peut être cliqué depuis la BULLE DU FOU, pendant une démonstration, donc
+  // overlay fermé : sans ça, la fiche se dessinerait derrière un panneau invisible et le
+  // clic n'aurait aucun effet visible. L'échiquier garde sa démonstration en dessous.
+  var ov=document.getElementById('overlay'); if(ov) ov.classList.add('show');
   if(t.type==='entry'){ encOpenEntry(t.id); return false; }
   curSec=t.sec; focusId=t.id;
   encView='list'; encEntryShown=null; encEntryId=null;
