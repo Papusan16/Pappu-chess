@@ -2097,6 +2097,63 @@ button.ctrl:active{transform:scale(.93)}
 .enc-loader-row .ctrl{flex:1}
 #encyImportStatus{font-size:.68rem;color:var(--text-muted);min-height:1em}
 .enc-vide{color:var(--text-dim);text-align:center;padding:22px 14px;font-size:.85rem;line-height:1.5}
+
+/* ===== SURBRILLANCE DES ÉLÉMENTS CLIQUABLES — règle générale =====
+   Cinq règles, valables partout, pas des retouches au cas par cas :
+   R1. AU REPOS l'affordance est déjà là (surface pour un bouton ou une carte,
+       soulignement pour un lien en ligne). C'est la règle porteuse : sur tactile il
+       n'y a pas de survol, donc rien ne peut DÉPENDRE du survol pour se signaler.
+   R2. SURBRILLANCE : un seul geste visuel partout — anneau doré + éclaircissement,
+       au survol ET au focus clavier. Le survol est gardé par `hover:hover` pour
+       qu'un tap ne laisse pas un élément collé en état survolé.
+   R3. APPUI : léger enfoncement (fort sur un bouton, discret sur une carte).
+   R4. INERTE : ce qui n'est pas cliquable ne prend JAMAIS l'anneau et garde le
+       curseur de texte — amorce de lien, pastilles de rayon, bannières.
+   R5. BOUT DE COURSE : une flèche qui ne mène nulle part s'éteint (classe .off) —
+       sans quoi la surbrillance mentirait. */
+.sec-tab,.enc-item,.enc-item .person-link,.closebtn,.enc-loader summary,
+.enc-loader-row .ctrl,.ent-back,.ent-demo,.lien-enc,#encSearch,
+.nav-controls button,.ency-branches button,.ency-back,.ency-close{
+  transition:box-shadow .15s ease,filter .15s ease,transform .08s ease;
+}
+/* R2 — survol (souris seulement) */
+@media (hover:hover){
+  .sec-tab:hover,.enc-item:hover,.enc-item .person-link:hover,.closebtn:hover,
+  .enc-loader summary:hover,.enc-loader-row .ctrl:hover,.ent-back:hover,
+  .ent-demo:hover,.lien-enc:hover,.ency-branches button:hover,
+  .ency-back:hover,.ency-close:hover,.nav-controls button:not(.off):hover{
+    box-shadow:0 0 0 2px var(--gold-a40);filter:brightness(1.12)
+  }
+}
+/* R2 — focus clavier, sans garde : il vaut sur tous les appareils */
+.sec-tab:focus-visible,.enc-item:focus-visible,.enc-item .person-link:focus-visible,
+.closebtn:focus-visible,.enc-loader summary:focus-visible,.enc-loader-row .ctrl:focus-visible,
+.ent-back:focus-visible,.ent-demo:focus-visible,.lien-enc:focus-visible,#encSearch:focus,
+.ency-branches button:focus-visible,.ency-back:focus-visible,.ency-close:focus-visible,
+.nav-controls button:not(.off):focus-visible{
+  outline:none;box-shadow:0 0 0 2px var(--gold-a40);filter:brightness(1.12)
+}
+/* R1 — deux éléments manquaient d'affordance au repos */
+.sec-tab{border:1px solid var(--border-2)}
+.sec-tab.active{border-color:var(--gold)}
+.enc-loader summary{border:1px dashed var(--border-dashed);border-radius:8px;padding:7px 10px}
+/* R2 — l'anneau sur un lien en ligne a besoin d'un peu d'air */
+.lien-enc{border-radius:4px;padding:0 2px}
+/* R3 — appui : franc sur un bouton, à peine perceptible sur une carte */
+.sec-tab:active,.closebtn:active,.enc-loader-row .ctrl:active,.ent-back:active,
+.ent-demo:active,.ency-branches button:active,.ency-back:active,.ency-close:active{transform:scale(.93)}
+.enc-item:active{transform:scale(.985)}
+/* R4 — inerte : jamais d'anneau, jamais de curseur main */
+.lien-amorce,.ent-chip,.ent-vrf,.ent-note,.enc-msg,.ency-status,.enc-vide{cursor:default}
+/* R5 — flèche en bout de course */
+.nav-controls button.off{opacity:.35;cursor:default}
+/* Cibles tactiles : viser un bouton au doigt demande ~40 px. Sous `pointer:coarse`
+   seulement, pour ne pas gonfler la colonne droite en desktop. */
+@media (pointer:coarse){
+  .nav-controls button,.ency-branches button,.ency-back,.ency-close,
+  .sec-tab,.ent-back,.enc-loader-row .ctrl{min-height:40px}
+  .sec-tab{display:flex;align-items:center}
+}
 .target{box-shadow:0 0 0 3px var(--gold-light),0 6px 22px var(--cible-glow)!important;animation:flash 1.4s}
 @keyframes flash{0%,100%{box-shadow:0 0 0 3px var(--gold-light)}50%{box-shadow:0 0 0 6px var(--gold-light)}}
 
@@ -3677,7 +3734,24 @@ function flipBoard(){flipped=!flipped;buildBoard();
   if(!playMode) maybeOfferPerspective();
   identify(false);
 }
+// R5 de la règle de surbrillance : une flèche qui ne mène nulle part s'éteint. Sans ça,
+// mettre les flèches en surbrillance serait un mensonge — elles se signaleraient comme
+// cliquables aux deux bouts de la lecture, où elles ne font rien.
+function updateNavState(){
+  var row=document.querySelector('.nav-controls'); if(!row) return;
+  var b=row.querySelectorAll('button'); if(b.length<4) return;
+  var auDebut, aLaFin;
+  if(encyMode && encyDemo){
+    var n=encyCurrentNode();
+    auDebut=(encyStep<=0); aLaFin=(encyStep>=n.steps.length-1);
+  } else {
+    auDebut=(cursor<=0); aLaFin=(cursor>=fullMoves.length);
+  }
+  b[0].classList.toggle('off',auDebut); b[1].classList.toggle('off',auDebut);
+  b[2].classList.toggle('off',aLaFin);  b[3].classList.toggle('off',aLaFin);
+}
 function updateMoves(){const el=document.getElementById('movesPlayed');
+  updateNavState();
   if(encyMode){ encyRenderPanel(); return; }
   if(!fullMoves.length){el.innerHTML='<span class="hint">Les coups joués apparaîtront ici…</span>';return;}
   let s='';
