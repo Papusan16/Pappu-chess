@@ -257,6 +257,26 @@ et `_sessions/2026-08-03.md` ; ci-dessous la continuité seule.
   démonstrations ne se jouent pas ; conventions de prose du lecteur
   (`ÉTAPE X — …`, `### Branche A — « … »`) encore implicites.
 
+## 2026-08-04 — PALIER : la branche lecteur-etapes-ramifie fusionnée dans main
+
+**Premier état public de l'encyclopédie-overlay.** Fusion validée à
+l'écran par Flavien, commit de fusion explicite (`--no-ff`) : 24 commits,
+13 fichiers. La branche est conservée, non supprimée.
+
+Reste ouvert :
+
+- **École / Top mats** — deux amorces `top-mats-nataf` l'attendent déjà
+  (le « ici » de la pause de `echec-a-la-decouverte`, et le champ `liens`
+  de `nataf`). Elles s'allumeront d'elles-mêmes le jour où l'entrée
+  portera cet id.
+- **Migration de `mauvais-fou` du format v2 vers v5** : ses cinq
+  démonstrations ne se jouent pas (prose intacte, encadré « non jouable »
+  à la place de chaque bouton).
+- **Vérifications Nataf à la vidéo** : la fiche porte une biographie tenue
+  pour vérifiée mais dont la référence bibliographique n'est pas
+  consignée, et la position de la démonstration n'est rattachée à aucune
+  partie identifiée.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
