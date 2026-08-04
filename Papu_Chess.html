@@ -2145,8 +2145,11 @@ button.ctrl:active{transform:scale(.93)}
 .enc-item:active{transform:scale(.985)}
 /* R4 — inerte : jamais d'anneau, jamais de curseur main */
 .lien-amorce,.ent-chip,.ent-vrf,.ent-note,.enc-msg,.ency-status,.enc-vide{cursor:default}
-/* R5 — flèche en bout de course */
+/* R5 — flèche en bout de course, et tout contrôle rendu inopérant par le contexte
+   (le coach de partie pendant une démonstration d'encyclopédie) */
 .nav-controls button.off{opacity:.35;cursor:default}
+.teach-btn.off,.toggle-arrows.off{opacity:.35;cursor:default;filter:none;box-shadow:none}
+.teach-btn.off:hover,.toggle-arrows.off:hover{filter:none;box-shadow:none}
 /* Cibles tactiles : viser un bouton au doigt demande ~40 px. Sous `pointer:coarse`
    seulement, pour ne pas gonfler la colonne droite en desktop. */
 @media (pointer:coarse){
@@ -2492,7 +2495,7 @@ button.ctrl:active{transform:scale(.93)}
   </div>
   </div>
   <div class="turn-ind" id="turnInd">Trait aux Blancs</div>
-  <label class="toggle-arrows"><input type="checkbox" id="arrowToggle" checked onchange="drawArrows()"> 🟢 Coups recommandés (flèches)</label>
+  <label class="toggle-arrows" id="arrowToggleLabel"><input type="checkbox" id="arrowToggle" checked onchange="drawArrows()"> 🟢 Coups recommandés (flèches)</label>
   <div id="engineStatus" style="font-size:.68rem;color:var(--text-dim);margin-top:1px">Moteur : connexion...</div>
   <div id="offlineNote" style="display:none;font-size:.64rem;color:var(--text-dim);margin-top:1px">
     <span onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'" style="cursor:pointer;text-decoration:underline dotted">📵 Mode nomade — détails</span>
@@ -2505,7 +2508,7 @@ button.ctrl:active{transform:scale(.93)}
     <button class="ctrl persp-btn" onclick="openPerspectivePopup()" title="Perspective &amp; coaching">🎭</button>
   </div>
   <div class="teach-row">
-      <button class="teach-btn" onclick="askHint()">💡 Idée du prof</button>
+      <button class="teach-btn" id="hintBtn" onclick="askHint()">💡 Idée du prof</button>
       <button class="teach-btn" onclick="exportPGN()" title="Télécharger la partie">💾 Exporter PGN</button>
       <button class="teach-btn resign-btn" id="resignBtn" style="display:none" onclick="resignGame()">🏳️ Abandonner</button>
   </div>
@@ -3750,8 +3753,22 @@ function updateNavState(){
   b[0].classList.toggle('off',auDebut); b[1].classList.toggle('off',auDebut);
   b[2].classList.toggle('off',aLaFin);  b[3].classList.toggle('off',aLaFin);
 }
+// Même règle que les flèches en bout de course : ce qui ne peut pas être cliqué s'éteint.
+// Pendant une démonstration, le coach de partie n'a pas voix au chapitre.
+function updateCoachState(){
+  var enDemo=!!(encyMode && encyDemo);
+  var b=document.getElementById('hintBtn');
+  if(b){
+    b.disabled=enDemo;
+    b.classList.toggle('off',enDemo);
+    b.title=enDemo?'Le Fou déroule une démonstration — le coach de partie se tait.':'';
+  }
+  var lab=document.getElementById('arrowToggleLabel'), tog=document.getElementById('arrowToggle');
+  if(lab) lab.classList.toggle('off',enDemo);
+  if(tog) tog.disabled=enDemo;
+}
 function updateMoves(){const el=document.getElementById('movesPlayed');
-  updateNavState();
+  updateNavState(); updateCoachState();
   if(encyMode){ encyRenderPanel(); return; }
   if(!fullMoves.length){el.innerHTML='<span class="hint">Les coups joués apparaîtront ici…</span>';return;}
   let s='';
@@ -4854,6 +4871,10 @@ function evalPhrase(cp){
   return 'Tu es en difficulté : cherche des ressources défensives ou de quoi compliquer la partie.';
 }
 function askHint(){
+  // Une démonstration d'encyclopédie est en cours : le coach de PARTIE se tait. Les deux
+  // Fous ne parlent jamais en même temps — le conseil générique n'a rien à dire d'une
+  // position posée pour l'exemple, et il écraserait la bulle du lecteur.
+  if(encyMode && encyDemo) return;
   if(game.game_over()){ hintBubble('La partie est terminée.','',''); return; }
   var fen=game.fen();
   if(fen!==hintFen){ hintLevel=0; hintFen=fen; }
@@ -5045,7 +5066,9 @@ function drawArrows(){
 function drawFouArrows(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
   if(playMode) return; // pas d'indice concret en partie live
-  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
+  // « Coups recommandés » règle les flèches du moteur/livre. Pendant une démonstration,
+  // les %cal/%csl SONT le contenu enseigné : le réglage ne les efface pas.
+  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked && !encyMode) return;
   if(!fouArrows || !fouArrows.length) return;
   var ns='http://www.w3.org/2000/svg';
   fouArrows.forEach(function(o){
@@ -5070,7 +5093,9 @@ function drawFouArrows(){
 function drawFouCircles(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
   if(playMode) return; // pas d'indice concret en partie live
-  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
+  // « Coups recommandés » règle les flèches du moteur/livre. Pendant une démonstration,
+  // les %cal/%csl SONT le contenu enseigné : le réglage ne les efface pas.
+  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked && !encyMode) return;
   if(!fouCircles || !fouCircles.length) return;
   var ns='http://www.w3.org/2000/svg';
   fouCircles.forEach(function(o){
