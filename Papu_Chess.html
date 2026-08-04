@@ -4864,6 +4864,14 @@ function maybeBotMove(){
 
 var hintLevel=0, hintFen=null;
 function pieceName(p){return {p:'pion',n:'cavalier',b:'fou',r:'tour',q:'dame',k:'roi'}[p]||'pièce';}
+// Genre grammatical de chaque pièce : « ta dame », « ta tour », mais « ton fou ». Le genre
+// est une propriété de la PIÈCE, pas du message — une table le dit une fois, et tout message
+// futur accorde sans avoir à le redeviner. Repli féminin, cohérent avec « pièce » ci-dessus.
+const PIECE_GENRE={p:'m',n:'m',b:'m',r:'f',q:'f',k:'m'};
+function pieceAvec(det,p){
+  var f=(PIECE_GENRE[p]||'f')==='f';
+  return ({possessif:f?'ta':'ton', defini:f?'la':'le', indefini:f?'une':'un'}[det]||'')+' '+pieceName(p);
+}
 function moveNature(uci){
   var from=uci.slice(0,2),to=uci.slice(2,4),promo=uci.slice(4,5)||'q';
   var g=new Chess(game.fen());
@@ -4934,7 +4942,7 @@ function showHint(d, lvl, offline){
   if(hintLevel===2 && nat){
     var msg='<b>Regarde du côté de ';
     // désigner la pièce à jouer et l'idée
-    msg+='ton '+pieceName(nat.piece)+'.</b> ';
+    msg+=pieceAvec('possessif',nat.piece)+'.</b> ';
     if(nat.mate) msg+='Il existe une suite qui mène au <b>mat</b> — cherche les échecs forçants !';
     else if(nat.captured) msg+='Le meilleur coup est une <b>capture</b> : tu peux gagner du matériel ou éliminer une pièce clé.';
     else if(nat.check) msg+='Le meilleur coup donne <b>échec</b> — un coup forçant qui limite les réponses adverses.';
