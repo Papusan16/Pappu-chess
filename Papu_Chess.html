@@ -2212,7 +2212,10 @@ button.ctrl:active{transform:scale(.93)}
 .moves-played .mv:hover{background:var(--surface-hover)}
 .moves-played .mv-current{background:var(--gold);color:var(--text-on-light);font-weight:800}
 .nav-controls{display:flex;gap:5px;width:100%;margin-top:2px}
-.nav-controls button{flex:1;background:linear-gradient(180deg,var(--btn-nav-top),var(--btn-nav-bottom));border:1px solid var(--border-a);border-radius:8px;color:var(--text-soft);font-size:15px;padding:8px 4px;cursor:pointer;font-weight:700}
+.nav-controls button{flex:1;background:linear-gradient(180deg,var(--btn-nav-top),var(--btn-nav-bottom));border:1px solid var(--border-a);border-radius:8px;color:var(--white);font-size:15px;padding:8px 4px;cursor:pointer;font-weight:700}
+/* Glyphe BLANC sur le fond bleu foncé : --text-soft y était illisible, et pire en thème
+   clair (#45577a sur #1e2740) — le fond des flèches, lui, ne change pas avec le thème.
+   En bout de course, l'atténuation vient de .off (opacité), pas d'une autre couleur. */
 .nav-controls button:active{transform:scale(.92)}
 
 /* Disposition adaptative : côte à côte sur écran large, empilé sur mobile */
