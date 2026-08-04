@@ -137,3 +137,46 @@ on en est sans avoir à reconstituer l'historique. À relire à côté de
     sources disent, la complétude est bornée par le corpus ; poids du
     mono-fichier à surveiller (parade déjà prévue dans PRINCIPES :
     fonds servable par API).
+
+---
+
+## Ouverts au 2026-08-04 (décisions arbitrées le 3-4 août)
+
+Détail et raisons dans `_sessions/2026-08-04.md` ; ici, le chantier seul.
+
+- **Conception de l'ÉCOLE / onglet « S'exercer », avec la collection
+  « Top mats ».** Premier cas : le **mat de Nataf**, présenté en MIROIR de
+  l'entrée `echec-a-la-decouverte` comme « le mat permis par l'échec à la
+  découverte ». Chaque face pointe vers l'autre ; **un seul jeu de faits
+  d'échiquier** (coups, `%cal`/`%csl`) partagé par les deux, seule la voix
+  du Fou change (fait vs voix).
+  Point dur à trancher dans cette conception : aujourd'hui une
+  démonstration est **enfermée dans le `.md` de son entrée**, alors que le
+  miroir suppose des faits **adressables depuis deux entrées**.
+  Dépendance : côté motif, la démonstration doit s'arrêter au moment
+  crucial et renvoyer vers la séquence du Top mats — ce renvoi est
+  aujourd'hui un **lien-amorce inerte**, et le reste tant que l'École
+  n'existe pas.
+  Rappel : **l'École est un RÉGIME (axe d'usage), pas un rayon ni un
+  onglet de contenu** — la réconciliation des catégories de la phase 4 ne
+  la couvre pas.
+
+- **Lecteur — deux corrections d'ergonomie** : mettre les **flèches de
+  navigation cliquables en surbrillance** (rien ne signale qu'elles sont
+  le geste principal de la lecture) ; **déplacer les boutons de variantes
+  SOUS les flèches de navigation**, et non en bas du panneau — à
+  l'embranchement, choisir une branche prolonge le geste d'avancer.
+
+- **Vignette-photo au survol du nom d'un personnage** (idée en réserve,
+  non arbitrée). Ni la source des images ni le comportement sur téléphone
+  (où il n'y a pas de survol) ne sont tranchés.
+
+- **Migrer `mauvais-fou.md` du format v2 vers v3.** Ses **5
+  démonstrations ne se jouent pas** : elles sont écrites en « ##
+  Démonstrations » + « ### Démonstration N », que le lecteur d'étapes v3
+  ne sait pas lire — il n'en tire ni FEN de départ ni étapes. L'entrée
+  s'affiche correctement (prose intacte, encadré « non jouable en l'état »
+  à la place de chaque bouton), donc rien n'est cassé, mais l'entrée
+  pilote de la phase 2 est aujourd'hui la seule entrée dont on ne peut
+  rien dérouler. Alternative à peser au moment de le faire : étendre le
+  parseur plutôt que migrer l'entrée.

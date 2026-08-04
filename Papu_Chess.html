@@ -2003,6 +2003,18 @@ button.ctrl:active{transform:scale(.93)}
 .moves-played{width:100%;background:var(--surface-1);border:1px solid var(--border-2);border-radius:10px;padding:9px;font-size:.8rem;font-family:ui-monospace,monospace;color:var(--text-code);min-height:38px;line-height:1.6}
 .moves-played b{color:var(--text-dim)}.moves-played .mv{color:var(--text-gold-soft)}
 .hint{font-size:.72rem;color:var(--text-dim);text-align:center;line-height:1.4}
+/* Lecteur d'étapes ramifié (encyclopédie, phase 3) — vit dans #movesPlayed pendant encyMode */
+.ency-title{font-family:ui-serif,Georgia,serif;font-size:.86rem;font-weight:800;color:var(--text-gold);margin-bottom:4px}
+.ency-status{font-size:.7rem;font-weight:700;padding:5px 8px;border-radius:8px;margin-bottom:7px;font-family:ui-serif,Georgia,serif}
+.ency-status.ok{background:var(--tone-green-bg);color:var(--success)}
+.ency-status.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
+.ency-crumb{font-size:.74rem;color:var(--text-soft);margin-bottom:8px;font-family:ui-serif,Georgia,serif}
+.ency-branch-slot{width:100%}
+.ency-branch-slot:empty{display:none}
+.ency-branches{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.ency-branches button{flex:1;min-width:110px;background:linear-gradient(180deg,var(--btn-teach-top),var(--btn-teach-bottom));border:1px solid var(--arrow-alt);border-radius:9px;color:var(--btn-colorpick-text);font-size:.76rem;font-weight:700;padding:8px 6px;cursor:pointer;font-family:ui-sans-serif,system-ui,sans-serif}
+.ency-back,.ency-close{width:100%;margin-top:4px;border-radius:8px;padding:8px;font-size:.74rem;font-weight:700;cursor:pointer;border:1px solid var(--border-a);background:var(--surface);color:var(--text-muted);font-family:ui-sans-serif,system-ui,sans-serif}
+.ency-close{color:var(--burgundy-text,var(--text-muted))}
 /* OVERLAY ENCYCLO */
 .overlay{position:fixed;inset:0;background:var(--overlay-bg);backdrop-filter:blur(3px);z-index:100;display:none;flex-direction:column;padding:12px 10px;overflow:hidden}
 .overlay.show{display:flex;animation:fade .25s}
@@ -2049,6 +2061,104 @@ button.ctrl:active{transform:scale(.93)}
 .blk-ex{background:var(--tone-purple-bg);border-left:3px solid var(--tone-purple-border);font-style:italic}
 .blk b{color:var(--speech-eco-bg)}
 .enc-item .person-link{margin-top:8px;display:inline-block;font-size:.74rem;color:var(--tone-gold-text);font-weight:700;text-decoration:underline}
+/* Entrée riche (_fonds/encyclopedie/*.md) : pastille dans la liste, puis état « entrée » de l'overlay */
+.enc-item .erich{font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:8px;background:var(--tone-purple-border);color:var(--white)}
+.ent-back{background:var(--surface);border:1px solid var(--border-a);border-radius:9px;color:var(--text-soft);font-size:.78rem;font-weight:700;padding:8px 12px;cursor:pointer;align-self:flex-start;font-family:inherit}
+.ent-card{background:linear-gradient(135deg,var(--enc-bg-1),var(--enc-bg-2));color:var(--text-on-light);border-radius:11px;padding:13px 15px;border:1px solid var(--enc-border)}
+.ent-name{font-family:ui-serif,Georgia,serif;font-size:1.08rem;font-weight:800;line-height:1.3}
+.ent-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.ent-chip{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--tone-blue-bg);color:var(--enc-detail-text)}
+.ent-prose{font-size:.84rem;line-height:1.55;color:var(--enc-detail-text);margin-top:10px}
+.ent-prose h3{font-family:ui-serif,Georgia,serif;font-size:.92rem;font-weight:800;color:var(--text-on-light);margin:14px 0 5px}
+.ent-prose h4{font-size:.84rem;font-weight:800;color:var(--text-on-light);margin:11px 0 4px}
+.ent-prose p{margin:6px 0}
+.ent-prose ul,.ent-prose ol{margin:6px 0 6px 18px;padding:0}
+.ent-prose li{margin:3px 0}
+.ent-prose code{font-family:ui-monospace,monospace;font-size:.78rem;background:var(--tone-blue-bg);padding:1px 4px;border-radius:4px;word-break:break-all}
+.ent-prose blockquote{margin:7px 0;padding:6px 10px;border-left:3px solid var(--tone-purple-border);background:var(--tone-purple-bg);font-style:italic}
+.ent-prose hr{border:none;border-top:1px solid var(--enc-border);margin:11px 0}
+.ent-demo{width:100%;margin-top:11px;background:linear-gradient(180deg,var(--btn-teach-top),var(--btn-teach-bottom));border:1px solid var(--arrow-alt);border-radius:9px;color:var(--btn-colorpick-text);font-size:.82rem;font-weight:700;padding:11px 9px;cursor:pointer;text-align:left;font-family:inherit}
+.ent-vrf{font-size:.68rem;font-weight:700;margin-top:4px;padding:4px 8px;border-radius:7px;display:inline-block}
+.ent-vrf.ok{background:var(--tone-green-bg);color:var(--success)}
+.ent-vrf.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
+/* Liens internes : cliquable quand la cible existe, AMORCE visible et inerte sinon
+   (FORMAT v3 : « le réseau précède les nœuds » — un lien mort n'est pas une erreur). */
+.lien-enc{color:var(--arrow-alt);font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lien-amorce{color:var(--enc-caret);border-bottom:1px dotted var(--enc-caret);opacity:.8;cursor:default}
+.ent-liens{margin-top:13px;padding-top:10px;border-top:1px solid var(--enc-border);display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.76rem}
+.ent-liens-t{font-weight:800;color:var(--text-on-light)}
+.ent-liens .lien-enc{padding:3px 9px;border-radius:8px;background:var(--tone-blue-bg);text-decoration:none}
+.ent-liens .lien-amorce{padding:3px 9px;border-radius:8px;border:1px dashed var(--enc-border);border-bottom-style:dashed}
+.ent-note{font-size:.72rem;color:var(--enc-detail-text);background:var(--warn-bg);border-left:3px solid var(--warn-border);padding:7px 9px;border-radius:7px;margin-top:9px;line-height:1.45}
+.enc-msg{max-width:460px;margin:0 auto 8px;width:100%;font-size:.72rem;color:var(--text-muted);background:var(--surface-note);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px;line-height:1.45}
+.enc-loader{max-width:460px;margin:6px auto 0;width:100%;font-size:.74rem;color:var(--text-muted)}
+.enc-loader summary{cursor:pointer;padding:6px 2px;color:var(--text-dim)}
+.enc-loader-body{display:flex;flex-direction:column;gap:6px;padding-bottom:6px}
+.enc-loader textarea{min-height:70px;background:var(--surface);border:1px solid var(--border-a);border-radius:8px;color:var(--text-input);padding:8px;font-size:.76rem;font-family:ui-monospace,monospace;resize:vertical}
+.enc-loader-row{display:flex;gap:8px}
+.enc-loader-row .ctrl{flex:1}
+#encyImportStatus{font-size:.68rem;color:var(--text-muted);min-height:1em}
+.enc-vide{color:var(--text-dim);text-align:center;padding:22px 14px;font-size:.85rem;line-height:1.5}
+
+/* ===== SURBRILLANCE DES ÉLÉMENTS CLIQUABLES — règle générale =====
+   Cinq règles, valables partout, pas des retouches au cas par cas :
+   R1. AU REPOS l'affordance est déjà là (surface pour un bouton ou une carte,
+       soulignement pour un lien en ligne). C'est la règle porteuse : sur tactile il
+       n'y a pas de survol, donc rien ne peut DÉPENDRE du survol pour se signaler.
+   R2. SURBRILLANCE : un seul geste visuel partout — anneau doré + éclaircissement,
+       au survol ET au focus clavier. Le survol est gardé par `hover:hover` pour
+       qu'un tap ne laisse pas un élément collé en état survolé.
+   R3. APPUI : léger enfoncement (fort sur un bouton, discret sur une carte).
+   R4. INERTE : ce qui n'est pas cliquable ne prend JAMAIS l'anneau et garde le
+       curseur de texte — amorce de lien, pastilles de rayon, bannières.
+   R5. BOUT DE COURSE : une flèche qui ne mène nulle part s'éteint (classe .off) —
+       sans quoi la surbrillance mentirait. */
+.sec-tab,.enc-item,.enc-item .person-link,.closebtn,.enc-loader summary,
+.enc-loader-row .ctrl,.ent-back,.ent-demo,.lien-enc,#encSearch,
+.nav-controls button,.ency-branches button,.ency-back,.ency-close{
+  transition:box-shadow .15s ease,filter .15s ease,transform .08s ease;
+}
+/* R2 — survol (souris seulement) */
+@media (hover:hover){
+  .sec-tab:hover,.enc-item:hover,.enc-item .person-link:hover,.closebtn:hover,
+  .enc-loader summary:hover,.enc-loader-row .ctrl:hover,.ent-back:hover,
+  .ent-demo:hover,.lien-enc:hover,.ency-branches button:hover,
+  .ency-back:hover,.ency-close:hover,.nav-controls button:not(.off):hover{
+    box-shadow:0 0 0 2px var(--gold-a40);filter:brightness(1.12)
+  }
+}
+/* R2 — focus clavier, sans garde : il vaut sur tous les appareils */
+.sec-tab:focus-visible,.enc-item:focus-visible,.enc-item .person-link:focus-visible,
+.closebtn:focus-visible,.enc-loader summary:focus-visible,.enc-loader-row .ctrl:focus-visible,
+.ent-back:focus-visible,.ent-demo:focus-visible,.lien-enc:focus-visible,#encSearch:focus,
+.ency-branches button:focus-visible,.ency-back:focus-visible,.ency-close:focus-visible,
+.nav-controls button:not(.off):focus-visible{
+  outline:none;box-shadow:0 0 0 2px var(--gold-a40);filter:brightness(1.12)
+}
+/* R1 — deux éléments manquaient d'affordance au repos */
+.sec-tab{border:1px solid var(--border-2)}
+.sec-tab.active{border-color:var(--gold)}
+.enc-loader summary{border:1px dashed var(--border-dashed);border-radius:8px;padding:7px 10px}
+/* R2 — l'anneau sur un lien en ligne a besoin d'un peu d'air */
+.lien-enc{border-radius:4px;padding:0 2px}
+/* R3 — appui : franc sur un bouton, à peine perceptible sur une carte */
+.sec-tab:active,.closebtn:active,.enc-loader-row .ctrl:active,.ent-back:active,
+.ent-demo:active,.ency-branches button:active,.ency-back:active,.ency-close:active{transform:scale(.93)}
+.enc-item:active{transform:scale(.985)}
+/* R4 — inerte : jamais d'anneau, jamais de curseur main */
+.lien-amorce,.ent-chip,.ent-vrf,.ent-note,.enc-msg,.ency-status,.enc-vide{cursor:default}
+/* R5 — flèche en bout de course, et tout contrôle rendu inopérant par le contexte
+   (le coach de partie pendant une démonstration d'encyclopédie) */
+.nav-controls button.off{opacity:.35;cursor:default}
+.teach-btn.off,.toggle-arrows.off{opacity:.35;cursor:default;filter:none;box-shadow:none}
+.teach-btn.off:hover,.toggle-arrows.off:hover{filter:none;box-shadow:none}
+/* Cibles tactiles : viser un bouton au doigt demande ~40 px. Sous `pointer:coarse`
+   seulement, pour ne pas gonfler la colonne droite en desktop. */
+@media (pointer:coarse){
+  .nav-controls button,.ency-branches button,.ency-back,.ency-close,
+  .sec-tab,.ent-back,.enc-loader-row .ctrl{min-height:40px}
+  .sec-tab{display:flex;align-items:center}
+}
 .target{box-shadow:0 0 0 3px var(--gold-light),0 6px 22px var(--cible-glow)!important;animation:flash 1.4s}
 @keyframes flash{0%,100%{box-shadow:0 0 0 3px var(--gold-light)}50%{box-shadow:0 0 0 6px var(--gold-light)}}
 
@@ -2104,7 +2214,10 @@ button.ctrl:active{transform:scale(.93)}
 .moves-played .mv:hover{background:var(--surface-hover)}
 .moves-played .mv-current{background:var(--gold);color:var(--text-on-light);font-weight:800}
 .nav-controls{display:flex;gap:5px;width:100%;margin-top:2px}
-.nav-controls button{flex:1;background:linear-gradient(180deg,var(--btn-nav-top),var(--btn-nav-bottom));border:1px solid var(--border-a);border-radius:8px;color:var(--text-soft);font-size:15px;padding:8px 4px;cursor:pointer;font-weight:700}
+.nav-controls button{flex:1;background:linear-gradient(180deg,var(--btn-nav-top),var(--btn-nav-bottom));border:1px solid var(--border-a);border-radius:8px;color:var(--white);font-size:15px;padding:8px 4px;cursor:pointer;font-weight:700}
+/* Glyphe BLANC sur le fond bleu foncé : --text-soft y était illisible, et pire en thème
+   clair (#45577a sur #1e2740) — le fond des flèches, lui, ne change pas avec le thème.
+   En bout de course, l'atténuation vient de .off (opacité), pas d'une autre couleur. */
 .nav-controls button:active{transform:scale(.92)}
 
 /* Disposition adaptative : côte à côte sur écran large, empilé sur mobile */
@@ -2118,6 +2231,7 @@ button.ctrl:active{transform:scale(.93)}
       "board  turn"
       "board  ctrl"
       "board  nav"
+      "board  branch"
       "board  jester"
       "board  engine"
       "board  note"
@@ -2143,6 +2257,7 @@ button.ctrl:active{transform:scale(.93)}
      l'échiquier vers le bas et n'ajoute plus de hauteur sous lui (cf. fitBoard : réservation
      de la nav supprimée du calcul, elle ne vit plus dans la colonne gauche). */
   .nav-controls{grid-area:nav;margin-top:2px}
+  .ency-branch-slot{grid-area:branch}
   #engineStatus{grid-area:engine;margin-top:0 !important;text-align:right;opacity:.75}
   #offlineNote{grid-area:note}
   .paste-area{grid-area:paste}
@@ -2387,7 +2502,7 @@ button.ctrl:active{transform:scale(.93)}
   </div>
   </div>
   <div class="turn-ind" id="turnInd">Trait aux Blancs</div>
-  <label class="toggle-arrows"><input type="checkbox" id="arrowToggle" checked onchange="drawArrows()"> 🟢 Coups recommandés (flèches)</label>
+  <label class="toggle-arrows" id="arrowToggleLabel"><input type="checkbox" id="arrowToggle" checked onchange="drawArrows()"> 🟢 Coups recommandés (flèches)</label>
   <div id="engineStatus" style="font-size:.68rem;color:var(--text-dim);margin-top:1px">Moteur : connexion...</div>
   <div id="offlineNote" style="display:none;font-size:.64rem;color:var(--text-dim);margin-top:1px">
     <span onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'" style="cursor:pointer;text-decoration:underline dotted">📵 Mode nomade — détails</span>
@@ -2400,7 +2515,7 @@ button.ctrl:active{transform:scale(.93)}
     <button class="ctrl persp-btn" onclick="openPerspectivePopup()" title="Perspective &amp; coaching">🎭</button>
   </div>
   <div class="teach-row">
-      <button class="teach-btn" onclick="askHint()">💡 Idée du prof</button>
+      <button class="teach-btn" id="hintBtn" onclick="askHint()">💡 Idée du prof</button>
       <button class="teach-btn" onclick="exportPGN()" title="Télécharger la partie">💾 Exporter PGN</button>
       <button class="teach-btn resign-btn" id="resignBtn" style="display:none" onclick="resignGame()">🏳️ Abandonner</button>
   </div>
@@ -2474,14 +2589,29 @@ button.ctrl:active{transform:scale(.93)}
     <button onclick="navNext()" title="Avancer">▶</button>
     <button onclick="navEnd()" title="Fin">⏭</button>
   </div>
+  <!-- Boutons de branche : ils vivent juste sous la navigation, parce que choisir une
+       branche à un embranchement prolonge le geste d'avancer. Rempli par encyRenderPanel. -->
+  <div class="ency-branch-slot" id="encyBranchSlot"></div>
   <div class="moves-played" id="movesPlayed"><span class="hint">Les coups joués apparaîtront ici…</span></div>
 </div>
 
 <div class="overlay" id="overlay">
   <div class="ov-head"><span class="ov-title">📚 Encyclopédie</span><button class="closebtn" onclick="closeEnc()">✕</button></div>
   <div class="sec-tabs" id="secTabs"></div>
-  <div class="ov-search"><input id="encSearch" placeholder="Rechercher…" oninput="renderEnc()"></div>
+  <div class="ov-search" id="encSearchWrap"><input id="encSearch" placeholder="Rechercher…" oninput="renderEnc()"></div>
   <div class="enc-list" id="encList"></div>
+  <details class="enc-loader" id="encLoader">
+    <summary>✍️ Rédaction — charger une entrée collée</summary>
+    <div class="enc-loader-body">
+      <textarea id="encyPaste" placeholder="Colle ici le Markdown d'une entrée en cours de rédaction, pas encore posée dans _fonds/…"></textarea>
+      <div class="enc-loader-row">
+        <button class="ctrl" onclick="encyLoadFromTextarea()">▶️ Charger le texte collé</button>
+        <button class="ctrl" onclick="document.getElementById('encyFile').click()">📂 Fichier .md</button>
+      </div>
+      <input type="file" id="encyFile" accept=".md,.markdown,.txt" style="display:none" onchange="encyImportFile(this)">
+      <div id="encyImportStatus"></div>
+    </div>
+  </details>
 </div>
 <div class="overlay" id="profileOverlay">
   <div class="ov-head"><span class="ov-title">👤 Ma fiche joueur</span><button class="closebtn" onclick="closeProfile()">✕</button></div>
@@ -2524,6 +2654,13 @@ let startFen=null; // position de départ imposée par un PGN ([SetUp "1"]/[FEN 
 let initialComment='', initialAnno={arrows:[],circles:[]}; // commentaire/annotations attachés à la position de départ, avant le premier coup
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
 let fouCircles=[]; // cases que le Fou entoure → cercles violets pointillés (pièce en prise, avant-poste…)
+// ===== Lecteur d'étapes ramifié (encyclopédie, phase 3) =====
+let encyMode=false;      // une démonstration d'encyclopédie est chargée et affichée
+let encyEntry=null;      // entrée parsée (front-matter + liste de démonstrations)
+let encyDemo=null;       // démonstration actuellement jouée : {title, role, fenRoot, root, verification}
+let encyPath=[];         // chemin depuis la racine : [{name,label}, ...]
+let encyStep=0;          // index de l'étape courante dans le nœud (branche) actuel
+let encyReturn=null;     // d'où la démonstration a été lancée : {sec,id} → la fermer rouvre l'encyclopédie là
 let analyseDepth=14, playMode=false, playElo=1320, playerColor='w', botThinking=false;
 let userElo=320; // niveau réel de l'utilisateur (Elo Chess.com ou FIDE) — le Fou calibre ses conseils dessus
 function setUserLevel(v){ var n=parseInt(v,10); if(!isNaN(n)&&n>0) userElo=n; }
@@ -3149,6 +3286,7 @@ function syncFull(){ // reconstruit fullMoves depuis game et place le curseur à
 }
 function atLiveEnd(){ return cursor===fullMoves.length; }
 function click(name){
+  if(encyMode) return; // lecture seule : une démonstration d'encyclopédie ne se joue pas à la main
   // si on regarde le passé, jouer un coup = proposer une nouvelle ligne
   if(!atLiveEnd()){
     if(confirm('Tu es revenu en arrière. Jouer ce coup effacera les coups suivants et repartira d\'ici. Continuer ?')){
@@ -3552,10 +3690,10 @@ function uciToSan(r, mi){
     return mv?mv.san:uci;
   }catch(e){ return r.best; }
 }
-function navStart(){ if(fullMoves.length){ rebuildTo(0);} }
-function navPrev(){ if(cursor>0){ rebuildTo(cursor-1);} }
-function navNext(){ if(cursor<fullMoves.length){ rebuildTo(cursor+1);} }
-function navEnd(){ if(fullMoves.length){ rebuildTo(fullMoves.length);} }
+function navStart(){ if(encyMode){ encyStep=0; encyGoto(); return; } if(fullMoves.length){ rebuildTo(0);} }
+function navPrev(){ if(encyMode){ if(encyStep>0){ encyStep--; encyGoto(); } return; } if(cursor>0){ rebuildTo(cursor-1);} }
+function navNext(){ if(encyMode){ var n=encyCurrentNode(); if(encyStep<n.steps.length-1){ encyStep++; encyGoto(); } return; } if(cursor<fullMoves.length){ rebuildTo(cursor+1);} }
+function navEnd(){ if(encyMode){ var n=encyCurrentNode(); encyStep=n.steps.length-1; encyGoto(); return; } if(fullMoves.length){ rebuildTo(fullMoves.length);} }
 function undo(){
   // supprime définitivement le dernier coup de la partie
   if(fullMoves.length){
@@ -3609,7 +3747,41 @@ function flipBoard(){flipped=!flipped;buildBoard();
   if(!playMode) maybeOfferPerspective();
   identify(false);
 }
+// R5 de la règle de surbrillance : une flèche qui ne mène nulle part s'éteint. Sans ça,
+// mettre les flèches en surbrillance serait un mensonge — elles se signaleraient comme
+// cliquables aux deux bouts de la lecture, où elles ne font rien.
+function updateNavState(){
+  var row=document.querySelector('.nav-controls'); if(!row) return;
+  var b=row.querySelectorAll('button'); if(b.length<4) return;
+  var auDebut, aLaFin;
+  if(encyMode && encyDemo){
+    var n=encyCurrentNode();
+    auDebut=(encyStep<=0); aLaFin=(encyStep>=n.steps.length-1);
+  } else {
+    auDebut=(cursor<=0); aLaFin=(cursor>=fullMoves.length);
+  }
+  b[0].classList.toggle('off',auDebut); b[1].classList.toggle('off',auDebut);
+  b[2].classList.toggle('off',aLaFin);  b[3].classList.toggle('off',aLaFin);
+}
+// Même règle que les flèches en bout de course : ce qui ne peut pas être cliqué s'éteint.
+// Pendant une démonstration, le coach de partie n'a pas voix au chapitre.
+function updateCoachState(){
+  var enDemo=!!(encyMode && encyDemo);
+  var b=document.getElementById('hintBtn');
+  if(b){
+    b.disabled=enDemo;
+    b.classList.toggle('off',enDemo);
+    b.title=enDemo?'Le Fou déroule une démonstration — le coach de partie se tait.':'';
+  }
+  var lab=document.getElementById('arrowToggleLabel'), tog=document.getElementById('arrowToggle');
+  if(lab) lab.classList.toggle('off',enDemo);
+  if(tog) tog.disabled=enDemo;
+}
 function updateMoves(){const el=document.getElementById('movesPlayed');
+  updateNavState(); updateCoachState();
+  var slot=document.getElementById('encyBranchSlot');
+  if(slot && !(encyMode && encyDemo)) slot.innerHTML='';
+  if(encyMode){ encyRenderPanel(); return; }
   if(!fullMoves.length){el.innerHTML='<span class="hint">Les coups joués apparaîtront ici…</span>';return;}
   let s='';
   for(let i=0;i<fullMoves.length;i++){
@@ -3640,8 +3812,11 @@ function identify(animate){
   if(fouMode==='off'){ return; }
   // MODE DISCRET : le Fou ne se manifeste PAS spontanément à chaque coup.
   // Il garde son message et n'affiche un conseil que si on le sollicite (Idée du prof).
-  // Exception : le mode PGN commenté et l'analyse restent actifs (ce sont des demandes explicites).
-  if(fouMode==='discret' && !pgnMode && !gameAnalysis){ return; }
+  // Exception : le mode PGN commenté, l'analyse et le lecteur d'encyclopédie restent actifs (demandes explicites).
+  if(fouMode==='discret' && !pgnMode && !gameAnalysis && !encyMode){ return; }
+  // LECTEUR D'ÉTAPES RAMIFIÉ (encyclopédie, phase 3) : une entrée est chargée, priorité sur tout le reste
+  // (ouverture/ECO, accueil, coach de partie) — c'est une consultation explicite de l'utilisateur.
+  if(encyMode && encyDemo){ encyIdentify(sp, animate); return; }
   // MODE PGN COMMENTÉ, position de départ (avant le premier coup) : commentaire/annotations attachés au FEN importé
   if(pgnMode && cursor===0 && (initialComment || initialAnno.arrows.length || initialAnno.circles.length)){
     fouArrows = initialAnno.arrows.slice();
@@ -3734,7 +3909,7 @@ function identify(animate){
   if(NOTES[seq[0]]&&NOTES[seq[0]].idea)html+='<span class="chip idea" onclick="tog(\'d-idea\')">'+lblIdea+'</span>';
   if(note&&note.reply)html+='<span class="chip reply" onclick="tog(\'d-reply\')">'+lblReply+'</span>';
   if(note&&note.whiteplan)html+='<span class="chip white" onclick="tog(\'d-white\')">'+lblPlan+'</span>';
-  if(pk&&PEOPLE[pk])html+='<span class="chip person" onclick="openEnc(\'people\',\''+pk+'\')">📜 '+PEOPLE[pk].name.split(/[ (]/)[0]+'</span>';
+  if(pk&&PEOPLE[pk])html+='<span class="chip person" onclick="openEnc(\'history\',\''+pk+'\')">📜 '+PEOPLE[pk].name.split(/[ (]/)[0]+'</span>';
   html+='</div>';
   if(NOTES[seq[0]]&&NOTES[seq[0]].idea)html+='<div class="detail d-idea" id="d-idea"><b>'+ttlIdea+'</b> '+NOTES[seq[0]].idea+'</div>';
   if(note&&note.reply)html+='<div class="detail '+(isWarn?'d-warn':'d-reply')+'" id="d-reply"><b>'+ttlReply+'</b> '+note.reply+'</div>';
@@ -3788,51 +3963,431 @@ function identify(animate){
 }
 function tog(id){const el=document.getElementById(id);if(!el)return;if(openDetail&&openDetail!==id){const o=document.getElementById(openDetail);if(o)o.classList.remove('show');}el.classList.toggle('show');openDetail=el.classList.contains('show')?id:null;}
 
-/* ENCYCLOPÉDIE */
+/* ENCYCLOPÉDIE — l'overlay est la PORTE UNIQUE.
+   Une fiche de la liste peut être servie de deux façons :
+   - fiche courte EN DUR (ENC/OPS/PEOPLE), comme depuis toujours ;
+   - ENTRÉE RICHE (_fonds/encyclopedie/<id>.md) quand elle existe, avec sa prose
+     et ses démonstrations jouables.
+   Le manifeste INDEX.json dit lesquelles existent ; le fetch du .md au clic reste la
+   vérité. Toute défaillance (manifeste absent, 404, Markdown illisible) redonne la
+   fiche en dur : on ne perd jamais un contenu, au pire une pastille. */
+const ENCY_DIR='_fonds/encyclopedie/';
+let encIndex=[];          // manifeste (cache d'affichage), [] si absent
+let encIndexState='vierge'; // vierge | tente — un seul essai par session
+let encById={};           // id d'entrée riche → méta du manifeste
+let encByReplaced={};     // id de fiche en dur → méta de l'entrée qui la périme
+let encBroken={};         // entrées dont le chargement a échoué → on redonne la fiche en dur
+let encView='list';       // état de l'overlay : list | entry
+let encEntryCache={};     // id → entrée résolue (un seul fetch par entrée et par session)
+let encEntryShown=null;   // entrée affichée dans l'état « entrée »
+let encEntryId=null;      // son id (connu avant même que le fetch réponde)
+let encMsg='';            // message discret en tête de liste (dégradation)
+
+function encIndexBuild(list){
+  encIndex=Array.isArray(list)?list:[];
+  encById={}; encByReplaced={}; encLex=null; // le lexique d'auto-liage dépend du manifeste
+  encIndex.forEach(function(m){
+    if(!m || !m.id) return;
+    encById[m.id]=m;
+    (m.remplace||[]).forEach(function(f){ encByReplaced[f]=m; });
+  });
+}
+function encLoadIndex(){
+  if(encIndexState!=='vierge') return Promise.resolve();
+  encIndexState='tente';
+  return fetch(ENCY_DIR+'INDEX.json').then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(list){ encIndexBuild(list); }).catch(function(){
+    // Pas de manifeste : l'encyclopédie fonctionne exactement comme avant.
+    encIndexBuild([]);
+  });
+}
+// L'entrée riche qui périme cette fiche en dur, si elle existe et n'a pas échoué.
+function encRichFor(id){
+  var m=encByReplaced[id];
+  return (m && !encBroken[m.id]) ? m : null;
+}
+
+/* --- Liens internes ------------------------------------------------------
+   Trois formes, UN SEUL résolveur : le champ `liens:` de l'en-tête, la syntaxe
+   [[id]] écrite dans la prose, et les noms cités en toutes lettres (auto-liage).
+   Ordre de résolution : entrée riche > fiche en dur > AMORCE. Une amorce (cible
+   pas encore écrite) reste VISIBLE et NON CLIQUABLE : c'est une promesse, pas une
+   erreur — le réseau précède les nœuds (FORMAT v3). */
+
+let encHard=null; // index des fiches en dur : id → {sec, nom}
+function encHardIndex(){
+  if(encHard) return encHard;
+  encHard={};
+  SECTIONS.forEach(function(s){
+    if(s.type==='people'){ Object.keys(PEOPLE).forEach(function(k){ encHard[k]={sec:s.id, nom:PEOPLE[k].name}; }); }
+    else if(s.data){ s.data.forEach(function(o){ if(o && o.id) encHard[o.id]={sec:s.id, nom:o.name}; }); }
+  });
+  return encHard;
+}
+function encResolveTarget(id){
+  if(!id) return null;
+  var m=encById[id]||encByReplaced[id];          // l'entrée riche prime, y compris via `remplace`
+  if(m && !encBroken[m.id]) return {type:'entry', id:m.id, nom:m.nom||m.id};
+  var d=encHardIndex()[id];
+  if(d) return {type:'fiche', id:id, sec:d.sec, nom:d.nom};
+  return null;                                    // amorce
+}
+function encLinkHtml(id, texte){
+  var t=encResolveTarget(id);
+  if(!t) return '<span class="lien-amorce" title="Entrée à écrire — le lien est une amorce assumée">'+encEsc(texte||id)+'</span>';
+  return '<a class="lien-enc" href="#" title="'+encEsc(t.nom)+'" onclick="return encGoTo(\''+String(id).replace(/'/g,"\\'")+'\')">'+encEsc(texte||t.nom)+'</a>';
+}
+function encGoTo(id){
+  var t=encResolveTarget(id);
+  if(!t) return false;
+  // Un lien peut être cliqué depuis la BULLE DU FOU, pendant une démonstration, donc
+  // overlay fermé : sans ça, la fiche se dessinerait derrière un panneau invisible et le
+  // clic n'aurait aucun effet visible. L'échiquier garde sa démonstration en dessous.
+  var ov=document.getElementById('overlay'); if(ov) ov.classList.add('show');
+  if(t.type==='entry'){ encOpenEntry(t.id); return false; }
+  curSec=t.sec; focusId=t.id;
+  encView='list'; encEntryShown=null; encEntryId=null;
+  buildSecTabs(); renderEnc();
+  return false;
+}
+// Auto-liage : formes de surface connues (nom + alias des entrées, noms des fiches en
+// dur). Les formes courtes ou trop génériques sont écartées — un texte d'échecs dit
+// « batterie » ou « fou » à tout bout de champ ; qui veut le lien à cet endroit précis
+// écrit [[batterie]]. Les alias écartés ici restent utiles à la RECHERCHE.
+const ENC_LIEN_MIN=5;
+const ENC_LIEN_STOP={'batterie':1,'centre':1,'échec':1,'echec':1,'double échec':1,'abandon':1,
+  'fou passif':1,'fou enterré':1,'pièce masquante':1,'ouverture':1,'finale':1,'milieu':1};
+let encLex=null;
+function encLexicon(){
+  if(encLex) return encLex;
+  var formes=[];
+  function ajoute(forme, id){
+    if(!forme) return;
+    // on retient la forme SANS son article : « voir la fourchette » doit lier « fourchette »
+    // et laisser « la » dehors, plutôt que de souligner l'article avec.
+    var f=String(forme).trim().replace(/^(l['’]|le |la |les )/i,'').trim();
+    if(f.length<ENC_LIEN_MIN || ENC_LIEN_STOP[f.toLowerCase()]) return;
+    formes.push({forme:f, id:id});
+  }
+  encIndex.forEach(function(m){ ajoute(m.nom,m.id); (m.alias||[]).forEach(function(a){ ajoute(a,m.id); }); });
+  var dur=encHardIndex();
+  Object.keys(dur).forEach(function(k){ ajoute(dur[k].nom,k); });
+  var vu={}; encLex=[];
+  formes.sort(function(a,b){ return b.forme.length-a.forme.length; }).forEach(function(f){
+    var k=f.forme.toLowerCase(); if(vu[k]) return; vu[k]=1;
+    var lettre='A-Za-zÀ-ÖØ-öø-ÿ0-9-';
+    encLex.push({id:f.id, re:new RegExp('(^|[^'+lettre+'])('+f.forme.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')(?![' +lettre+ '])','i')});
+  });
+  return encLex;
+}
+// Ne travaille QUE sur du texte (jamais sur du HTML) : on repère la première forme
+// connue, on coupe, on recommence sur la suite. Le fragment déjà produit n'est jamais
+// re-balayé, donc aucun risque de réécrire une balise ou un attribut.
+function encAutoLinkText(txt, selfId, vus){
+  if(!txt || !/[A-Za-zÀ-ÿ]/.test(txt)) return txt;
+  var lex=encLexicon(), best=null;
+  for(var i=0;i<lex.length;i++){
+    var e=lex[i];
+    if(e.id===selfId || vus[e.id]) continue;
+    var m=e.re.exec(txt); if(!m) continue;
+    var pos=m.index+m[1].length;
+    if(!encResolveTarget(e.id)) continue;        // l'auto-liage ne révèle que ce qui existe
+    if(!best || pos<best.pos) best={pos:pos, mot:m[2], id:e.id};
+  }
+  if(!best) return txt;
+  vus[best.id]=1;                                 // une seule occurrence par section
+  return txt.slice(0,best.pos)+encLinkHtml(best.id,best.mot)+
+         encAutoLinkText(txt.slice(best.pos+best.mot.length), selfId, vus);
+}
+// Applique l'auto-liage aux seuls segments de TEXTE d'un fragment déjà balisé par nos
+// soins, en sautant l'intérieur des liens et du code.
+function encLinkify(html, ctx){
+  var parts=html.split(/(<[^>]+>)/), prof=0;
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i];
+    if(p.charAt(0)==='<'){
+      if(/^<(a|code)\b/i.test(p) || /class="lien-amorce"/.test(p)) prof++;
+      else if(/^<\/(a|code|span)>/i.test(p) && prof>0) prof--;
+      continue;
+    }
+    if(prof===0) parts[i]=encAutoLinkText(p, ctx.selfId, ctx.vus);
+  }
+  return parts.join('');
+}
+
+/* --- État « entrée » : rendu de la prose --------------------------------- */
+
+function encEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function encInline(s, ctx){
+  var h=encEsc(s)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    // [[id]] ou [[id|texte affiché]] : la forme explicite, déjà employée dans les entrées
+    .replace(/\[\[([^\]]+)\]\]/g, function(m,dedans){
+      var bout=dedans.split('|');
+      return encLinkHtml(bout[0].trim(), bout[1]?bout[1].trim():null);
+    })
+    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<i>$2</i>');
+  return ctx ? encLinkify(h, ctx) : h;
+}
+// Rendu Markdown modeste, suffisant pour l'explication libre d'une entrée :
+// titres, paragraphes, listes, citations, filets, gras/italique/code.
+function encProse(text, ctx){
+  var lines=String(text).split('\n'), out=[], para=[], liste=null;
+  function fermerPara(){ if(para.length){ out.push('<p>'+encInline(para.join(' '), ctx)+'</p>'); para=[]; } }
+  function fermerListe(){ if(liste){ out.push('</'+liste+'>'); liste=null; } }
+  function ouvrirListe(t){ if(liste!==t){ fermerListe(); out.push('<'+t+'>'); liste=t; } }
+  lines.forEach(function(raw){
+    var l=raw.replace(/\s+$/,'');
+    if(!l.trim()){ fermerPara(); fermerListe(); return; }
+    var h=l.match(/^(#{2,6})\s+(.*)$/);
+    if(h){ fermerPara(); fermerListe(); out.push(h[1].length<=3?'<h3>'+encInline(h[2])+'</h3>':'<h4>'+encInline(h[2])+'</h4>'); return; }
+    if(/^---+$/.test(l.trim())){ fermerPara(); fermerListe(); out.push('<hr>'); return; }
+    var q=l.match(/^>\s?(.*)$/);
+    if(q){ fermerPara(); fermerListe(); out.push('<blockquote>'+encInline(q[1], ctx)+'</blockquote>'); return; }
+    var puce=l.match(/^\s*[-*]\s+(.*)$/);
+    if(puce){ fermerPara(); ouvrirListe('ul'); out.push('<li>'+encInline(puce[1], ctx)+'</li>'); return; }
+    var num=l.match(/^\s*\d+[.)]\s+(.*)$/);
+    if(num){ fermerPara(); ouvrirListe('ol'); out.push('<li>'+encInline(num[1], ctx)+'</li>'); return; }
+    if(liste && /^\s+\S/.test(raw)){ out[out.length-1]=out[out.length-1].replace(/<\/li>$/,' '+encInline(l.trim(), ctx)+'</li>'); return; }
+    para.push(l.trim());
+  });
+  fermerPara(); fermerListe();
+  return out.join('');
+}
+// Une démonstration n'est jouable que si le lecteur a su en tirer une position et des
+// étapes. Sinon (entrée d'un format antérieur, section incomplète) on affiche la prose
+// et on le dit — une entrée dont la démo ne se lit pas doit rester lisible.
+function encyDemoPlayable(d){ return !!(d && d.fenRoot && d.root && d.root.steps && d.root.steps.length); }
+
+// Découpe le corps de l'entrée en sections de niveau 2, dans l'ordre du document.
+// Les sections « Démonstration… » deviennent un bouton à leur place ; les autres, de la prose.
+function encSplitBody(body){
+  var out=[], parts=String(body||'').split(/^##\s+/m), demoNo=0;
+  parts.forEach(function(p,i){
+    if(!p.trim()) return;
+    if(i===0){ // avant le premier ##, on saute le titre h1 (le nom est déjà affiché)
+      var t=p.replace(/^#\s+.*$/m,'').trim();
+      if(t) out.push({type:'prose', text:t});
+      return;
+    }
+    var nl=p.indexOf('\n');
+    var titre=(nl<0?p:p.slice(0,nl)).trim(), corps=nl<0?'':p.slice(nl+1);
+    if(/^Démonstrations?\b/.test(titre)){
+      // le chapeau « ## Démonstrations » d'une entrée qui les liste en ### : on garde sa prose
+      var sousDemos=corps.split(/^###\s+/m);
+      if(/^Démonstrations\b/.test(titre) && sousDemos.length>1){
+        if(sousDemos[0].trim()) out.push({type:'prose', text:sousDemos[0]});
+        sousDemos.slice(1).forEach(function(sd){
+          var n2=sd.indexOf('\n');
+          out.push({type:'demo', i:demoNo++, titre:(n2<0?sd:sd.slice(0,n2)).trim()});
+        });
+      } else {
+        out.push({type:'demo', i:demoNo++, titre:titre});
+      }
+      return;
+    }
+    out.push({type:'prose', text:'## '+titre+'\n'+corps});
+  });
+  return out;
+}
+function encRenderEntry(){
+  var list=document.getElementById('encList');
+  var e=encEntryShown;
+  if(!e){ list.innerHTML='<button class="ent-back" onclick="encBackToList()">← Retour à la liste</button>'+
+    '<div class="ent-card"><div class="ent-prose">Chargement de l\'entrée…</div></div>'; return; }
+  var h='<button class="ent-back" onclick="encBackToList()">← Retour à la liste</button>';
+  h+='<div class="ent-card">';
+  h+='<div class="ent-name">'+encEsc(e.nom||e.id||'')+'</div>';
+  var chips=[];
+  (e.rayons||[]).forEach(function(r){ chips.push('<span class="ent-chip">'+encEsc(r)+'</span>'); });
+  if(e.phase) chips.push('<span class="ent-chip">'+encEsc(e.phase)+'</span>');
+  if(chips.length) h+='<div class="ent-meta">'+chips.join('')+'</div>';
+  h+='<div class="ent-prose">';
+  encSplitBody(e.body).forEach(function(bl){
+    // `vus` repart à chaque section : un lien par notion et par section, pas une tapisserie
+    if(bl.type==='prose'){ h+=encProse(bl.text, {selfId:e.id, vus:{}}); return; }
+    var d=e.demos[bl.i];
+    if(!encyDemoPlayable(d)){
+      h+='<h3>'+encEsc(bl.titre)+'</h3><div class="ent-note">Démonstration non jouable en l\'état : le lecteur d\'étapes n\'y a pas trouvé de position de départ et d\'étapes au format attendu. Le texte de l\'entrée reste consultable.</div>';
+      return;
+    }
+    var v=d.verification;
+    h+='<button class="ent-demo" onclick="encPlayDemo('+bl.i+')">▶️ Dérouler la démonstration — '+encEsc(d.title||bl.titre)+'</button>';
+    if(v) h+='<div class="ent-vrf '+(v.ok?'ok':'warn')+'">'+(v.ok?'✅':'⚠️')+' vérification : '+v.issues.length+' anomalie(s) / '+v.checksRun+' contrôle(s)</div>';
+  });
+  h+='</div>';
+  // Le champ `liens:` — ce qui fait de l'encyclopédie un réseau. Les cibles pas encore
+  // écrites restent affichées, en amorce : elles disent à l'arbitrage quoi rédiger ensuite.
+  if((e.liens||[]).length){
+    h+='<div class="ent-liens"><span class="ent-liens-t">Ça rejoint :</span>'+
+       e.liens.map(function(id){ return encLinkHtml(id, null); }).join('')+'</div>';
+  }
+  h+='</div>';
+  list.innerHTML=h;
+  list.scrollTop=0;
+}
+function encPlayDemo(i){
+  if(!encEntryShown) return;
+  // retour : la fermeture de la démonstration rouvrira l'overlay SUR cette entrée
+  if(encyStartDemo(encEntryShown, i, {sec:curSec, entry:encEntryId})) closeEnc();
+}
+function encOpenEntry(id){
+  encEntryId=id;
+  if(encEntryCache[id]){ encEntryShown=encEntryCache[id]; encView='entry'; renderEnc(); return; }
+  encEntryShown=null; encView='entry'; renderEnc();
+  fetch(ENCY_DIR+id+'.md').then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(txt){
+    var e=encyResolveEntry(txt);
+    encEntryCache[id]=e;
+    if(encEntryId===id){ encEntryShown=e; renderEnc(); }
+  }).catch(function(err){
+    // Dégradation : l'entrée riche est indisponible, la fiche en dur reprend sa place.
+    encBroken[id]=true;
+    encMsg='« '+id+' » : entrée détaillée indisponible ('+err.message+'). La fiche courte est affichée.';
+    encBackToList();
+  });
+}
+function encBackToList(){ encView='list'; encEntryShown=null; encEntryId=null; renderEnc(); }
+function encChrome(){
+  var liste=(encView==='list');
+  var t=document.getElementById('secTabs'), s=document.getElementById('encSearchWrap'), l=document.getElementById('encLoader');
+  if(t) t.style.display=liste?'':'none';
+  if(s) s.style.display=liste?'':'none';
+  if(l) l.style.display=liste?'':'none';
+}
+
 const SECTIONS=[
   {id:'tactics',label:'⚔️ Tactiques',data:ENC.tactics,type:'enc'},
   {id:'strategy',label:'♟️ Stratégie',data:ENC.strategy,type:'enc'},
   {id:'openings',label:'📖 Ouvertures',data:OPS,type:'open'},
   {id:'endgames',label:'👑 Finales',data:ENC.endgames,type:'enc'},
   {id:'method',label:'🧭 Méthode',data:ENC.method,type:'enc'},
-  {id:'people',label:'🎭 Personnages',data:null,type:'people'}
+  // Histoire absorbe les figures (plus d'onglet Personnages séparé) : une figure, une
+  // partie célèbre et un récit relèvent du même rayon pour le joueur qui cherche.
+  {id:'history',label:'🏛️ Histoire',data:null,type:'people'},
+  {id:'practice',label:'🎯 Pratique',data:[],type:'enc'}
 ];
+/* --- Rayon (fond, porté par l'entrée) → onglet (vue de navigation, porté par l'app) ---
+   Le rayon dit ce qu'est l'objet ; l'onglet dit où le joueur va le chercher. La clé
+   `onglet:` d'une entrée est une DÉROGATION, pas une seconde classification : elle ne
+   décrit rien, elle range — et le moteur n'a pas le droit de la lire.
+   Le partage Tactiques/Stratégie est le seul que les rayons ne tranchent pas (nos deux
+   entrées portent le même [Technique, Méthode] / milieu, l'une est tactique, l'autre
+   stratégique) : c'est là que la dérogation sert. */
+const ENC_ONGLETS={tactics:1,strategy:1,openings:1,endgames:1,method:1,history:1,practice:1};
+function encTabOf(meta){
+  if(!meta) return null;
+  if(meta.onglet && ENC_ONGLETS[meta.onglet]) return meta.onglet;
+  var rayon=((meta.rayons||[])[0]||'').toLowerCase(); // le PREMIER rayon range l'entrée
+  var phase=(meta.phase||'').toLowerCase();
+  if(rayon.indexOf('histoire')===0) return 'history';
+  if(rayon.indexOf('pratique')===0) return 'practice';
+  if(rayon.indexOf('m')===0) return 'method';                       // Méthode
+  if(rayon.indexOf('th')===0) return phase==='ouverture'?'openings':'strategy';  // Théorie
+  if(rayon.indexOf('te')===0) return phase==='finale'?'endgames':'tactics';      // Technique
+  return 'tactics';
+}
+// Entrées riches à afficher dans cet onglet : celles qui y sont rangées et qui n'y ont pas
+// déjà pris la place d'une fiche en dur (sinon elles apparaîtraient deux fois).
+function encEntriesFor(secId, dejaVues){
+  return encIndex.filter(function(m){
+    return m && m.id && !encBroken[m.id] && encTabOf(m)===secId && !dejaVues[m.id];
+  });
+}
 let curSec='tactics',focusId=null;
 function buildSecTabs(){const el=document.getElementById('secTabs');el.innerHTML='';SECTIONS.forEach(s=>{const d=document.createElement('div');d.className='sec-tab'+(s.id===curSec?' active':'');d.textContent=s.label;d.onclick=()=>{curSec=s.id;focusId=null;buildSecTabs();renderEnc();};el.appendChild(d);});}
 function freqLabel(f){return f===3?'<span class="efreq f3">Très courant</span>':f===2?'<span class="efreq f2">Courant</span>':'<span class="efreq f1">Occasionnel</span>';}
+// Item de liste servi par une entrée riche : même carte, une pastille en plus, et le
+// clic ouvre l'entrée au lieu de déplier l'accordéon. `court` vient de la fiche en dur
+// qu'elle périme — c'est son résumé d'une ligne, il reste juste.
+function encRichItem(meta, court){
+  const it=document.createElement('div');it.className='enc-item';it.id='enc-'+meta.id;
+  it.innerHTML='<div class="eh"><span class="en">'+(meta.nom||meta.id)+'</span><span class="erich">📖 entrée détaillée</span></div>'+
+    (court?'<div class="eshort">'+court+'</div>':'')+
+    '<span class="ecaret">▾ Ouvrir l\'entrée'+(meta.demos?' · '+meta.demos+' démonstration'+(meta.demos>1?'s':''):'')+'</span>';
+  it.onclick=()=>encOpenEntry(meta.id);
+  return it;
+}
+function encMatch(filter, ...morceaux){
+  if(!filter) return true;
+  return morceaux.filter(Boolean).join(' ').toLowerCase().includes(filter);
+}
+// Fiche visée par un lien interne : on la déplie et on la signale (même geste que
+// le person-link des ouvertures, jusqu'ici réservé à l'onglet Personnages).
+function encFocus(it, id){
+  if(id!==focusId) return;
+  it.classList.add('open');
+  setTimeout(()=>{it.classList.add('target');it.scrollIntoView({block:'center'});setTimeout(()=>it.classList.remove('target'),1500);},50);
+}
 function renderEnc(){
+  encChrome();
+  if(encView==='entry'){ encRenderEntry(); return; }
   const sec=SECTIONS.find(s=>s.id===curSec);const list=document.getElementById('encList');list.innerHTML='';
   const filter=(document.getElementById('encSearch').value||'').toLowerCase();
+  const vues={}; // entrées riches déjà posées ici à la place d'une fiche en dur
+  if(encMsg){ const m=document.createElement('div');m.className='enc-msg';m.textContent=encMsg;list.appendChild(m); }
   if(sec.type==='people'){
     for(const k of Object.keys(PEOPLE)){const p=PEOPLE[k];if(filter&&!(p.name+' '+p.country+' '+p.role+' '+(p.openings||[]).join(' ')).toLowerCase().includes(filter))continue;
+      const rich=encRichFor(k);
+      if(rich){ vues[rich.id]=1; if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),p.name)) list.appendChild(encRichItem(rich,p.country+' · '+p.role)); continue; }
       const it=document.createElement('div');it.className='enc-item'+(k===focusId?' open':'');it.id='enc-'+k;
       it.innerHTML='<div class="eh"><span class="en">'+p.name+'</span><span class="emoves">'+p.life+'</span></div><div class="eshort">'+p.country+' · '+p.role+'</div><span class="ecaret">▾ Lire la fiche</span><div class="edetail">'+(p.openings?'<div class="blk blk-idea"><b>Ouvertures :</b> '+p.openings.join(' · ')+'</div>':'')+'<div class="blk blk-ex">'+p.bio+'</div></div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
       if(k===focusId)setTimeout(()=>{it.classList.add('target');it.scrollIntoView({block:'center'});setTimeout(()=>it.classList.remove('target'),1500);},50);
     }
   } else if(sec.type==='open'){
-    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){if(filter&&!(o.name+' '+o.moves+' '+o.short).toLowerCase().includes(filter))continue;
-      const it=document.createElement('div');it.className='enc-item';
+    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
+      const rich=encRichFor(o.id);
+      if(rich){ vues[rich.id]=1; if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.moves,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
+      if(filter&&!(o.name+' '+o.moves+' '+o.short).toLowerCase().includes(filter))continue;
+      const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea"><b>Idée.</b> '+o.idea+'</div><div class="blk blk-reply"><b>Comment réagir.</b> '+o.reply+'</div>';
       if(o.trap)d+='<div class="blk blk-trap"><b>À savoir.</b> '+o.trap+'</div>';
-      if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();curSec=\'people\';focusId=\''+o.person+'\';buildSecTabs();renderEnc();">📜 Voir : '+PEOPLE[o.person].name+'</span>';
+      if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();curSec=\'history\';focusId=\''+o.person+'\';buildSecTabs();renderEnc();">📜 Voir : '+PEOPLE[o.person].name+'</span>';
       it.innerHTML='<div class="eh"><span class="en">'+o.name+'</span>'+freqLabel(o.freq)+'</div><div class="emoves" style="margin-top:3px">'+o.moves+'</div><div class="eshort">'+o.short+'</div><span class="ecaret">▾ Détails</span><div class="edetail">'+d+'</div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
+      encFocus(it,o.id);
     }
   } else {
-    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){if(filter&&!(o.name+' '+o.short+' '+o.full).toLowerCase().includes(filter))continue;
-      const it=document.createElement('div');it.className='enc-item';
+    for(const o of [...sec.data].sort((a,b)=>b.freq-a.freq)){
+      const rich=encRichFor(o.id);
+      if(rich){ vues[rich.id]=1; if(encMatch(filter,rich.nom,(rich.alias||[]).join(' '),o.name,o.short)) list.appendChild(encRichItem(rich,o.short)); continue; }
+      if(filter&&!(o.name+' '+o.short+' '+o.full).toLowerCase().includes(filter))continue;
+      const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea">'+o.full+'</div>';
       if(o.signal)d+='<div class="blk blk-signal"><b>Comment le repérer.</b> '+o.signal+'</div>';
       if(o.ex)d+='<div class="blk blk-ex"><b>Exemple.</b> '+o.ex+'</div>';
       it.innerHTML='<div class="eh"><span class="en">'+o.name+'</span>'+freqLabel(o.freq)+'</div><div class="eshort">'+o.short+'</div><span class="ecaret">▾ Détails</span><div class="edetail">'+d+'</div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
+      encFocus(it,o.id);
     }
   }
-  if(!list.children.length)list.innerHTML='<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:.85rem">Aucun résultat.</div>';
+  // Entrées riches rangées dans cet onglet sans y périmer de fiche : c'est ainsi qu'une
+  // entrée sans équivalent en dur (une figure, un objet neuf) trouve sa place.
+  encEntriesFor(sec.id, vues).forEach(function(m){
+    if(encMatch(filter,m.nom,(m.alias||[]).join(' '),(m.rayons||[]).join(' '))) list.appendChild(encRichItem(m,null));
+  });
+  if(!list.children.length){
+    list.innerHTML = filter
+      ? '<div class="enc-vide">Aucun résultat.</div>'
+      : '<div class="enc-vide">Ce rayon attend ses premières entrées.<br>Une entrée d\'encyclopédie s\'y rangera dès qu\'elle en portera le rayon.</div>';
+  }
 }
-function openEnc(sec,focus){if(sec)curSec=sec;if(focus)focusId=focus;document.getElementById('encSearch').value='';buildSecTabs();renderEnc();document.getElementById('overlay').classList.add('show');}
-function closeEnc(){document.getElementById('overlay').classList.remove('show');focusId=null;}
+function openEnc(sec,focus){
+  if(sec)curSec=sec; if(focus)focusId=focus;
+  encView='list'; encEntryShown=null; encEntryId=null;
+  document.getElementById('encSearch').value='';
+  buildSecTabs();renderEnc();
+  document.getElementById('overlay').classList.add('show');
+  // Le manifeste arrive après coup : la liste se redessine quand il est là (ou pas).
+  encLoadIndex().then(function(){ if(document.getElementById('overlay').classList.contains('show') && encView==='list') renderEnc(); });
+}
+function closeEnc(){document.getElementById('overlay').classList.remove('show');focusId=null;encMsg='';}
 function fitBoardSoon(){ setTimeout(fitBoard,60); }
 function togglePasteArea(){
   var pa=document.getElementById('pasteArea');
@@ -4313,6 +4868,14 @@ function maybeBotMove(){
 
 var hintLevel=0, hintFen=null;
 function pieceName(p){return {p:'pion',n:'cavalier',b:'fou',r:'tour',q:'dame',k:'roi'}[p]||'pièce';}
+// Genre grammatical de chaque pièce : « ta dame », « ta tour », mais « ton fou ». Le genre
+// est une propriété de la PIÈCE, pas du message — une table le dit une fois, et tout message
+// futur accorde sans avoir à le redeviner. Repli féminin, cohérent avec « pièce » ci-dessus.
+const PIECE_GENRE={p:'m',n:'m',b:'m',r:'f',q:'f',k:'m'};
+function pieceAvec(det,p){
+  var f=(PIECE_GENRE[p]||'f')==='f';
+  return ({possessif:f?'ta':'ton', defini:f?'la':'le', indefini:f?'une':'un'}[det]||'')+' '+pieceName(p);
+}
 function moveNature(uci){
   var from=uci.slice(0,2),to=uci.slice(2,4),promo=uci.slice(4,5)||'q';
   var g=new Chess(game.fen());
@@ -4332,6 +4895,10 @@ function evalPhrase(cp){
   return 'Tu es en difficulté : cherche des ressources défensives ou de quoi compliquer la partie.';
 }
 function askHint(){
+  // Une démonstration d'encyclopédie est en cours : le coach de PARTIE se tait. Les deux
+  // Fous ne parlent jamais en même temps — le conseil générique n'a rien à dire d'une
+  // position posée pour l'exemple, et il écraserait la bulle du lecteur.
+  if(encyMode && encyDemo) return;
   if(game.game_over()){ hintBubble('La partie est terminée.','',''); return; }
   var fen=game.fen();
   if(fen!==hintFen){ hintLevel=0; hintFen=fen; }
@@ -4379,7 +4946,7 @@ function showHint(d, lvl, offline){
   if(hintLevel===2 && nat){
     var msg='<b>Regarde du côté de ';
     // désigner la pièce à jouer et l'idée
-    msg+='ton '+pieceName(nat.piece)+'.</b> ';
+    msg+=pieceAvec('possessif',nat.piece)+'.</b> ';
     if(nat.mate) msg+='Il existe une suite qui mène au <b>mat</b> — cherche les échecs forçants !';
     else if(nat.captured) msg+='Le meilleur coup est une <b>capture</b> : tu peux gagner du matériel ou éliminer une pièce clé.';
     else if(nat.check) msg+='Le meilleur coup donne <b>échec</b> — un coup forçant qui limite les réponses adverses.';
@@ -4502,7 +5069,7 @@ function drawArrows(){
   // 1) Flèches "recommandées" (livre d'ouverture / moteur) — masquées en mode Jouer (anti-triche)
   // et masquées dès qu'une position de départ est imposée (FEN) ou qu'on est en mode PGN/démonstration :
   // le livre/moteur n'a rien à dire sur une position posée pour l'exemple, seules les %cal/%csl du commentaire comptent.
-  if(!playMode && arrowsOn && !startFen && !pgnMode){
+  if(!playMode && arrowsOn && !startFen && !pgnMode && !encyMode){
     var seq=getUciSeq();
     var opts=BOOK[seq.join(' ')];
     if(opts && opts.length){ drawArrowList(opts,false); }
@@ -4523,7 +5090,9 @@ function drawArrows(){
 function drawFouArrows(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
   if(playMode) return; // pas d'indice concret en partie live
-  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
+  // « Coups recommandés » règle les flèches du moteur/livre. Pendant une démonstration,
+  // les %cal/%csl SONT le contenu enseigné : le réglage ne les efface pas.
+  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked && !encyMode) return;
   if(!fouArrows || !fouArrows.length) return;
   var ns='http://www.w3.org/2000/svg';
   fouArrows.forEach(function(o){
@@ -4548,7 +5117,9 @@ function drawFouArrows(){
 function drawFouCircles(){
   var layer=document.getElementById('arrowLayer'); if(!layer) return;
   if(playMode) return; // pas d'indice concret en partie live
-  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked) return; // respecte le réglage global
+  // « Coups recommandés » règle les flèches du moteur/livre. Pendant une démonstration,
+  // les %cal/%csl SONT le contenu enseigné : le réglage ne les efface pas.
+  var tog=document.getElementById('arrowToggle'); if(tog && !tog.checked && !encyMode) return;
   if(!fouCircles || !fouCircles.length) return;
   var ns='http://www.w3.org/2000/svg';
   fouCircles.forEach(function(o){
@@ -4563,6 +5134,355 @@ function drawFouCircles(){
     layer.appendChild(circ);
   });
 }
+
+/* ===== LECTEUR D'ÉTAPES RAMIFIÉ (encyclopédie, phase 3) =====
+   Parse une entrée d'encyclopédie (_fonds/encyclopedie/*.md, FORMAT.md v3),
+   résout l'arbre de la démonstration une fois au chargement (FEN de chaque
+   nœud/étape par rejeu chess.js), puis la navigation n'est que de la
+   lecture d'index. Front-matter : extraction minimale (id/nom/phase/
+   rayons/alias/liens) ; `sources` non structuré, réservé à la phase 4
+   (consultation). `nature:` est capturé par étape/branche mais pas encore
+   affiché — disponible pour plus tard. */
+
+function encyParseFrontMatter(md){
+  var m = md.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  if(!m) return {meta:{}, body:md};
+  var body = md.slice(m[0].length);
+  var lines = m[1].split('\n');
+  function scalarValue(v){
+    v=v.trim();
+    if(/^\[.*\]$/.test(v)) return v.slice(1,-1).split(',').map(function(s){return s.trim();}).filter(Boolean);
+    if(/^"(.*)"$/.test(v)) return v.replace(/^"|"$/g,'');
+    return v;
+  }
+  var meta={}, i=0;
+  while(i<lines.length){
+    var mm=lines[i].match(/^([a-zA-Z_]+):\s*(.*)$/);
+    if(mm){
+      var key=mm[1], rest=mm[2];
+      if(rest && rest.trim()!==''){ meta[key]=scalarValue(rest); i++; }
+      else{
+        var items=[]; i++;
+        while(i<lines.length && /^\s+\S/.test(lines[i])){
+          var lm=lines[i].match(/^\s*-\s*(.*)$/);
+          if(lm) items.push(scalarValue(lm[1]));
+          i++;
+        }
+        meta[key]=items;
+      }
+    } else i++;
+  }
+  return {meta:meta, body:body};
+}
+function encyFrSan(s){
+  // notation française (R=Roi, D=Dame, T=Tour, F=Fou, C=Cavalier) → SAN anglais pour chess.js.
+  // ATTENTION : R français = Roi (K), pas Tour — ne jamais passer du SAN français brut à chess.js.
+  return s.replace(/\b([RDTFC])(?=[a-h1-8x])/g, function(m,p){ return {R:'K',D:'Q',T:'R',F:'B',C:'N'}[p]; });
+}
+function encyStripMoveNum(s){
+  return s.replace(/^\d+(\.|…)+\s*/,'').replace(/\s*\([^)]*\)\s*$/,'').trim();
+}
+function encyParseStep(paragraph){
+  var lines=paragraph.split('\n');
+  var hm=lines[0].match(/^ÉTAPE\s+([A-Za-z0-9.]+)\s*(?:[—-]\s*(.*))?$/);
+  var id = hm ? hm[1] : String(lines[0]).trim();
+  var label = hm && hm[2] ? hm[2].trim() : '';
+  var isReset = /réinitialisation/i.test(label);
+  var rest = lines.slice(1), idx=0, nature=null, coupRaw='—', annoLine=null, fouLines=[];
+  if(rest[idx] && /^nature:/i.test(rest[idx])){ nature=rest[idx].replace(/^nature:\s*/i,'').trim(); idx++; }
+  // [v5] `cloture:` — la démonstration S'ARRÊTE à cette étape dans cette entrée. Ce qui
+  // suit reste lu et vérifié (c'est de la matière), mais n'est pas proposé sur l'échiquier.
+  var cloture=null;
+  if(rest[idx] && /^cloture:/i.test(rest[idx])){ cloture=rest[idx].replace(/^cloture:\s*/i,'').trim(); idx++; }
+  if(!isReset && rest[idx] && /^coup:/i.test(rest[idx])){ coupRaw=rest[idx].replace(/^coup:\s*/i,'').trim(); idx++; }
+  if(rest[idx] && /^\[%(csl|cal)/i.test(rest[idx])){ annoLine=rest[idx]; idx++; }
+  for(; idx<rest.length; idx++){
+    fouLines.push(rest[idx].replace(/^Le Fou\s*:\s*«\s*/,'').replace(/»\s*$/,''));
+  }
+  return {
+    id:id, label:label, isReset:isReset, nature:nature, cloture:cloture,
+    coupRaw:coupRaw, anno: annoLine ? extractVisuals(annoLine) : {arrows:[],circles:[]},
+    fouText: fouLines.join(' ').replace(/\s+/g,' ').trim()
+  };
+}
+function encyExtractSteps(text){
+  var steps=[], re=/```[^\n]*\n([\s\S]*?)```/g, fm;
+  while((fm=re.exec(text))){
+    fm[1].split(/\n\s*\n/).map(function(p){return p.trim();}).filter(Boolean).forEach(function(p){
+      if(/^ÉTAPE\s/.test(p)) steps.push(encyParseStep(p));
+    });
+  }
+  return steps;
+}
+function encyParseDemoTree(sectionText, rootFen){
+  var lines=sectionText.split('\n'), blocks=[], cur=null;
+  lines.forEach(function(line){
+    var h=line.match(/^(#{3,4})\s+(.*)$/);
+    if(h){ cur={level:h[1].length, title:h[2].trim(), lines:[]}; blocks.push(cur); }
+    else if(cur) cur.lines.push(line);
+  });
+  var root={name:null, label:'Racine', steps:[], children:[], declaredFen:null};
+  var lastAtLevel={2:root};
+  var branchRe=/^(?:Sous-)?[Bb]ranche\s+([^\s—-]+)\s*(?:[—-]\s*(.*))?$/;
+  blocks.forEach(function(b){
+    var mb=b.title.match(branchRe);
+    var blockText=b.lines.join('\n');
+    var steps=encyExtractSteps(blockText);
+    if(mb){
+      var fenM=blockText.match(/Position de branche\s*:\s*`([^`]+)`/);
+      var label=mb[2]?mb[2].replace(/^«\s*|\s*»$/g,'').trim():b.title;
+      var node={name:mb[1], label:label, steps:steps, children:[], declaredFen: fenM?fenM[1]:null};
+      var parent=lastAtLevel[b.level-1]||root;
+      parent.children.push(node);
+      lastAtLevel[b.level]=node;
+    } else {
+      root.steps=root.steps.concat(steps);
+    }
+  });
+  return root;
+}
+function encyParseDemo(sectionText){
+  var tm=sectionText.match(/^##\s*Démonstration\s*(?:—\s*(.*))?$/m);
+  var title = tm && tm[1] ? tm[1].trim() : 'Démonstration';
+  var fenM=sectionText.match(/\*\*FEN\*\*\s*:\s*`([^`]+)`/);
+  var fenRoot = fenM ? fenM[1] : null;
+  var yM=sectionText.match(/```yaml\s*\n([\s\S]*?)```/);
+  var declared={outil:null,date:null,invariants:[]};
+  if(yM){
+    yM[1].split('\n').forEach(function(l){
+      var om=l.match(/^\s*outil:\s*"?(.*?)"?\s*$/); if(om) declared.outil=om[1];
+      var dm=l.match(/^\s*date:\s*(.*)$/); if(dm) declared.date=dm[1].trim();
+      var im=l.match(/^\s*-\s*"(.*)"\s*$/); if(im) declared.invariants.push(im[1]);
+    });
+  }
+  return {title:title, fenRoot:fenRoot, declared:declared, root: encyParseDemoTree(sectionText, fenRoot)};
+}
+function encyParseEntry(mdText){
+  var fm=encyParseFrontMatter(mdText);
+  var parts=fm.body.split(/^##\s+Démonstration/m);
+  var demos=[];
+  for(var i=1;i<parts.length;i++){
+    var sectionText='## Démonstration'+parts[i];
+    var cut=sectionText.search(/\n##\s+(?!Démonstration)/);
+    if(cut>=0) sectionText=sectionText.slice(0,cut);
+    demos.push(encyParseDemo(sectionText));
+  }
+  return {id:fm.meta.id, nom:fm.meta.nom, rayons:fm.meta.rayons, phase:fm.meta.phase,
+    alias:fm.meta.alias, liens:fm.meta.liens, remplace:fm.meta.remplace, onglet:fm.meta.onglet,
+    body:fm.body, demos:demos};
+}
+function encyResolveTree(root, rootFen){
+  var issues=[], checksRun=0;
+  // Coups d'ouverture "réels" couverts par un nœud, en descendant récursivement dans ses
+  // propres enfants si ses étapes ne jouent elles-mêmes aucun coup (nœud purement
+  // organisationnel, ex. Branche A ici : son étape A1 n'est qu'une annotation, ce sont ses
+  // sous-branches A.1/A.2 qui jouent). Renvoie null si irrésoluble (coup illégal, ou ni coup
+  // ni enfant à explorer) — dans ce cas le contrôle de complétude est sauté, pas mis en échec.
+  function firstMovesOf(node, fen){
+    for(var i=0;i<node.steps.length;i++){
+      var s=node.steps[i];
+      if(s.coupRaw && s.coupRaw!=='—'){
+        var g=new Chess(fen), mv=g.move(encyFrSan(encyStripMoveNum(s.coupRaw)),{sloppy:true});
+        return mv ? [mv.san] : null;
+      }
+    }
+    if(node.children && node.children.length){
+      var all=[];
+      for(var j=0;j<node.children.length;j++){
+        var sub=firstMovesOf(node.children[j], fen);
+        if(sub===null) return null;
+        all=all.concat(sub);
+      }
+      return all;
+    }
+    return null;
+  }
+  function resolveNode(node, entryFen){
+    node.entryFen = node.declaredFen || entryFen;
+    if(node.declaredFen){
+      checksRun++;
+      if(node.declaredFen!==entryFen) issues.push('Branche « '+node.label+' » : FEN déclaré différent du FEN dérivé par rejeu.');
+    }
+    var fen=node.entryFen;
+    node.steps.forEach(function(step){
+      if(step.coupRaw && step.coupRaw!=='—'){
+        var g=new Chess(fen);
+        var mv=g.move(encyFrSan(encyStripMoveNum(step.coupRaw)), {sloppy:true});
+        checksRun++;
+        if(!mv){
+          issues.push('Étape '+step.id+' : coup « '+step.coupRaw+' » illégal depuis la position affichée.');
+          step.fen=fen; step.legal=false; step.giveCheck=false; step.isMate=false;
+        } else {
+          step.from=mv.from; step.to=mv.to; step.legal=true;
+          step.giveCheck=/\+/.test(mv.san); step.isMate=/#/.test(mv.san);
+          if(step.giveCheck){ checksRun++; if(!g.in_check()) issues.push('Étape '+step.id+' : « + » annoncé mais pas échec.'); }
+          if(step.isMate){ checksRun++; if(!g.in_checkmate()) issues.push('Étape '+step.id+' : « # » annoncé mais pas mat.'); }
+          fen=g.fen(); step.fen=fen;
+        }
+      } else { step.fen=fen; step.legal=true; step.giveCheck=false; step.isMate=false; }
+    });
+    // Complétude à un embranchement : seulement quand CE nœud a lui-même consommé au moins un
+    // coup (fen a changé) — sinon c'est un regroupement organisationnel sur la MÊME position
+    // que son parent, déjà couvert par le contrôle du parent (cf. firstMovesOf, qui descend
+    // dedans). Sans cette garde, un nœud comme Branche A serait comparé à tort à TOUS les coups
+    // légaux de la position, alors qu'il n'en couvre qu'une partie (le reste revient à Branche B).
+    if(node.children.length && fen!==node.entryFen){
+      var openers=[], resolvable=true;
+      node.children.forEach(function(ch){
+        var sub=firstMovesOf(ch, fen);
+        if(sub===null) resolvable=false; else openers=openers.concat(sub);
+      });
+      if(resolvable){
+        checksRun++;
+        var legal=new Chess(fen).moves().slice().sort(), got=openers.slice().sort();
+        if(JSON.stringify(legal)!==JSON.stringify(got)){
+          issues.push('Embranchement après « '+(node.label||'la racine')+' » : les branches ('+got.join(', ')+') ne couvrent pas tous les coups légaux ('+legal.join(', ')+').');
+        }
+      }
+    }
+    node.children.forEach(function(ch){ resolveNode(ch, fen); });
+  }
+  resolveNode(root, rootFen);
+  return {ok: issues.length===0, issues:issues, checksRun:checksRun};
+}
+function encyCurrentNode(){
+  var node=encyDemo.root;
+  for(var i=0;i<encyPath.length;i++){
+    var found=node.children.filter(function(c){return c.name===encyPath[i].name;})[0];
+    if(!found) break;
+    node=found;
+  }
+  return node;
+}
+function encyGoto(){
+  var node=encyCurrentNode();
+  if(encyStep<0) encyStep=0;
+  if(encyStep>=node.steps.length) encyStep=Math.max(0,node.steps.length-1);
+  var step=node.steps[encyStep];
+  game=new Chess(step.fen);
+  lastFrom=step.from||null; lastTo=step.to||null; sel=null; legal=[];
+  render(false);
+  fitBoardSoon();
+}
+function encyIdentify(sp, animate){
+  var node=encyCurrentNode(), step=node.steps[encyStep];
+  fouArrows=step.anno.arrows.slice();
+  fouCircles=step.anno.circles.slice();
+  setMood(step.isMate?'wow':(step.giveCheck?'joy':'happy'), animate);
+  var html='<div class="stitle">📖 '+(encyDemo.title||'Démonstration')+'</div>';
+  html+='<div class="fam">'+(step.label?step.label:('Étape '+step.id))+'</div>';
+  // Le texte d'une étape passe par le MÊME rendu de liens que la prose d'une entrée :
+  // [[id]] y devient un lien ou une amorce. md() ne faisait que le gras et aurait laissé
+  // les crochets à l'écran.
+  if(step.fouText) html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+encInline(step.fouText,{selfId:(encyEntry&&encyEntry.id)||null,vus:{}})+'</div>';
+  else if(step.isReset) html+='<div class="stext" style="font-style:italic">Fin de cette branche — reviens à l\'embranchement pour explorer la sœur.</div>';
+  sp.innerHTML=html;
+}
+// Les branches ne vivent PAS dans le panneau : elles s'affichent dans leur emplacement
+// propre, immédiatement sous les flèches de navigation.
+function encyRenderBranches(node){
+  var slot=document.getElementById('encyBranchSlot'); if(!slot) return;
+  var atLast=(encyStep===node.steps.length-1);
+  var etape=node.steps[encyStep];
+  // [v5] étape de clôture : on rend la main au joueur, on ne propose pas les branches.
+  if(etape && etape.cloture){ slot.innerHTML=''; return; }
+  if(!(atLast && node.children.length)){ slot.innerHTML=''; return; }
+  var h='<div class="ency-branches">';
+  node.children.forEach(function(ch){
+    h+='<button onclick="encyChooseBranch(\''+ch.name.replace(/'/g,"\\'")+'\')">→ '+ch.label+'</button>';
+  });
+  slot.innerHTML=h+'</div>';
+}
+function encyRenderPanel(){
+  var el=document.getElementById('movesPlayed'); if(!el || !encyDemo) return;
+  var node=encyCurrentNode(), v=encyDemo.verification;
+  var html='';
+  if(v){ html+='<div class="ency-status '+(v.ok?'ok':'warn')+'">'+(v.ok?'✅':'⚠️')+' Vérification (contrôles mécaniques) : '+v.issues.length+' anomalie(s) sur '+v.checksRun+' contrôle(s).'+
+    (v.issues.length? '<br>'+v.issues.map(function(s){return '· '+s;}).join('<br>') : '')+'</div>'; }
+  var crumbs=['Racine'].concat(encyPath.map(function(p){return p.label;}));
+  html+='<div class="ency-crumb">'+crumbs.join(' › ')+' — étape '+(encyStep+1)+'/'+node.steps.length+'</div>';
+  encyRenderBranches(node);
+  if(encyPath.length) html+='<button class="ency-back" onclick="encyBackToFork()">🔼 Revenir à l\'embranchement</button>';
+  html+='<button class="ency-close" onclick="encyClose()">✕ Fermer la démonstration</button>';
+  el.innerHTML=html;
+}
+function encyChooseBranch(name){
+  var node=encyCurrentNode();
+  var ch=node.children.filter(function(c){return c.name===name;})[0];
+  if(!ch) return;
+  encyPath.push({name:ch.name, label:ch.label});
+  encyStep=0;
+  encyGoto();
+}
+function encyBackToFork(){
+  if(!encyPath.length) return;
+  encyPath.pop();
+  var node=encyCurrentNode();
+  encyStep=node.steps.length-1;
+  encyGoto();
+}
+function encyClose(){
+  var back=encyReturn;
+  encyMode=false; encyEntry=null; encyDemo=null; encyPath=[]; encyStep=0; encyReturn=null;
+  reset();
+  // La démonstration a été lancée depuis l'encyclopédie : on y revient, au lieu de laisser
+  // le joueur sur un échiquier vide. La boucle de lecture se referme (liste → entrée →
+  // démonstration → entrée).
+  if(back && typeof openEnc==='function'){
+    openEnc(back.sec, back.fiche);
+    if(back.entry && typeof encOpenEntry==='function') encOpenEntry(back.entry);
+  }
+}
+
+/* --- Deux temps, séparés : résoudre / jouer -------------------------------
+   encyResolveEntry() ne fait QUE lire (parsing + rejeu de vérification) : elle ne
+   touche ni à l'échiquier, ni à l'état de partie. C'est ce que l'overlay appelle au
+   clic sur une fiche, pour afficher la prose d'une entrée sans rien lancer.
+   encyStartDemo() est la prise en main de l'échiquier, déclenchée seulement quand le
+   joueur demande à dérouler une démonstration. */
+
+function encyResolveEntry(mdText){
+  var entry=encyParseEntry(mdText);
+  // chaque démonstration porte sa propre vérification, résolue une fois ici
+  entry.demos.forEach(function(d){ d.verification=encyResolveTree(d.root, d.fenRoot); });
+  return entry;
+}
+function encyStartDemo(entry, i, returnTo){
+  var demo=entry && entry.demos ? entry.demos[i||0] : null;
+  if(!demo) return false;
+  encyEntry=entry; encyDemo=demo; encyPath=[]; encyStep=0; encyMode=true;
+  encyReturn=returnTo||null;
+  fullMoves=[]; cursor=0; gameAnalysis=null; moveComments=[]; moveAnnotations=[];
+  pgnMode=false; startFen=null;
+  setPlayMode(false);
+  var pa=document.getElementById('pasteArea'); if(pa) pa.style.display='none';
+  encyGoto();
+  return true;
+}
+// Chargement direct depuis du texte Markdown (chargeur de rédaction) : résout puis joue.
+function encyLoadEntry(mdText, returnTo){
+  var st=document.getElementById('encyImportStatus');
+  var entry;
+  try{ entry=encyResolveEntry(mdText); }
+  catch(e){ if(st) st.textContent='Erreur de lecture : '+e.message; return false; }
+  if(!entry.demos.length){ if(st) st.textContent='Aucune démonstration trouvée dans ce texte.'; return false; }
+  if(st) st.textContent='';
+  return encyStartDemo(entry, 0, returnTo);
+}
+/* Chargeur de rédaction (pied de l'overlay) : voir une entrée PAS ENCORE posée dans
+   _fonds/. Le chargement par id, lui, n'existe plus — c'est la liste qui l'assure. */
+function encyLoadFromTextarea(){
+  var txt=(document.getElementById('encyPaste').value||'');
+  if(!txt.trim()) return;
+  if(encyLoadEntry(txt)) closeEnc();
+}
+function encyImportFile(input){
+  var f=input.files && input.files[0]; if(!f) return;
+  var reader=new FileReader();
+  reader.onload=function(){ if(encyLoadEntry(String(reader.result))) closeEnc(); };
+  reader.readAsText(f);
+}
+
 function fitBoard(){
   try{
     var wrap = document.querySelector('.board-eval-wrap');
