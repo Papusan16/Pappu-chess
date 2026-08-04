@@ -12,7 +12,6 @@ alias:
   - coup à la découverte
   - batterie
   - pièce masquante
-  - double échec
 sources:
   - nature: heritee
     auteur: Marc Quenehen
@@ -122,6 +121,11 @@ on joue deux coups en un. D'où deux conséquences pratiques :
   finalité — d'e4 comme d'e8, le cavalier ira mater en d6.
 
 ## Le double échec, cas extrême
+
+Le [[echec-double|double échec]] est un **motif voisin**, pas un autre
+nom de celui-ci : une découverte n'est double que si la pièce masquante
+donne elle-même échec en s'écartant, et un double échec peut naître
+autrement. Les deux se croisent sans se contenir.
 
 Quand la pièce masquante donne elle aussi échec en s'écartant, les deux
 échecs sont simultanés et le camp attaqué **ne peut plus rien parer** :
