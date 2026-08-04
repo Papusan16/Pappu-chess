@@ -267,17 +267,27 @@ Le Fou : « Le cavalier s'écarte, et l'échec part du fou, qui n'a pas
 bougé. La dame blanche est toujours en prise en c6 — et alors ? Les
 Noirs doivent d'abord répondre à l'échec. »
 
-ÉTAPE 8 — RAMIFICATION
+ÉTAPE 8 — À toi de jouer
+cloture: pause
 coup: —
 [%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
 Le Fou : « Les Noirs n'ont plus que trois coups dans toute la position.
-Ou la dame vient s'interposer, en e7 ou en f6 — ou le roi fuit en c8.
-Regardons les deux. »
+Ou la dame vient s'interposer en e7 ou en f6, ce qui a peu d'intérêt et
+n'en a même pas pour la démonstration, ou le roi fuit en c8. Que ferais-tu
+dans cette situation. Tu peux découvrir ce qu'a fait l'adversaire du GM
+Nataf et la réponse de ce dernier [[top-mats-nataf|ici]] »
 ```
 
-> À partir d'ici, la démonstration **embranche**. Chaque branche part de
-> la position après 1. Ce4+, redonnée en FEN pour que le lecteur puisse
-> l'atteindre sans rejouer la ligne principale.
+> **La démonstration s'arrête ici dans cette entrée** (`cloture: pause`) :
+> l'entrée-motif enseigne la découverte, elle ne joue pas le mat. Ce qui
+> suit reste de la MATIÈRE — lue, vérifiée et rejouable par le lecteur,
+> mais non proposée sur l'échiquier ici. Elle resservira telle quelle,
+> en miroir, dans la séquence « Top mats » (`top-mats-nataf`), vers
+> laquelle renvoie le « ici » de l'étape 8 — amorce inerte tant que
+> cette entrée n'est pas écrite.
+>
+> Chaque branche part de la position après 1. Ce4+, redonnée en FEN pour
+> que le lecteur puisse l'atteindre sans rejouer la ligne principale.
 
 ### Branche A — « La dame s'interpose »
 

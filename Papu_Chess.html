@@ -5178,13 +5178,17 @@ function encyParseStep(paragraph){
   var isReset = /réinitialisation/i.test(label);
   var rest = lines.slice(1), idx=0, nature=null, coupRaw='—', annoLine=null, fouLines=[];
   if(rest[idx] && /^nature:/i.test(rest[idx])){ nature=rest[idx].replace(/^nature:\s*/i,'').trim(); idx++; }
+  // [v5] `cloture:` — la démonstration S'ARRÊTE à cette étape dans cette entrée. Ce qui
+  // suit reste lu et vérifié (c'est de la matière), mais n'est pas proposé sur l'échiquier.
+  var cloture=null;
+  if(rest[idx] && /^cloture:/i.test(rest[idx])){ cloture=rest[idx].replace(/^cloture:\s*/i,'').trim(); idx++; }
   if(!isReset && rest[idx] && /^coup:/i.test(rest[idx])){ coupRaw=rest[idx].replace(/^coup:\s*/i,'').trim(); idx++; }
   if(rest[idx] && /^\[%(csl|cal)/i.test(rest[idx])){ annoLine=rest[idx]; idx++; }
   for(; idx<rest.length; idx++){
     fouLines.push(rest[idx].replace(/^Le Fou\s*:\s*«\s*/,'').replace(/»\s*$/,''));
   }
   return {
-    id:id, label:label, isReset:isReset, nature:nature,
+    id:id, label:label, isReset:isReset, nature:nature, cloture:cloture,
     coupRaw:coupRaw, anno: annoLine ? extractVisuals(annoLine) : {arrows:[],circles:[]},
     fouText: fouLines.join(' ').replace(/\s+/g,' ').trim()
   };
@@ -5355,7 +5359,10 @@ function encyIdentify(sp, animate){
   setMood(step.isMate?'wow':(step.giveCheck?'joy':'happy'), animate);
   var html='<div class="stitle">📖 '+(encyDemo.title||'Démonstration')+'</div>';
   html+='<div class="fam">'+(step.label?step.label:('Étape '+step.id))+'</div>';
-  if(step.fouText) html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+md(step.fouText)+'</div>';
+  // Le texte d'une étape passe par le MÊME rendu de liens que la prose d'une entrée :
+  // [[id]] y devient un lien ou une amorce. md() ne faisait que le gras et aurait laissé
+  // les crochets à l'écran.
+  if(step.fouText) html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+encInline(step.fouText,{selfId:(encyEntry&&encyEntry.id)||null,vus:{}})+'</div>';
   else if(step.isReset) html+='<div class="stext" style="font-style:italic">Fin de cette branche — reviens à l\'embranchement pour explorer la sœur.</div>';
   sp.innerHTML=html;
 }
@@ -5364,6 +5371,9 @@ function encyIdentify(sp, animate){
 function encyRenderBranches(node){
   var slot=document.getElementById('encyBranchSlot'); if(!slot) return;
   var atLast=(encyStep===node.steps.length-1);
+  var etape=node.steps[encyStep];
+  // [v5] étape de clôture : on rend la main au joueur, on ne propose pas les branches.
+  if(etape && etape.cloture){ slot.innerHTML=''; return; }
   if(!(atLast && node.children.length)){ slot.innerHTML=''; return; }
   var h='<div class="ency-branches">';
   node.children.forEach(function(ch){

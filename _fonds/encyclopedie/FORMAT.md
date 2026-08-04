@@ -1,5 +1,9 @@
 # Format d'une entrée d'encyclopédie
 
+**Version 5** — 2026-08-04. Ajoute UNE figure : la **démonstration
+tronquée à dessein** (clé `cloture:`), née de la décision de faire vivre
+le mat de Nataf à l'École plutôt que dans l'entrée-motif. Marque `[v5]`.
+
 **Version 4** — 2026-08-04. Entérine ce que la phase 4 a mis EN SERVICE
 sans l'avoir encore écrit ici : deux clés d'en-tête (`remplace`,
 `onglet`), la syntaxe de lien `[[id]]`, la règle de rendu d'un lien-amorce,
@@ -10,7 +14,8 @@ Principe de cette version : **le format rattrape le code**. Aucune clé
 inventée ici ; tout ce qui suit tourne déjà dans `Papu_Chess.html`.
 Historique : v1 = format posé (phase 1) ; v2 = crash-test linéaire de
 l'entrée pilote `mauvais-fou` (phase 2) ; v3 = crash-test ramifié ;
-**v4 = mise en conformité avec la porte unique (overlay 📚)**.
+v4 = mise en conformité avec la porte unique (overlay 📚) ;
+**v5 = démonstration tronquée à dessein**.
 
 Clé de voûte du régime CONSULTATION (cf. `_fonds/moteur_du_fou.md`). Le
 lecteur d'étapes le LIRA, l'arbitrage le REMPLIRA. Une entrée = un objet
@@ -343,6 +348,52 @@ honnêtement « ça, c'est Marc » et « ça, c'est nous qui l'avons poussé
 plus loin » — la règle « inspiration, pas imitation » de `PRINCIPES.md`
 appliquée au grain de l'étape.
 
+### [v5] La clé `cloture:` — une démonstration tronquée à dessein
+
+Une étape peut porter **`cloture:`**. Elle déclare que **la démonstration
+s'arrête là, DANS CETTE ENTRÉE**. Le lecteur ne propose alors aucune
+branche, même si l'étape est un embranchement.
+
+```
+ÉTAPE 8 — À toi de jouer
+cloture: pause
+coup: —
+[%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
+Le Fou : « … Que ferais-tu dans cette situation. Tu peux découvrir ce
+qu'a fait l'adversaire du GM Nataf et la réponse de ce dernier
+[[top-mats-nataf|ici]] »
+```
+
+**Ce qui suit reste de la MATIÈRE.** Les branches écrites après une étape
+de clôture continuent d'être lues, vérifiées et rejouées au chargement —
+leurs FEN d'entrée, leurs invariants, leur cohérence sont contrôlés comme
+avant. Elles ne sont simplement **pas proposées sur l'échiquier ici**.
+Rien n'est supprimé, rien n'est dupliqué : le même matériau servira
+ailleurs, en miroir.
+
+**Valeur, pas simple drapeau.** `pause` dit POURQUOI ça s'arrête : on rend
+la main au joueur, sur une question. Ça laisse la place à d'autres
+valeurs (une démonstration qui se termine simplement, sans question) sans
+changer la clé.
+
+**Le renvoi ne demande aucune clé.** Il s'écrit dans le texte du Fou avec
+la syntaxe `[[id|texte]]` de la v4. Si la cible n'existe pas encore, la
+règle du lien-amorce (v3, F7) s'applique d'elle-même : le mot s'affiche
+visible, grisé, non cliquable, et **s'allumera tout seul** le jour où
+l'entrée visée sera écrite — sans retoucher celle-ci. Ne jamais fabriquer
+une fausse cible pour « faire marcher » un renvoi.
+
+**Pourquoi une clé plutôt que de sortir les branches de la section.**
+Les déplacer sous un titre de prose aurait évité la clé, mais leurs blocs
+d'étapes se seraient retrouvés déballés en texte brut dans l'entrée : on
+aurait échangé une clé contre une régression visible. Et une clé portée
+par la DÉMONSTRATION (`cloture: étape 8`) dupliquerait l'identifiant de
+l'étape, qu'une renumérotation casserait en silence.
+
+**Conséquence pour le lecteur** : le texte d'une étape passe par le même
+rendu de liens que la prose d'une entrée. C'est ce qui rend `[[…]]`
+utilisable partout, pas seulement dans l'explication.
+
 ### [v4] Conventions de prose que le lecteur lit réellement
 
 Restées implicites depuis la phase 3, alors que le lecteur en dépend
@@ -366,7 +417,7 @@ démonstrations ne se déroulent pas (c'est le cas de `mauvais-fou`,
   graves), un paragraphe par étape, séparés par une ligne vide. Chaque
   paragraphe commence par `ÉTAPE <id>`, éventuellement suivi de
   `— <libellé>`, puis, dans cet ordre, les lignes facultatives :
-  `nature: …`, `coup: …` (ou `coup: —`, cf. v3), la ligne d'annotations
+  `nature: …`, `cloture: …` (v5), `coup: …` (ou `coup: —`, cf. v3), la ligne d'annotations
   `[%csl …][%cal …]`, et enfin ce que dit le Fou, sous la forme
   `Le Fou : « … »`, sur autant de lignes qu'il faut.
 - Une étape dont le libellé contient **« réinitialisation »** est traitée
