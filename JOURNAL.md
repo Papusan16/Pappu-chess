@@ -202,6 +202,61 @@ Mis à jour en fin de session. Une nouvelle conversation commence par
   dans « Charger le texte ») — seule la vérification Node est faite à ce
   stade.
 
+## 2026-08-01 → 08-03 — Encyclopédie : FORMAT v3, lecteur ramifié, overlay porte unique
+
+Chantier mené sur la branche `claude/lecteur-etapes-ramifie-8jgzz1`,
+**non fusionnée dans main**. Le grain fin est dans `_sessions/2026-08-01.md`
+et `_sessions/2026-08-03.md` ; ci-dessous la continuité seule.
+
+- **FORMAT v3 entériné** (`_fonds/encyclopedie/FORMAT.md`) : sept frictions
+  du crash-test ramifié — clé `verification` (rejeu obligatoire, trois FEN
+  successifs s'étaient révélés faux sur la seule position Nataf), clé
+  `coup` (étape d'annotation vs étape de coup), cumul des annotations à
+  l'embranchement (deux sœurs n'héritent jamais l'une de l'autre), FEN
+  d'entrée de branche redondant contre la divergence silencieuse, G
+  redéfini (« le coup à l'étude », quel qu'en soit le camp), `nature` au
+  grain de l'étape, et le **lien-amorce** : un lien vers une entrée
+  inexistante est assumé, pas une erreur.
+- **Phase 3 — lecteur d'étapes ramifié** : conçu puis implémenté dans
+  `Papu_Chess.html` (parsing du Markdown dans l'app, sans pipeline de
+  build ; arbre résolu une fois au chargement ; navigation = lecture pure ;
+  vérification mécanique des invariants avec bannière). `echec-a-la-decouverte.md`
+  corrigée au passage (étape A1 nommait deux coups, sous-branches sans FEN
+  d'entrée — non conforme v3).
+- **Phase 4 — l'overlay 📚 devient la porte unique de l'encyclopédie.**
+  Conception d'abord (`bf47778`), puis implémentation en quatre pas :
+  - `5858fa8` — `encyLoadEntry` coupée en parsing pur (`encyResolveEntry`)
+    et prise en main de l'échiquier (`encyStartDemo`) : c'est la couture
+    qui permet à l'overlay d'afficher une entrée sans rien lancer.
+  - `3fdd600` — bascule fiche-en-dur / entrée riche. Manifeste
+    `_fonds/encyclopedie/INDEX.json` (généré par `generer_index.py`) pour
+    savoir quelles entrées existent, `fetch` du `.md` au clic comme vérité.
+    Clé `remplace:` : le fichier neuf déclare la fiche en dur qu'il périme
+    (`decouverte`, `bon-mauvais-fou`), sans toucher au bloc JSON de l'app.
+    Toute défaillance (manifeste absent, 404, Markdown illisible) redonne
+    la fiche courte — on ne perd jamais un contenu. Panneau encyclopédie
+    enterré dans la zone PGN **supprimé** ; chargeur de rédaction (collage /
+    fichier `.md`) **déplacé en pied d'overlay**, replié.
+  - `be84768` — liens internes. Un seul résolveur : entrée riche > fiche en
+    dur > **amorce** (visible, grisée, non cliquable). Syntaxe `[[id]]`
+    rendue (elle était déjà employée dans les entrées sans être ni gravée
+    ni affichée), champ `liens:` en bandeau « Ça rejoint : », auto-liage
+    des noms cités sur segments de texte uniquement.
+  - `b4f3037` — onglets **🏛️ Histoire** (qui absorbe les fiches PEOPLE,
+    plus d'onglet Personnages) et **🎯 Pratique**. Le rayon reste la
+    classification de fond portée par l'entrée ; l'onglet en est dérivé par
+    l'app (table premier rayon + phase), avec la clé `onglet:` en
+    dérogation, aveugle au moteur.
+- **RIEN N'EST ENCORE VALIDÉ À L'ÉCRAN.** Tout le chantier phase 4 repose
+  sur un banc d'essai Node (contexte VM, DOM de capture) : ni Playwright ni
+  Chromium headless utilisables sur cette machine. La validation visuelle
+  par Flavien (`serveur_echecs.py`, overlay 📚, bande des sept onglets en
+  largeur téléphone) est le **prochain geste bloquant avant toute fusion
+  dans main**.
+- Restes connus de ce chantier : `mauvais-fou.md` est au format v2, ses 5
+  démonstrations ne se jouent pas ; conventions de prose du lecteur
+  (`ÉTAPE X — …`, `### Branche A — « … »`) encore implicites.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
