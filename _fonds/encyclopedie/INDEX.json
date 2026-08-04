@@ -57,5 +57,22 @@
    "bon-mauvais-fou"
   ],
   "demos": 5
+ },
+ {
+  "id": "nataf",
+  "nom": "Igor-Alexandre Nataf",
+  "rayons": [
+   "Histoire"
+  ],
+  "alias": [
+   "nataf",
+   "igor nataf",
+   "igor-alexandre nataf"
+  ],
+  "liens": [
+   "echec-a-la-decouverte",
+   "top-mats-nataf"
+  ],
+  "demos": 0
  }
 ]
