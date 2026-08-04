@@ -274,8 +274,9 @@ coup: —
 Le Fou : « Les Noirs n'ont plus que trois coups dans toute la position.
 Ou la dame vient s'interposer en e7 ou en f6, ce qui a peu d'intérêt et
 n'en a même pas pour la démonstration, ou le roi fuit en c8. Que ferais-tu
-dans cette situation. Tu peux découvrir ce qu'a fait l'adversaire du GM
-[[nataf|Nataf]] et la réponse de ce dernier [[top-mats-nataf|ici]] »
+dans cette situation. Tu peux découvrir ce qu'a fait l'adversaire du grand
+maître international [[nataf|Nataf]] et la réponse de ce dernier
+[[top-mats-nataf|ici]] »
 ```
 
 > **La démonstration s'arrête ici dans cette entrée** (`cloture: pause`) :
