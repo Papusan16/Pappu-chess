@@ -52,7 +52,7 @@ sources:
 liens:
   - fourchette
   - clouage
-  - double-echec
+  - echec-double
   - deviation
   - batterie
 remplace:
@@ -522,9 +522,11 @@ branche ou par une étape. Ici : branche A `elaboree` (sauf A1), branche
 B `heritee` de bout en bout.
 
 **7 → v3 : le lien mort est une amorce.** Les cinq `liens` de cette
-entrée (`fourchette`, `clouage`, `double-echec`, `deviation`,
-`batterie`) pointent tous vers des entrées **inexistantes** — seule
-`mauvais-fou` existe, et elle n'a rien à voir avec ce motif ; la lier
-aurait été un lien de complaisance. Entériné : le réseau précède les
-nœuds, un lien mort s'affiche non cliquable et ne fait échouer aucune
-validation.
+entrée (`fourchette`, `clouage`, `echec-double`, `deviation`,
+`batterie`) pointaient tous, à la rédaction, vers des entrées
+**inexistantes**. Depuis la phase 4, quatre d'entre eux trouvent une
+FICHE COURTE en dur et sont devenus cliquables ; seul `batterie` reste
+une amorce. (Le slug était écrit `double-echec` jusqu'au 2026-08-04 :
+aligné sur `echec-double`, celui de la fiche.) Entériné : le réseau
+précède les nœuds, un lien mort s'affiche non cliquable et ne fait
+échouer aucune validation.
