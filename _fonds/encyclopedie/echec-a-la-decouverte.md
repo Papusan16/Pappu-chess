@@ -228,33 +228,32 @@ reprenant celles de l'étape précédente.
 ```
 ÉTAPE 1
 coup: —
-[%csl Rd8]
-Le Fou : « Leur roi, en d8, est dans le viseur… »
+[%csl Rd8][%cal Yh4d8]
+Le Fou : « Le roi noir est en d8, sur la diagonale du fou h4 — mais il
+ne le voit pas encore : le cavalier blanc, posé en f6, bouche la
+ligne. »
 
 ÉTAPE 2
 coup: —
-[%csl Rd8][%cal Yh4d8]
-Le Fou : « …du fou h4, le long de la diagonale. Il ne le voit pas
-encore : quelque chose est posé devant. »
+[%csl Rd8,Gf6][%cal Yh4d8]
+Le Fou : « Toute la finesse tient là : cette pièce qui masque l'attaque
+est blanche. En la déplaçant, on découvre l'échec sans rien risquer. »
 
 ÉTAPE 3
 coup: —
-[%csl Rd8,Gf6][%cal Yh4d8]
-Le Fou : « C'est notre propre cavalier, en f6, qui bouche la ligne.
-Avec les Blancs, on cherche à le bouger pour ouvrir l'échec. »
+[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
+Le Fou : « En le plaçant en e4 (e8 fonctionnait aussi pour ce qui est de
+sa destination, la dame c6 le protégeant), le cavalier ouvre la
+diagonale au fou et, par là même, met le roi noir en échec. »
 
 ÉTAPE 4
 coup: —
-[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4]
-Le Fou : « Nataf est venu en e4. »
-
-ÉTAPE 5
-coup: —
 [%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « On verra que cavalier e8 marchait aussi. Peu importe la
-case : ce qui compte, c'est que la diagonale s'ouvre. »
+Le Fou : « Et comme l'adversaire doit d'abord parer cet échec, il n'a
+pas le temps de s'occuper du cavalier : la découverte vient d'offrir un
+coup gratuit. »
 
-ÉTAPE 6 — réinitialisation : aucune annotation, l'échiquier redevient nu.
+ÉTAPE 5 — réinitialisation : aucune annotation, l'échiquier redevient nu.
 ```
 
 ### Le coup
@@ -504,7 +503,7 @@ profondeur. D'où la règle : toute démonstration est rejouée avant
 consignation, et porte ses invariants. Ceux de cette démonstration sont
 en tête de la section « Démonstration ».
 
-**2 → v3 clé `coup:`.** Les étapes 1 à 6 ne jouent aucun coup (position
+**2 → v3 clé `coup:`.** Les étapes 1 à 5 ne jouent aucun coup (position
 fixe, annotations cumulatives) ; les étapes 7 et suivantes jouent des
 coups. Sans marque, un lecteur qui rejoue rejouerait la position à
 chaque annotation. Chaque étape porte désormais `coup:` (`—` si aucun).

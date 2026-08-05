@@ -8,7 +8,7 @@
 Première démonstration à étapes du fonds. Position fixe (FEN ci-dessus) :
 aucun coup n'est joué, seules les annotations visuelles changent d'une
 étape à l'autre, de façon CUMULATIVE (chaque étape reprend les %cal/%csl
-de la précédente et en ajoute), jusqu'à la remise à zéro de l'étape 6.
+de la précédente et en ajoute), jusqu'à la remise à zéro de l'étape 5.
 
 Convention de couleur : R rouge = cible, Y jaune = ligne d'attaque,
 G vert = case/coup de travail.
@@ -19,32 +19,27 @@ numéroté ci-dessous, avec ses %cal/%csl au format déjà reconnu par
 extractVisuals() (Papu_Chess.html) et le texte du Fou associé.
 }
 
-{ ÉTAPE 1
-[%csl Rd8]
-Le Fou : « Leur roi, en d8, est dans le viseur… »
-}
-
-{ ÉTAPE 2 — cumulatif : + ligne d'attaque (fou h4 → d8)
+{ ÉTAPE 1 — cible + ligne d'attaque (fou h4 → d8), masque nommé
 [%csl Rd8][%cal Yh4d8]
-Le Fou : « …du fou h4, le long de la diagonale. »
+Le Fou : « Le roi noir est en d8, sur la diagonale du fou h4 — mais il ne le voit pas encore : le cavalier blanc, posé en f6, bouche la ligne. »
 }
 
-{ ÉTAPE 3 — cumulatif : + case de travail (cavalier f6)
+{ ÉTAPE 2 — cumulatif : + case de travail (cavalier f6)
 [%csl Rd8,Gf6][%cal Yh4d8]
-Le Fou : « Avec les Blancs, on cherche à bouger le cavalier f6 pour ouvrir l'échec. »
+Le Fou : « Toute la finesse tient là : cette pièce qui masque l'attaque est blanche. En la déplaçant, on découvre l'échec sans rien risquer. »
 }
 
-{ ÉTAPE 4 — cumulatif : + coup de travail joué (f6-e4)
-[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4]
-Le Fou : « Nataf est venu en e4. »
-}
-
-{ ÉTAPE 5 — cumulatif : + coup de travail alternatif (f6-e8)
+{ ÉTAPE 3 — cumulatif : + LES DEUX coups de travail (f6-e4 et f6-e8), le texte mentionnant les deux destinations
 [%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « On verra que cavalier e8 marchait aussi. »
+Le Fou : « En le plaçant en e4 (e8 fonctionnait aussi pour ce qui est de sa destination, la dame c6 le protégeant), le cavalier ouvre la diagonale au fou et, par là même, met le roi noir en échec. »
 }
 
-{ ÉTAPE 6 — réinitialisation : aucune annotation, l'échiquier redevient nu }
+{ ÉTAPE 4 — annotations inchangées : on conclut sur le coup gratuit
+[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
+Le Fou : « Et comme l'adversaire doit d'abord parer cet échec, il n'a pas le temps de s'occuper du cavalier : la découverte vient d'offrir un coup gratuit. »
+}
+
+{ ÉTAPE 5 — réinitialisation : aucune annotation, l'échiquier redevient nu }
 
 {
 SUITE : cette mise en place est reprise et PROLONGÉE en démonstration
