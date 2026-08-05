@@ -1,5 +1,24 @@
 # Format d'une entrée d'encyclopédie
 
+**Version 7** — 2026-08-05. La **démonstration JOUÉE**. N'ajoute AUCUNE
+clé : elle achève ce que la clé `coup:` de v3 promettait déjà et que le
+lecteur exécutait sans que le format l'ait écrit. Trois règles nouvelles,
+marquées `[v7]` — **F8** (les annotations d'une étape jouée décrivent la
+position d'APRÈS le coup), **F9** (le temps du verbe suit la position),
+**F10** (`cloture:` arrête la navigation, il ne masque pas seulement les
+branches) — plus une tolérance d'écriture sur `coup:` (notation par
+cases). Née d'un constat de rejeu : la démonstration de
+`echec-a-la-decouverte` JOUE déjà ses onze coups, et pourtant son étape 4
+disait « l'adversaire doit parer cet échec » devant un cavalier encore en
+f6. Le décalage n'était pas dans le moteur, il était dans une règle de
+langue qui n'avait jamais été écrite. Conception :
+`_fonds/demonstration_jouable_conception.md`.
+
+**Version 6** — 2026-08-05. Ajoute la **présentation d'une
+démonstration** : le premier bloc de citation qui suit immédiatement le
+titre d'une démonstration s'affiche au-dessus du bouton « ▶️ Dérouler »
+au lieu d'être consommé comme mécanique. Marque `[v6]`.
+
 **Version 5** — 2026-08-04. Ajoute UNE figure : la **démonstration
 tronquée à dessein** (clé `cloture:`), née de la décision de faire vivre
 le mat de Nataf à l'École plutôt que dans l'entrée-motif. Marque `[v5]`.
@@ -15,7 +34,8 @@ inventée ici ; tout ce qui suit tourne déjà dans `Papu_Chess.html`.
 Historique : v1 = format posé (phase 1) ; v2 = crash-test linéaire de
 l'entrée pilote `mauvais-fou` (phase 2) ; v3 = crash-test ramifié ;
 v4 = mise en conformité avec la porte unique (overlay 📚) ;
-**v5 = démonstration tronquée à dessein**.
+v5 = démonstration tronquée à dessein ; v6 = présentation d'une
+démonstration ; **v7 = démonstration jouée**.
 
 Clé de voûte du régime CONSULTATION (cf. `_fonds/moteur_du_fou.md`). Le
 lecteur d'étapes le LIRA, l'arbitrage le REMPLIRA. Une entrée = un objet
@@ -323,6 +343,37 @@ algébrique, ou **`—`** si l'étape ne joue rien. Sans elle, un lecteur
 qui rejoue la partie rejouerait la position à chaque annotation, et un
 lecteur qui ne rejoue pas manquerait les coups.
 
+**[v7] Le coup d'une étape de coup est JOUÉ, pas figuré.** Le lecteur le
+passe à chess.js depuis la position d'entrée de l'étape : la pièce se
+déplace réellement, une prise retire réellement la pièce prise, et un
+échec devient un échec à l'écran (le roi visé reçoit sa marque, `Ce4+`
+n'a pas besoin d'une flèche pour être un échec). C'était déjà le
+comportement du lecteur depuis la phase 3 ; ce paragraphe l'écrit.
+
+**[v7] Formes acceptées par `coup:`.** Le SAN reste la forme
+recommandée — c'est celle des sources, et la seule lisible par un humain
+qui relit une entrée :
+
+| Écriture | Lue comme |
+|---|---|
+| `coup: —` | aucun coup — étape d'annotation |
+| `coup: Ce4+` | SAN français (R=Roi, D=Dame, T=Tour, F=Fou, C=Cavalier) |
+| `coup: Ne4+` | SAN anglais |
+| `coup: 1. Ce4+` | le numéro de coup est retiré |
+| `coup: 1… De7` | le numéro de coup noir est retiré |
+| `coup: 2. Fxe7+ (la prise)` | la parenthèse finale est retirée |
+| **`coup: f6-e4`** | **[v7]** cases source-destination |
+| **`coup: e7-e8=D`** | **[v7]** idem, avec promotion |
+
+La **notation par cases** est une **issue de secours, pas une forme
+préférée**. Elle existe parce que le SAN est le seul endroit du format où
+une erreur de rédaction produit un échec TOTAL et non une approximation :
+un `x` oublié sur une prise, une disambiguïsation absente quand deux
+cavaliers atteignent la même case, un `+` de trop — et l'étape entière
+devient illégale, donc muette. La notation par cases est sans ambiguïté
+par construction. On l'écrit quand le SAN résiste, et on dit alors dans
+le texte de l'étape de quel coup il s'agit.
+
 ### [v3] Cumul des annotations : la règle à l'embranchement
 
 En ligne droite, la règle est déjà posée : chaque étape REPREND les
@@ -341,6 +392,86 @@ lit désormais ainsi :
 
 La règle vaut à toute profondeur : deux sous-branches sont sœurs entre
 elles exactement comme deux branches.
+
+**[v7] Une réinitialisation ne remet à zéro que les ANNOTATIONS, jamais
+la position.** L'échiquier reste où les coups l'ont laissé ; ce sont les
+cercles et les flèches qui disparaissent. Une étape de réinitialisation
+ne porte donc pas de `coup:`. Le point n'était pas ambigu tant qu'une
+démonstration ne bougeait pas ; il le devient dès qu'elle joue, et il se
+tranche ainsi — « l'échiquier redevient nu » veut dire nu d'annotations,
+pas revenu à la position de départ.
+
+### [v7] F8 — les annotations d'une étape jouée décrivent l'APRÈS
+
+**Les `%cal`/`%csl` d'une étape sont lus sur la position que cette étape
+AFFICHE.** Pour une étape d'annotation, c'est la position courante ; pour
+une étape de coup, c'est la position **après** le coup.
+
+Conséquence immédiate, et c'est tout l'objet de la règle : **une flèche
+qui part de la case que la pièce vient de quitter part d'une case vide.**
+Sur l'étape qui joue `Ce4+`, une flèche `Gf6e4` ne montrerait pas le
+trajet du cavalier — elle partirait de f6, où il n'y a plus rien.
+
+D'où la règle de rédaction :
+
+> Pour montrer le **trajet** d'un coup, on l'annote sur l'étape
+> d'annotation qui le **précède**. Pour montrer ce que le coup a
+> **produit**, on l'annote sur l'étape qui le joue.
+
+C'est déjà ce que fait `echec-a-la-decouverte` — les deux flèches
+`Gf6e4` et `Gf6e8` vivent à l'étape 3, qui ne joue rien, et l'étape 6 qui
+joue `Ce4+` ne porte que la cible et la ligne. Mais c'était par bonne
+intuition, pas par règle : rien ne l'imposait, et rien ne l'aurait
+signalé.
+
+**Contrôle mécanique associé.** Le lecteur ajoute à `verification` :
+
+> Sur une étape qui joue un coup, aucune flèche `%cal` ne doit partir de
+> la **case de départ** de ce coup. Sinon : anomalie « Étape X : flèche
+> partant de f6, case vidée par le coup de cette étape. »
+
+Ce contrôle est **sans faux positif** : la case est vide par
+construction. Deux limites voulues :
+
+- il ne porte que sur les **flèches**, pas sur les cercles. Un cercle sur
+  case vide est parfaitement légitime — c'est ainsi qu'on marque une case
+  de fuite (`Gc8`, `Ge7` à l'étape 7) ou une case faible ;
+- le **roque** en est exclu : la case du roi est bien vidée, mais une
+  flèche qui en part garde un sens (montrer le trajet du roi).
+
+### [v7] F9 — le temps du verbe suit la position
+
+Règle de LANGUE, normative pour les démonstrations. Elle ne se vérifie
+pas mécaniquement ; elle donne le critère de relecture, et surtout elle
+nomme le défaut.
+
+> **Une étape parle au temps de sa position.**
+>
+> - **Étape d'annotation** (`coup: —`) — le coup n'est pas joué,
+>   l'échiquier ne le montre pas. Le Fou en parle au **conditionnel ou au
+>   futur** : « en s'écartant, le cavalier ouvrira la diagonale »,
+>   « l'adversaire devra d'abord parer cet échec ». Jamais à l'accompli.
+> - **Étape de coup** — le coup est joué, la position le prouve. Le Fou
+>   parle au **présent ou au passé composé** : « le cavalier s'écarte, et
+>   l'échec part du fou », « les Noirs doivent maintenant répondre ».
+
+**Un texte à l'accompli sur une étape d'annotation est une erreur de
+format**, au même titre qu'un FEN faux : il enseigne quelque chose que
+l'échiquier contredit sous les yeux du joueur. Et c'est une erreur plus
+sournoise qu'un FEN faux, parce qu'elle ne casse rien — la démonstration
+« marche », elle ment simplement d'une étape.
+
+Le cas qui a produit la règle : l'étape 4 de `echec-a-la-decouverte`
+disait « et comme l'adversaire doit d'abord parer cet échec, il n'a pas
+le temps de s'occuper du cavalier » alors que le cavalier était encore en
+f6 et qu'aucun échec n'existait — le coup n'est joué qu'à l'étape 6.
+Aucun des seize contrôles de rejeu de cette démonstration ne pouvait
+l'attraper : ils vérifient la légalité, l'échec, le mat, les FEN de
+branche, la complétude d'un embranchement. **Jamais que les mots
+décrivent la position.**
+
+La règle vaut aussi pour une étape de **clôture** : la question posée au
+joueur porte sur la position **affichée**, pas sur une position à venir.
 
 ### [v3] Position d'entrée de branche : redondance assumée
 
@@ -420,6 +551,36 @@ la main au joueur, sur une question. Ça laisse la place à d'autres
 valeurs (une démonstration qui se termine simplement, sans question) sans
 changer la clé.
 
+#### [v7] F10 — `cloture:` ARRÊTE, il ne masque pas seulement
+
+La v5 disait « le lecteur ne propose alors aucune branche ». C'est
+insuffisant, et l'insuffisance était invisible. Formulation qui fait foi :
+
+> **`cloture:` arrête la démonstration à cette étape.** Sur une étape de
+> clôture, le lecteur ne propose **aucune branche** ET ne permet pas
+> d'**avancer** : « étape suivante » et « aller à la fin » sont
+> désactivés, **quelle que soit la place de l'étape dans son nœud**. Le
+> retour en arrière reste entièrement disponible — une démonstration
+> close se rejoue.
+
+Pourquoi ce durcissement. Dans `echec-a-la-decouverte`, l'arrêt observé à
+l'étape 7 **marchait par coïncidence** : la flèche « suivant » était
+grisée non pas parce que l'étape porte `cloture: pause`, mais parce
+qu'elle est la **dernière étape de son nœud**, et que le lecteur bloque
+toujours en fin de nœud. Une clôture posée ailleurs qu'en dernière
+position n'aurait rien arrêté du tout — le joueur aurait dépassé la
+question par la flèche. La clé aurait été un commentaire, pas une règle.
+
+**L'arrêt doit se VOIR sans message.** La flèche « suivant » se grise
+d'elle-même, et cette flèche grisée est l'énoncé : il n'y a plus rien
+devant. Pas de bandeau, pas de pop-up — la démonstration s'arrête comme
+elle s'arrêterait à sa fin, parce que pour le joueur c'est bien sa fin.
+
+**Ce qui suit reste de la matière**, inchangé (paragraphe ci-dessus) : les
+branches sont toujours lues, rejouées et vérifiées au chargement. F10 ne
+change que ce que le joueur peut ATTEINDRE, jamais ce que le lecteur
+CONTRÔLE.
+
 **Le renvoi ne demande aucune clé.** Il s'écrit dans le texte du Fou avec
 la syntaxe `[[id|texte]]` de la v4. Si la cible n'existe pas encore, la
 règle du lien-amorce (v3, F7) s'applique d'elle-même : le mot s'affiche
@@ -467,6 +628,13 @@ démonstrations ne se déroulent pas (c'est le cas de `mauvais-fou`,
   `Le Fou : « … »`, sur autant de lignes qu'il faut.
 - Une étape dont le libellé contient **« réinitialisation »** est traitée
   comme une remise à zéro des annotations : elle ne porte pas de `coup:`.
+  **[v7]** Des annotations SEULEMENT — la position ne revient pas en
+  arrière (cf. v7, sous « Cumul des annotations »).
+- **[v7]** Le texte du Fou obéit à **F9** : conditionnel ou futur sur une
+  étape d'annotation, présent ou passé composé sur une étape de coup.
+  C'est la seule convention de prose des démonstrations qui porte sur la
+  LANGUE et non sur la forme — et c'est celle dont un manquement ne se
+  voit qu'à l'écran, sur l'échiquier.
 
 Deux conséquences à garder en tête en écrivant :
 
