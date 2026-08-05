@@ -2019,7 +2019,11 @@ button.ctrl:active{transform:scale(.93)}
 .ency-back,.ency-close{width:100%;margin-top:4px;border-radius:8px;padding:8px;font-size:.74rem;font-weight:700;cursor:pointer;border:1px solid var(--border-a);background:var(--surface);color:var(--text-muted);font-family:ui-sans-serif,system-ui,sans-serif}
 .ency-close{color:var(--burgundy-text,var(--text-muted))}
 /* OVERLAY ENCYCLO */
-.overlay{position:fixed;inset:0;background:var(--overlay-bg);backdrop-filter:blur(3px);z-index:100;display:none;flex-direction:column;padding:12px 10px;overflow:hidden}
+/* --enc-col : la largeur de la colonne de lecture de l'overlay. Elle était écrite six fois
+   en dur, sur six frères qui DOIVENT rester alignés (en-tête, onglets, recherche, liste,
+   message, chargeur) — élargir l'un sans les autres décrocherait la colonne de son chapeau.
+   Le token vit ici et non sur :root, qui ne porte que du décor redéfini par le thème clair. */
+.overlay{--enc-col:460px;position:fixed;inset:0;background:var(--overlay-bg);backdrop-filter:blur(3px);z-index:100;display:none;flex-direction:column;padding:12px 10px;overflow:hidden}
 .overlay.show{display:flex;animation:fade .25s}
 /* Fiche joueur */
 .pf-scroll{overflow:auto;max-width:460px;margin:0 auto;width:100%;padding-bottom:24px}
@@ -2035,19 +2039,19 @@ button.ctrl:active{transform:scale(.93)}
 .pf-actions{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
 .pf-save{background:linear-gradient(180deg,var(--arrow-main),var(--arrow-main-dark));border:none;border-radius:9px;color:var(--white);font-weight:800;padding:11px 16px;cursor:pointer}
 .pf-status{font-size:.72rem;color:var(--text-muted)}
-.ov-head{display:flex;align-items:center;justify-content:space-between;max-width:460px;margin:0 auto 10px;width:100%}
+.ov-head{display:flex;align-items:center;justify-content:space-between;max-width:var(--enc-col);margin:0 auto 10px;width:100%}
 .ov-title{font-size:1rem;font-weight:800;color:var(--gold-light)}
 .closebtn{background:var(--btn-lib-bottom);border:1px solid var(--gold-a40);border-radius:8px;color:var(--gold-light);font-size:1.1rem;width:38px;height:38px;cursor:pointer;font-weight:700}
-.sec-tabs{max-width:460px;margin:0 auto 10px;width:100%;display:flex;gap:5px;overflow-x:auto;padding-bottom:3px}
+.sec-tabs{max-width:var(--enc-col);margin:0 auto 10px;width:100%;display:flex;gap:5px;overflow-x:auto;padding-bottom:3px}
 .cat-row{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap}
 .cat-tab{padding:6px 13px;border-radius:8px;background:var(--surface-note);border:1px solid var(--border-soft);color:var(--text-gold);font-weight:800;font-size:.8rem;cursor:pointer;white-space:nowrap}
 .cat-tab.active{background:var(--gold);color:var(--text-on-light);border-color:var(--gold)}
 .sub-row{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px}
 .sec-tab{flex:0 0 auto;font-size:.73rem;font-weight:700;padding:7px 12px;border-radius:16px;background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap}
 .sec-tab.active{background:linear-gradient(180deg,var(--gold),var(--gold-dark));color:var(--text-on-light)}
-.ov-search{max-width:460px;margin:0 auto 10px;width:100%}
+.ov-search{max-width:var(--enc-col);margin:0 auto 10px;width:100%}
 .ov-search input{width:100%;background:var(--surface-search);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.85rem;padding:9px 12px;outline:none}
-.enc-list{max-width:460px;margin:0 auto;width:100%;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:20px}
+.enc-list{max-width:var(--enc-col);margin:0 auto;width:100%;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:20px}
 .enc-item{background:linear-gradient(135deg,var(--enc-bg-1),var(--enc-bg-2));color:var(--text-on-light);border-radius:11px;padding:11px 13px;cursor:pointer;border:1px solid var(--enc-border)}
 .enc-item .eh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .enc-item .en{font-size:.95rem;font-weight:800}
@@ -2097,8 +2101,8 @@ button.ctrl:active{transform:scale(.93)}
 .ent-demo-intro p:first-child{margin-top:0}
 .ent-demo-intro p:last-child{margin-bottom:0}
 .ent-note{font-size:.72rem;color:var(--enc-detail-text);background:var(--warn-bg);border-left:3px solid var(--warn-border);padding:7px 9px;border-radius:7px;margin-top:9px;line-height:1.45}
-.enc-msg{max-width:460px;margin:0 auto 8px;width:100%;font-size:.72rem;color:var(--text-muted);background:var(--surface-note);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px;line-height:1.45}
-.enc-loader{max-width:460px;margin:6px auto 0;width:100%;font-size:.74rem;color:var(--text-muted)}
+.enc-msg{max-width:var(--enc-col);margin:0 auto 8px;width:100%;font-size:.72rem;color:var(--text-muted);background:var(--surface-note);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px;line-height:1.45}
+.enc-loader{max-width:var(--enc-col);margin:6px auto 0;width:100%;font-size:.74rem;color:var(--text-muted)}
 .enc-loader summary{cursor:pointer;padding:6px 2px;color:var(--text-dim)}
 .enc-loader-body{display:flex;flex-direction:column;gap:6px;padding-bottom:6px}
 .enc-loader textarea{min-height:70px;background:var(--surface);border:1px solid var(--border-a);border-radius:8px;color:var(--text-input);padding:8px;font-size:.76rem;font-family:ui-monospace,monospace;resize:vertical}
