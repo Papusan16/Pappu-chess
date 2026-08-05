@@ -259,14 +259,14 @@ coup gratuit. »
 ### Le coup
 
 ```
-ÉTAPE 7
+ÉTAPE 6
 coup: 1. Ce4+
 [%csl Rd8][%cal Yh4d8]
 Le Fou : « Le cavalier s'écarte, et l'échec part du fou, qui n'a pas
 bougé. La dame blanche est toujours en prise en c6 — et alors ? Les
 Noirs doivent d'abord répondre à l'échec. »
 
-ÉTAPE 8 — À toi de jouer
+ÉTAPE 7 — À toi de jouer
 cloture: pause
 coup: —
 [%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
@@ -283,7 +283,7 @@ maître international [[nataf|Nataf]] et la réponse de ce dernier
 > suit reste de la MATIÈRE — lue, vérifiée et rejouable par le lecteur,
 > mais non proposée sur l'échiquier ici. Elle resservira telle quelle,
 > en miroir, dans la séquence « Top mats » (`top-mats-nataf`), vers
-> laquelle renvoie le « ici » de l'étape 8 — amorce inerte tant que
+> laquelle renvoie le « ici » de l'étape 7 — amorce inerte tant que
 > cette entrée n'est pas écrite.
 >
 > Chaque branche part de la position après 1. Ce4+, redonnée en FEN pour
@@ -404,7 +404,7 @@ est encore pire que la première. »
 `nature: heritee` sur toute la branche — c'est celle que Marc déroule
 en entier, mat et anatomie du mat compris.
 Position de branche : `1r1k3r/pbp2q2/1pQ5/3Pp2p/3PN2B/P7/1PP5/1K1R4 b - - 1 1`
-(même position que la branche A : les deux sœurs repartent de l'étape 8,
+(même position que la branche A : les deux sœurs repartent de l'étape 7,
 et n'héritent rien l'une de l'autre.)
 
 C'est la branche que Marc suit (1:48–2:13), et celle qui finit en mat.
@@ -504,7 +504,7 @@ consignation, et porte ses invariants. Ceux de cette démonstration sont
 en tête de la section « Démonstration ».
 
 **2 → v3 clé `coup:`.** Les étapes 1 à 5 ne jouent aucun coup (position
-fixe, annotations cumulatives) ; les étapes 7 et suivantes jouent des
+fixe, annotations cumulatives) ; les étapes 6 et suivantes jouent des
 coups. Sans marque, un lecteur qui rejoue rejouerait la position à
 chaque annotation. Chaque étape porte désormais `coup:` (`—` si aucun).
 
@@ -514,7 +514,7 @@ l'embranchement. Entériné : une branche repart des annotations de
 l'étape qui l'a ouverte ; **deux branches sœurs n'héritent jamais l'une
 de l'autre** ; chaque branche se termine par une réinitialisation. Ici :
 A.1 et A.2 repartent toutes deux de l'étape A1, et A et B toutes deux de
-l'étape 8.
+l'étape 7.
 
 **4 → v3 FEN d'entrée de branche.** Chaque branche porte son FEN, en
 plus d'être dérivable par rejeu. Redondance voulue : sans elle, une
@@ -523,7 +523,7 @@ branche mal recopiée diverge en silence et la démonstration continue de
 été contrôlés identiques au FEN dérivé après 1. Ce4+.
 
 **5 → v3 : trois couleurs, G redéfini.** R = cible, Y = ligne, G = case
-ou coup **à l'étude**. Pas de quatrième couleur : à l'étape 8, les trois
+ou coup **à l'étude**. Pas de quatrième couleur : à l'étape 7, les trois
 réponses NOIRES sont en vert, et c'est correct — G ne désigne pas le
 camp qui joue, il désigne ce qu'on regarde.
 
