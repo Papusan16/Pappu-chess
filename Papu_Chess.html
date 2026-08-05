@@ -2089,6 +2089,10 @@ button.ctrl:active{transform:scale(.93)}
 .ent-liens-t{font-weight:800;color:var(--text-on-light)}
 .ent-liens .lien-enc{padding:3px 9px;border-radius:8px;background:var(--tone-blue-bg);text-decoration:none}
 .ent-liens .lien-amorce{padding:3px 9px;border-radius:8px;border:1px dashed var(--enc-border);border-bottom-style:dashed}
+.ent-demo-intro{font-size:.82rem;line-height:1.55;color:var(--enc-detail-text);background:var(--tone-purple-bg);border-left:3px solid var(--tone-purple-border);padding:8px 11px;border-radius:7px;margin:11px 0 4px}
+.ent-demo-intro p{margin:5px 0}
+.ent-demo-intro p:first-child{margin-top:0}
+.ent-demo-intro p:last-child{margin-bottom:0}
 .ent-note{font-size:.72rem;color:var(--enc-detail-text);background:var(--warn-bg);border-left:3px solid var(--warn-border);padding:7px 9px;border-radius:7px;margin-top:9px;line-height:1.45}
 .enc-msg{max-width:460px;margin:0 auto 8px;width:100%;font-size:.72rem;color:var(--text-muted);background:var(--surface-note);border:1px solid var(--border-soft);border-radius:8px;padding:7px 10px;line-height:1.45}
 .enc-loader{max-width:460px;margin:6px auto 0;width:100%;font-size:.74rem;color:var(--text-muted)}
@@ -4162,6 +4166,25 @@ function encProse(text, ctx){
 // et on le dit — une entrée dont la démo ne se lit pas doit rester lisible.
 function encyDemoPlayable(d){ return !!(d && d.fenRoot && d.root && d.root.steps && d.root.steps.length); }
 
+// [v6] PRÉSENTATION d'une démonstration. Le corps d'une section « Démonstration… » n'est
+// jamais affiché (il porte le FEN, les invariants, les étapes — de la mécanique). Une
+// démonstration a pourtant besoin d'être CADRÉE avant d'être déroulée : d'où vient la
+// position, qui joue, ce qui est en jeu. Convention générale, valable pour toute entrée :
+// le premier bloc de citation qui suit IMMÉDIATEMENT le titre d'une démonstration est sa
+// présentation. Elle s'affiche au-dessus du bouton ; le lecteur d'étapes ne la voit pas
+// (il ne lit que l'intérieur des blocs ```), donc elle n'est pas déroulée.
+// « Immédiatement » est la condition qui rend la règle sûre : les citations placées plus
+// bas dans la section (note de correction de FEN, avertissements) restent de la mécanique
+// et continuent de n'être pas affichées.
+function encDemoIntro(corps){
+  var lignes=String(corps||'').split('\n'), i=0, bloc=[];
+  while(i<lignes.length && !lignes[i].trim()) i++;
+  if(i>=lignes.length || !/^>/.test(lignes[i])) return null;
+  for(; i<lignes.length && /^>/.test(lignes[i]); i++) bloc.push(lignes[i].replace(/^>\s?/,''));
+  var texte=bloc.join('\n').trim();
+  return texte ? texte : null;
+}
+
 // Découpe le corps de l'entrée en sections de niveau 2, dans l'ordre du document.
 // Les sections « Démonstration… » deviennent un bouton à leur place ; les autres, de la prose.
 function encSplitBody(body){
@@ -4182,9 +4205,13 @@ function encSplitBody(body){
         if(sousDemos[0].trim()) out.push({type:'prose', text:sousDemos[0]});
         sousDemos.slice(1).forEach(function(sd){
           var n2=sd.indexOf('\n');
+          var intro=encDemoIntro(n2<0?'':sd.slice(n2+1));
+          if(intro) out.push({type:'intro', text:intro});
           out.push({type:'demo', i:demoNo++, titre:(n2<0?sd:sd.slice(0,n2)).trim()});
         });
       } else {
+        var introSeule=encDemoIntro(corps);
+        if(introSeule) out.push({type:'intro', text:introSeule});
         out.push({type:'demo', i:demoNo++, titre:titre});
       }
       return;
@@ -4209,6 +4236,13 @@ function encRenderEntry(){
   encSplitBody(e.body).forEach(function(bl){
     // `vus` repart à chaque section : un lien par notion et par section, pas une tapisserie
     if(bl.type==='prose'){ h+=encProse(bl.text, {selfId:e.id, vus:{}}); return; }
+    // la présentation d'une démonstration : hors séquence, affichée juste avant son bouton
+    if(bl.type==='intro'){
+      h+='<div class="ent-demo-intro">'+bl.text.split(/\n\s*\n/).map(function(par){
+        return '<p>'+encInline(par.replace(/\n/g,' ').trim(), {selfId:e.id, vus:{}})+'</p>';
+      }).join('')+'</div>';
+      return;
+    }
     var d=e.demos[bl.i];
     if(!encyDemoPlayable(d)){
       h+='<h3>'+encEsc(bl.titre)+'</h3><div class="ent-note">Démonstration non jouable en l\'état : le lecteur d\'étapes n\'y a pas trouvé de position de départ et d\'étapes au format attendu. Le texte de l\'entrée reste consultable.</div>';

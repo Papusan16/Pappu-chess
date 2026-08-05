@@ -230,6 +230,50 @@ séquence :
   RÉCURSIVE, extensible à n'importe quelle profondeur. C'est ce que le
   lecteur ramifié (phase 3) doit savoir lire.
 
+### [v6] La PRÉSENTATION d'une démonstration
+
+Le corps d'une section « Démonstration… » n'est **jamais affiché** dans
+l'entrée : il porte le FEN, les invariants, les blocs d'étapes — de la
+mécanique, que le lecteur consomme et ne montre pas. À sa place s'affiche
+le bouton « ▶️ Dérouler la démonstration ».
+
+Une démonstration a pourtant besoin d'être **cadrée avant d'être
+déroulée** : d'où vient la position, qui joue, ce qui est en jeu. D'où la
+convention, valable pour **toute entrée** :
+
+> **Le premier bloc de citation qui suit IMMÉDIATEMENT le titre d'une
+> démonstration est sa présentation.** Il s'affiche au-dessus du bouton,
+> et n'est pas déroulé.
+
+```
+## Démonstration — la découverte de Nataf
+
+> **La position vient d'une partie réelle.** Igor-Alexandre Nataf …
+
+**Rôle** : `exemple`
+…
+```
+
+Elle marche aux deux niveaux : sous un `##` (entrée à démonstration
+unique) comme sous chaque `### Démonstration N —` d'une entrée qui les
+liste.
+
+**Pourquoi « immédiatement ».** C'est la condition qui rend la règle
+sûre. Les citations placées plus bas dans la section — note de correction
+de FEN, avertissement de rejeu — restent de la mécanique et continuent de
+n'être pas affichées. Une seule position dans le document vaut
+présentation, il n'y a rien à déclarer et rien à oublier de déclarer.
+
+**Ce n'est pas une étape.** Le lecteur d'étapes ne lit que l'intérieur
+des blocs ```` ``` ````. Une présentation en est dehors : elle n'a ni
+`coup:`, ni annotations, ni numéro, et n'apparaît pas dans le compteur
+« étape X/N ». Ne jamais y mettre ce qui doit être vu sur l'échiquier.
+
+**Rigueur de source.** La présentation est de la prose d'entrée : elle
+obéit aux mêmes règles que le reste. Ce qui n'est pas dans le corpus ne
+s'y écrit pas — pas de nom d'adversaire, de date ni d'événement inventés
+pour « faire vivant ».
+
 ### [v3] Rejeu obligatoire : la clé `verification`
 
 **Aucune démonstration n'est consignée sans avoir été REJOUÉE.** Ce
