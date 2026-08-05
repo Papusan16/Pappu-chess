@@ -243,21 +243,21 @@ ligne. »
 coup: —
 [%csl Rd8,Gf6][%cal Yh4d8]
 Le Fou : « Toute la finesse tient là : cette pièce qui masque l'attaque
-est blanche. En la déplaçant, on découvre l'échec sans rien risquer. »
+est blanche. En la déplaçant, on découvrira l'échec sans rien risquer. »
 
 ÉTAPE 3
 coup: —
 [%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « En plaçant son cavalier en e4 (e8 fonctionnait aussi pour ce
-qui est de sa destination, la dame c6 le protégeant), Nataf ouvre la
-diagonale au fou et, par là même, met le roi noir en échec. »
+Le Fou : « En plaçant son cavalier en e4 (e8 fonctionnerait aussi pour ce
+qui est de sa destination, la dame c6 le protégeant), Nataf ouvrira la
+diagonale au fou et, par là même, mettra le roi noir en échec. »
 
 ÉTAPE 4
 coup: —
 [%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « Et comme l'adversaire doit d'abord parer cet échec, il n'a
-pas le temps de s'occuper du cavalier : la découverte vient d'offrir un
-coup gratuit. »
+Le Fou : « Et comme l'adversaire devra d'abord parer cet échec, il
+n'aura pas le temps de s'occuper du cavalier : la découverte lui aura
+offert un coup gratuit. »
 
 ÉTAPE 5 — réinitialisation : aucune annotation, l'échiquier redevient nu.
 ```
@@ -341,13 +341,13 @@ Dérivable par rejeu depuis la racine : 1. Ce4+, contrôlé.)
 ÉTAPE A1.1
 nature: heritee
 coup: 1… De7
-[%csl Rd8][%cal Yh4d8,Gf7e7]
+[%csl Rd8,Ge7][%cal Yh4d8]
 Le Fou : « La dame va en e7 — elle bouche la diagonale, mais elle se
 met dans la ligne du fou. »
 
 ÉTAPE A1.2
 coup: 2. Fxe7+
-[%csl Rd8][%cal Gh4e7]
+[%csl Rd8,Ge7][%cal Ye7d8]
 Le Fou : « Le fou la prend, et il la prend AVEC ÉCHEC — les Noirs n'ont
 même pas le temps de souffler. »
 
@@ -375,12 +375,12 @@ contrôlé.)
 ÉTAPE A2.1
 nature: heritee
 coup: 1… Df6
-[%csl Rd8][%cal Yh4d8,Gf7f6]
+[%csl Rd8,Gf6][%cal Yh4d8]
 Le Fou : « La dame va en f6, même idée. »
 
 ÉTAPE A2.2
 coup: 2. Fxf6+
-[%csl Rd8][%cal Gh4f6]
+[%csl Rd8,Gf6][%cal Yf6d8]
 Le Fou : « Même prise, avec échec là encore. Mais regarde plus loin sur
 la diagonale… »
 
@@ -424,7 +424,7 @@ dame, e7 est au fou, et le reste est occupé par ses propres pièces. »
 
 ÉTAPE B2
 coup: 2. Cd6#
-[%csl Rc8,Gd6][%cal Ge4d6]
+[%csl Rc8,Gd6]
 Le Fou : « Et le cavalier qui avait ouvert la diagonale vient conclure
 lui-même. Échec et mat. Depuis e8 c'était exactement pareil : d6 est à
 un saut des deux cases. »
@@ -550,3 +550,39 @@ une amorce. (Le slug était écrit `double-echec` jusqu'au 2026-08-04 :
 aligné sur `echec-double`, celui de la fiche.) Entériné : le réseau
 précède les nœuds, un lien mort s'affiche non cliquable et ne fait
 échouer aucune validation.
+
+**8 → v7 : les mots ne suivaient pas la position (règles F8, F9, F10).**
+Cette entrée JOUE ses onze coups depuis la phase 3 — la clé `coup:` est
+passée à chess.js, le cavalier se déplace, le roi passe réellement en
+échec. Et pourtant l'étape 4 disait « comme l'adversaire **doit** d'abord
+parer cet échec, il **n'a pas** le temps de s'occuper du cavalier » devant
+un cavalier encore en f6 : le coup n'est joué qu'à l'étape 6. Le décalage
+n'était pas dans le moteur, il était dans une règle de langue jamais
+écrite. Trois choses en sont sorties :
+
+- **F9** — le temps du verbe suit la position. Les étapes 2, 3 et 4 sont
+  passées au futur (« on découvrira », « Nataf ouvrira », « l'adversaire
+  devra »). Aucune renumérotation : la mise en place garde ses cinq
+  étapes et son ordre d'exposition, qui est celui de la méthode — on
+  constate la ligne éteinte AVANT de la rallumer.
+- **F8** — les annotations d'une étape jouée décrivent la position
+  d'APRÈS. Le contrôle mécanique a trouvé **cinq** flèches de trajet
+  posées sur l'étape qui joue le coup, donc partant d'une case vidée :
+  A1.1 (`Gf7e7`), A1.2 (`Gh4e7`), A2.1 (`Gf7f6`), A2.2 (`Gh4f6`),
+  B2 (`Ge4d6`). Toutes redisaient un coup que le surlignage des cases
+  disait déjà. Elles sont remplacées par ce que le coup a PRODUIT : la
+  dame ou le fou cerclé sur sa case d'arrivée, et la ligne d'échec
+  effective (`Ye7d8`, `Yf6d8`). Le trajet, lui, reste montré là où il a
+  un sens — à l'étape A1, qui ne joue rien et propose les deux cases.
+- **F10** — `cloture:` arrête vraiment. L'arrêt à l'étape 7 **marchait
+  par coïncidence** : la flèche « suivant » était grisée parce que
+  l'étape 7 est la dernière de son nœud, pas parce qu'elle porte
+  `cloture: pause`. Une clôture posée ailleurs se serait laissée
+  dépasser.
+
+Ce que ça dit du format, au-delà de cette entrée : les seize contrôles de
+rejeu vérifiaient la légalité, l'échec, le mat, les FEN de branche et la
+complétude d'un embranchement — **jamais que les mots décrivent la
+position**. Une démonstration peut être mécaniquement irréprochable et
+mentir d'une étape. C'est la classe d'erreur la plus coûteuse, parce
+qu'elle ne casse rien : elle enseigne.
