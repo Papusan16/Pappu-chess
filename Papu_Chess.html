@@ -2117,47 +2117,50 @@ button.ctrl:active{transform:scale(.93)}
    la lecture de l'encyclopédie — rend au desktop une taille de lecture normale.
    SOUS 800px, RIEN N'EST MODIFIÉ : la mise en page mobile reste identique au pixel.
 
-   Le ratio est UN SEUL, ×1,19 (= 1rem / .84rem), appliqué à toute la carte. C'est la
-   condition pour que la hiérarchie tienne : monter le seul corps à 1rem rendrait les
-   titres h3 (.92rem) PLUS PETITS que leur propre texte, et les puces méta illisibles à
-   côté. On monte l'ensemble ou rien.
+   Le ratio est UN SEUL, ×1,34 (= 1.125rem / .84rem), appliqué à toute la carte. C'est la
+   condition pour que la hiérarchie tienne : monter le seul corps rendrait les titres h3
+   (.92rem) PLUS PETITS que leur propre texte, et les puces méta illisibles à côté.
+   On monte l'ensemble ou rien. Toutes les valeurs ci-dessous dérivent des tailles de
+   base par ce ratio — elles ne sont jamais retouchées une par une.
 
-   Largeur utile résultante : 560 − 2×15 (padding de .ent-card) − 2×1 (bordure) = 528px.
-   Dans un chapeau, retirer encore 3px de filet et 2×11 de padding : 503px.
-   À 16px, on compte ~66 caractères par ligne (largeur moyenne ≈ .5em en Segoe UI) —
-   contre ~64 aujourd'hui en 460/13,4px. La MESURE ne bouge donc quasiment pas : on ne
-   met pas plus de mots par ligne, on les rend lisibles. Les deux valeurs restent dans
-   la fourchette confortable de 45–75 caractères. */
+   Largeur utile résultante : 660 − 2×15 (padding de .ent-card) − 2×1 (bordure) = 628px.
+   Dans un chapeau, retirer encore 3px de filet et 2×11 de padding : 603px.
+   À 18px, on compte ~70 caractères par ligne (largeur moyenne ≈ .5em en Segoe UI) —
+   contre ~64 sous 800px, en 460/13,4px. La mesure s'allonge donc un peu et arrive
+   HAUT dans la fourchette confortable de 45–75 caractères : c'est le dernier cran
+   avant qu'élargir encore n'oblige à grossir la police d'autant. */
 @media (min-width: 800px){
-  .overlay{--enc-col:560px}
+  .overlay{--enc-col:660px}
 
   /* La carte d'entrée — la surface de lecture proprement dite */
-  .ent-name{font-size:1.29rem}
-  .ent-prose{font-size:1rem}
-  .ent-prose h3{font-size:1.1rem}
-  .ent-prose h4{font-size:1rem}
-  .ent-prose code{font-size:.93rem}
-  .ent-demo-intro{font-size:1rem}     /* le chapeau au même niveau que le corps */
-  .ent-demo{font-size:.98rem}
-  .ent-chip{font-size:.74rem}
-  .ent-note{font-size:.86rem}
-  .ent-back{font-size:.93rem}
-  .ent-liens{font-size:.9rem}
-  .ent-vrf{font-size:.81rem}
+  .ent-name{font-size:1.45rem}
+  .ent-prose{font-size:1.125rem}
+  .ent-prose h3{font-size:1.23rem}
+  .ent-prose h4{font-size:1.125rem}
+  .ent-prose code{font-size:1.04rem}
+  .ent-demo-intro{font-size:1.125rem}   /* le chapeau au même niveau que le corps */
+  .ent-demo{font-size:1.1rem}
+  .ent-chip{font-size:.83rem}
+  .ent-note{font-size:.96rem}
+  .ent-back{font-size:1.04rem}
+  .ent-liens{font-size:1.02rem}
+  .ent-vrf{font-size:.91rem}
 
   /* La liste — l'autre surface de LECTURE de la même colonne. Elle monte du même ratio :
-     alterner entre une liste à 13px et une entrée à 16px dans la même colonne se lirait
+     alterner entre une liste à 13px et une entrée à 18px dans la même colonne se lirait
      comme un défaut, pas comme une intention. */
-  .enc-item .en{font-size:1.13rem}
-  .enc-item .eshort{font-size:.96rem}
-  .enc-item .edetail{font-size:.98rem}
-  .enc-item .ecaret{font-size:.93rem}
-  .enc-item .emoves{font-size:.88rem}
-  .enc-item .person-link{font-size:.88rem}
-  .enc-item .efreq,.enc-item .erich{font-size:.74rem}
-  /* Le dépliant est borné en hauteur avec overflow:hidden (1100px). Un texte 19% plus
-     haut y serait tronqué en silence — la borne monte du même ratio. */
-  .enc-item.open .edetail{max-height:1400px}
+  .enc-item .en{font-size:1.27rem}
+  .enc-item .eshort{font-size:1.08rem}
+  .enc-item .edetail{font-size:1.1rem}
+  .enc-item .ecaret{font-size:1.04rem}
+  .enc-item .emoves{font-size:.99rem}
+  .enc-item .person-link{font-size:.99rem}
+  .enc-item .efreq,.enc-item .erich{font-size:.83rem}
+  /* Le dépliant est borné en hauteur avec overflow:hidden — 1100px sous 800px. Un texte
+     34% plus haut y serait tronqué EN SILENCE sur les fiches longues : rien ne signale
+     une troncature, le texte manque simplement. La borne suit donc le ratio, avec une
+     marge : 1100 × 1,34 ≈ 1473, arrondi à 1600. */
+  .enc-item.open .edetail{max-height:1600px}
 }
 
 /* ===== SURBRILLANCE DES ÉLÉMENTS CLIQUABLES — règle générale =====
