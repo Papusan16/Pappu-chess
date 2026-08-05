@@ -235,9 +235,8 @@ reprenant celles de l'étape précédente.
 ÉTAPE 1
 coup: —
 [%csl Rd8][%cal Yh4d8]
-Le Fou : « Le roi noir est en d8, sur la diagonale du fou h4 — mais il
-ne le voit pas encore : le cavalier blanc, posé en f6, bouche la
-ligne. »
+Le Fou : « Le fou tient déjà le roi dans son viseur ; mais le cavalier
+planté devant lui bouche la ligne — il ne le voit pas encore. »
 
 ÉTAPE 2
 coup: —
