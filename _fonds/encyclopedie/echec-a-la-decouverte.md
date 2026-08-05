@@ -179,6 +179,12 @@ Trois choses que l'exemple porte mieux que l'énoncé général :
 
 ## Démonstration — la découverte de Nataf
 
+> **La position vient d'une partie réelle.** Igor-Alexandre Nataf, grand
+> maître international, conduit les Blancs face à un autre grand maître,
+> dont l'identité ne nous est pas parvenue. Les Noirs viennent d'attaquer
+> la dame blanche — et c'est là que tout se joue : au lieu de sauver sa
+> dame, Nataf va frapper ailleurs.
+
 **Rôle** : `exemple`
 **Nature (racine)** : `heritee` — sauf indication contraire portée par une
 branche ou une étape.
@@ -242,8 +248,8 @@ est blanche. En la déplaçant, on découvre l'échec sans rien risquer. »
 ÉTAPE 3
 coup: —
 [%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « En le plaçant en e4 (e8 fonctionnait aussi pour ce qui est de
-sa destination, la dame c6 le protégeant), le cavalier ouvre la
+Le Fou : « En plaçant son cavalier en e4 (e8 fonctionnait aussi pour ce
+qui est de sa destination, la dame c6 le protégeant), Nataf ouvre la
 diagonale au fou et, par là même, met le roi noir en échec. »
 
 ÉTAPE 4
