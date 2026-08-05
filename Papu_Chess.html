@@ -2009,6 +2009,9 @@ button.ctrl:active{transform:scale(.93)}
 .ency-status.ok{background:var(--tone-green-bg);color:var(--success)}
 .ency-status.warn{background:var(--tone-orange-bg);color:var(--tone-orange-text)}
 .ency-crumb{font-size:.74rem;color:var(--text-soft);margin-bottom:8px;font-family:ui-serif,Georgia,serif}
+/* [v7] Le coup joué par une étape. Absent sur une étape d'annotation : c'est la marque
+   visible du régime de l'étape, et elle ne se lit que quand il y a un coup. */
+.ency-coup{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;font-weight:700;color:var(--text-gold);background:var(--tone-green-bg);border-radius:6px;padding:2px 7px;margin:3px 0 5px}
 .ency-branch-slot{width:100%}
 .ency-branch-slot:empty{display:none}
 .ency-branches{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
@@ -3694,10 +3697,19 @@ function uciToSan(r, mi){
     return mv?mv.san:uci;
   }catch(e){ return r.best; }
 }
+// [v7] F10 — dernière étape ATTEIGNABLE d'un nœud. Une étape de clôture arrête la
+// démonstration où qu'elle soit dans son nœud : sans ça, l'arrêt ne tenait qu'au fait que
+// l'étape close était la dernière du nœud (vrai à l'étape 7 de la découverte, par
+// coïncidence), et une clôture posée ailleurs se serait laissée dépasser à la flèche.
+// Ce qui suit reste lu, rejoué et vérifié au chargement — seul l'accès est fermé.
+function encyLastReachable(node){
+  for(var i=0;i<node.steps.length;i++){ if(node.steps[i].cloture) return i; }
+  return node.steps.length-1;
+}
 function navStart(){ if(encyMode){ encyStep=0; encyGoto(); return; } if(fullMoves.length){ rebuildTo(0);} }
 function navPrev(){ if(encyMode){ if(encyStep>0){ encyStep--; encyGoto(); } return; } if(cursor>0){ rebuildTo(cursor-1);} }
-function navNext(){ if(encyMode){ var n=encyCurrentNode(); if(encyStep<n.steps.length-1){ encyStep++; encyGoto(); } return; } if(cursor<fullMoves.length){ rebuildTo(cursor+1);} }
-function navEnd(){ if(encyMode){ var n=encyCurrentNode(); encyStep=n.steps.length-1; encyGoto(); return; } if(fullMoves.length){ rebuildTo(fullMoves.length);} }
+function navNext(){ if(encyMode){ var n=encyCurrentNode(); if(encyStep<encyLastReachable(n)){ encyStep++; encyGoto(true); } return; } if(cursor<fullMoves.length){ rebuildTo(cursor+1);} }
+function navEnd(){ if(encyMode){ var n=encyCurrentNode(); encyStep=encyLastReachable(n); encyGoto(); return; } if(fullMoves.length){ rebuildTo(fullMoves.length);} }
 function undo(){
   // supprime définitivement le dernier coup de la partie
   if(fullMoves.length){
@@ -3760,7 +3772,8 @@ function updateNavState(){
   var auDebut, aLaFin;
   if(encyMode && encyDemo){
     var n=encyCurrentNode();
-    auDebut=(encyStep<=0); aLaFin=(encyStep>=n.steps.length-1);
+    // [v7] F10 : la flèche grisée EST l'énoncé de l'arrêt — pas de bandeau, pas de pop-up.
+    auDebut=(encyStep<=0); aLaFin=(encyStep>=encyLastReachable(n));
   } else {
     auDebut=(cursor<=0); aLaFin=(cursor>=fullMoves.length);
   }
@@ -5216,6 +5229,22 @@ function encyFrSan(s){
 function encyStripMoveNum(s){
   return s.replace(/^\d+(\.|…)+\s*/,'').replace(/\s*\([^)]*\)\s*$/,'').trim();
 }
+// [v7] Joue la valeur d'une clé `coup:` sur une partie. Point d'appel UNIQUE : le SAN et la
+// notation par cases doivent être acceptés partout où un coup est joué, sinon la tolérance
+// marcherait au rejeu et pas au contrôle de complétude (ou l'inverse).
+// La notation par cases (`f6-e4`, `e7-e8=D`) est une issue de secours : le SAN est la seule
+// forme où une erreur de rédaction — un `x` oublié, une disambiguïsation absente — rend
+// l'étape ILLÉGALE, donc muette. Les cases, elles, sont sans ambiguïté par construction.
+function encyPlayCoup(g, coupRaw){
+  var s=encyStripMoveNum(coupRaw);
+  var cases=s.match(/^([a-h][1-8])\s*(?:-|–|—|→|x)\s*([a-h][1-8])(?:=([RDTFCQRBNK]))?$/i);
+  if(cases){
+    var mv={from:cases[1].toLowerCase(), to:cases[2].toLowerCase()};
+    if(cases[3]) mv.promotion=({R:'k',D:'q',T:'r',F:'b',C:'n'}[cases[3].toUpperCase()]||cases[3].toLowerCase());
+    return g.move(mv);
+  }
+  return g.move(encyFrSan(s), {sloppy:true});
+}
 function encyParseStep(paragraph){
   var lines=paragraph.split('\n');
   var hm=lines[0].match(/^ÉTAPE\s+([A-Za-z0-9.]+)\s*(?:[—-]\s*(.*))?$/);
@@ -5316,7 +5345,7 @@ function encyResolveTree(root, rootFen){
     for(var i=0;i<node.steps.length;i++){
       var s=node.steps[i];
       if(s.coupRaw && s.coupRaw!=='—'){
-        var g=new Chess(fen), mv=g.move(encyFrSan(encyStripMoveNum(s.coupRaw)),{sloppy:true});
+        var g=new Chess(fen), mv=encyPlayCoup(g, s.coupRaw);
         return mv ? [mv.san] : null;
       }
     }
@@ -5341,7 +5370,7 @@ function encyResolveTree(root, rootFen){
     node.steps.forEach(function(step){
       if(step.coupRaw && step.coupRaw!=='—'){
         var g=new Chess(fen);
-        var mv=g.move(encyFrSan(encyStripMoveNum(step.coupRaw)), {sloppy:true});
+        var mv=encyPlayCoup(g, step.coupRaw);
         checksRun++;
         if(!mv){
           issues.push('Étape '+step.id+' : coup « '+step.coupRaw+' » illégal depuis la position affichée.');
@@ -5351,6 +5380,19 @@ function encyResolveTree(root, rootFen){
           step.giveCheck=/\+/.test(mv.san); step.isMate=/#/.test(mv.san);
           if(step.giveCheck){ checksRun++; if(!g.in_check()) issues.push('Étape '+step.id+' : « + » annoncé mais pas échec.'); }
           if(step.isMate){ checksRun++; if(!g.in_checkmate()) issues.push('Étape '+step.id+' : « # » annoncé mais pas mat.'); }
+          // [v7] F8 — les annotations d'une étape sont dessinées sur la position qu'elle
+          // AFFICHE, donc, pour une étape de coup, sur la position d'APRÈS. Une flèche
+          // partant de la case que la pièce vient de quitter partirait donc du vide : c'est
+          // le trajet d'un coup annoté une étape trop tard. Le trajet s'annote sur l'étape
+          // d'ANNOTATION qui précède ; ce qui reste ici, c'est ce que le coup a produit.
+          // Flèches seules — un cercle sur case vide est légitime (marquer une fuite, une
+          // case faible). Roque exclu : la case du roi est vidée, mais la flèche qui en part
+          // garde son sens.
+          if(!/^O-O/i.test(mv.san)){
+            checksRun++;
+            if(step.anno.arrows.some(function(a){ return a.m.slice(0,2)===mv.from; }))
+              issues.push('Étape '+step.id+' : flèche partant de '+mv.from+', case vidée par le coup de cette étape.');
+          }
           fen=g.fen(); step.fen=fen;
         }
       } else { step.fen=fen; step.legal=true; step.giveCheck=false; step.isMate=false; }
@@ -5388,14 +5430,18 @@ function encyCurrentNode(){
   }
   return node;
 }
-function encyGoto(){
+function encyGoto(avance){
   var node=encyCurrentNode();
   if(encyStep<0) encyStep=0;
-  if(encyStep>=node.steps.length) encyStep=Math.max(0,node.steps.length-1);
+  if(encyStep>encyLastReachable(node)) encyStep=Math.max(0,encyLastReachable(node));
   var step=node.steps[encyStep];
   game=new Chess(step.fen);
   lastFrom=step.from||null; lastTo=step.to||null; sel=null; legal=[];
-  render(false);
+  // [v7] On anime la pièce qui vient d'arriver, et SEULEMENT quand on avance sur une étape
+  // qui joue un coup : c'est ce qui distingue une démonstration jouée d'une suite de
+  // diagrammes. Une étape d'annotation n'a rien à animer (la position ne bouge pas), et
+  // reculer n'est pas un coup — animer un retour suggérerait qu'on « dé-joue ».
+  render(!!(avance && step.from));
   fitBoardSoon();
 }
 function encyIdentify(sp, animate){
@@ -5405,6 +5451,10 @@ function encyIdentify(sp, animate){
   setMood(step.isMate?'wow':(step.giveCheck?'joy':'happy'), animate);
   var html='<div class="stitle">📖 '+(encyDemo.title||'Démonstration')+'</div>';
   html+='<div class="fam">'+(step.label?step.label:('Étape '+step.id))+'</div>';
+  // [v7] Le coup joué se DIT autant qu'il se voit : les cases surlignées montrent d'où à où,
+  // pas quoi. Une étape d'annotation n'affiche rien ici — c'est la différence entre les deux
+  // régimes, rendue visible sans avoir à la nommer.
+  if(step.from) html+='<div class="ency-coup">'+encEsc(encyStripMoveNum(step.coupRaw))+'</div>';
   // Le texte d'une étape passe par le MÊME rendu de liens que la prose d'une entrée :
   // [[id]] y devient un lien ou une amorce. md() ne faisait que le gras et aurait laissé
   // les crochets à l'écran.
@@ -5416,7 +5466,7 @@ function encyIdentify(sp, animate){
 // propre, immédiatement sous les flèches de navigation.
 function encyRenderBranches(node){
   var slot=document.getElementById('encyBranchSlot'); if(!slot) return;
-  var atLast=(encyStep===node.steps.length-1);
+  var atLast=(encyStep===encyLastReachable(node));
   var etape=node.steps[encyStep];
   // [v5] étape de clôture : on rend la main au joueur, on ne propose pas les branches.
   if(etape && etape.cloture){ slot.innerHTML=''; return; }
@@ -5446,13 +5496,13 @@ function encyChooseBranch(name){
   if(!ch) return;
   encyPath.push({name:ch.name, label:ch.label});
   encyStep=0;
-  encyGoto();
+  encyGoto(true);
 }
 function encyBackToFork(){
   if(!encyPath.length) return;
   encyPath.pop();
   var node=encyCurrentNode();
-  encyStep=node.steps.length-1;
+  encyStep=encyLastReachable(node);
   encyGoto();
 }
 function encyClose(){
