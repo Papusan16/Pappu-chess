@@ -2111,6 +2111,55 @@ button.ctrl:active{transform:scale(.93)}
 #encyImportStatus{font-size:.68rem;color:var(--text-muted);min-height:1em}
 .enc-vide{color:var(--text-dim);text-align:center;padding:22px 14px;font-size:.85rem;line-height:1.5}
 
+/* ===== CONFORT DE LECTURE SUR GRAND ÉCRAN =====
+   L'overlay était dimensionné pour le mobile et appliqué partout : 460px de colonne et
+   13,4px de corps, sur un téléphone comme sur un 27 pouces. Ce bloc — le SEUL qui touche
+   la lecture de l'encyclopédie — rend au desktop une taille de lecture normale.
+   SOUS 800px, RIEN N'EST MODIFIÉ : la mise en page mobile reste identique au pixel.
+
+   Le ratio est UN SEUL, ×1,19 (= 1rem / .84rem), appliqué à toute la carte. C'est la
+   condition pour que la hiérarchie tienne : monter le seul corps à 1rem rendrait les
+   titres h3 (.92rem) PLUS PETITS que leur propre texte, et les puces méta illisibles à
+   côté. On monte l'ensemble ou rien.
+
+   Largeur utile résultante : 560 − 2×15 (padding de .ent-card) − 2×1 (bordure) = 528px.
+   Dans un chapeau, retirer encore 3px de filet et 2×11 de padding : 503px.
+   À 16px, on compte ~66 caractères par ligne (largeur moyenne ≈ .5em en Segoe UI) —
+   contre ~64 aujourd'hui en 460/13,4px. La MESURE ne bouge donc quasiment pas : on ne
+   met pas plus de mots par ligne, on les rend lisibles. Les deux valeurs restent dans
+   la fourchette confortable de 45–75 caractères. */
+@media (min-width: 800px){
+  .overlay{--enc-col:560px}
+
+  /* La carte d'entrée — la surface de lecture proprement dite */
+  .ent-name{font-size:1.29rem}
+  .ent-prose{font-size:1rem}
+  .ent-prose h3{font-size:1.1rem}
+  .ent-prose h4{font-size:1rem}
+  .ent-prose code{font-size:.93rem}
+  .ent-demo-intro{font-size:1rem}     /* le chapeau au même niveau que le corps */
+  .ent-demo{font-size:.98rem}
+  .ent-chip{font-size:.74rem}
+  .ent-note{font-size:.86rem}
+  .ent-back{font-size:.93rem}
+  .ent-liens{font-size:.9rem}
+  .ent-vrf{font-size:.81rem}
+
+  /* La liste — l'autre surface de LECTURE de la même colonne. Elle monte du même ratio :
+     alterner entre une liste à 13px et une entrée à 16px dans la même colonne se lirait
+     comme un défaut, pas comme une intention. */
+  .enc-item .en{font-size:1.13rem}
+  .enc-item .eshort{font-size:.96rem}
+  .enc-item .edetail{font-size:.98rem}
+  .enc-item .ecaret{font-size:.93rem}
+  .enc-item .emoves{font-size:.88rem}
+  .enc-item .person-link{font-size:.88rem}
+  .enc-item .efreq,.enc-item .erich{font-size:.74rem}
+  /* Le dépliant est borné en hauteur avec overflow:hidden (1100px). Un texte 19% plus
+     haut y serait tronqué en silence — la borne monte du même ratio. */
+  .enc-item.open .edetail{max-height:1400px}
+}
+
 /* ===== SURBRILLANCE DES ÉLÉMENTS CLIQUABLES — règle générale =====
    Cinq règles, valables partout, pas des retouches au cas par cas :
    R1. AU REPOS l'affordance est déjà là (surface pour un bouton ou une carte,
