@@ -355,7 +355,7 @@ s'arrête là, DANS CETTE ENTRÉE**. Le lecteur ne propose alors aucune
 branche, même si l'étape est un embranchement.
 
 ```
-ÉTAPE 8 — À toi de jouer
+ÉTAPE 7 — À toi de jouer
 cloture: pause
 coup: —
 [%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
@@ -387,8 +387,9 @@ une fausse cible pour « faire marcher » un renvoi.
 Les déplacer sous un titre de prose aurait évité la clé, mais leurs blocs
 d'étapes se seraient retrouvés déballés en texte brut dans l'entrée : on
 aurait échangé une clé contre une régression visible. Et une clé portée
-par la DÉMONSTRATION (`cloture: étape 8`) dupliquerait l'identifiant de
-l'étape, qu'une renumérotation casserait en silence.
+par la DÉMONSTRATION (`cloture: étape N`) dupliquerait l'identifiant de
+l'étape, qu'une renumérotation casserait en silence — c'est précisément
+ce qui vient d'arriver à l'ancienne étape 8, devenue 7.
 
 **Conséquence pour le lecteur** : le texte d'une étape passe par le même
 rendu de liens que la prose d'une entrée. C'est ce qui rend `[[…]]`
