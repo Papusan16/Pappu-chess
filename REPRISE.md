@@ -47,31 +47,19 @@ que faire dans les 30 premières secondes ?**
 pas seulement en fin de session — c'est une routine de push, pas un geste
 de clôture. État constaté au 2026-08-06.*
 
+- **`main`** : porte désormais **le noyau organisationnel en six
+  fichiers** — ce fichier, `PRINCIPES.md`, `_fonds/RESTE_A_FAIRE.md`,
+  `.claude/settings.json`, `.gitignore`, `.githooks/pre-push`. PR #1
+  (noyau) et #2 (hook) fusionnées par Flavien le 2026-08-06. Le
+  protocole est donc **lisible depuis la branche par défaut** : c'était
+  le défaut radical relevé par l'audit du noyau (cf. `_sessions/`).
 - **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré). **15 commits d'avance sur `main`**, aucun retard.
-- **Deux PR ouvertes, non fusionnées — ce sont les clics de Flavien**,
-  dans cet ordre : **PR #1** (`noyau-protocole`, cinq fichiers
-  d'organisation) puis **PR #2** (`digue-hook-pre-push`, le seul
-  `.githooks/pre-push`). Aucune des deux ne touche `Papu_Chess.html` ;
-  l'ordre tient à la cohérence de lecture, pas à un conflit.
+  (upstream configuré), **synchronisée avec `main`** — aucun retard.
 - **Hook `pre-push`** : refuse tout push vers `main`, y compris sa
   suppression — là où les règles `deny` ne couvrent que Claude Code, lui
   est dans le chemin de git. **`core.hooksPath` est une config LOCALE :
   versionner le hook ne l'active pas.** Après tout clone, rejouer
   `git config core.hooksPath .githooks` et `chmod +x .githooks/pre-push`.
-- **Branche `noyau-protocole`** : ouverte depuis `main`, elle porte les
-  seuls fichiers d'organisation (ce fichier, `PRINCIPES.md`,
-  `_fonds/RESTE_A_FAIRE.md`, `.claude/settings.json`, `.gitignore`) —
-  aucun code applicatif. Elle existe pour que le protocole atteigne
-  `main` sans attendre la validation écran de la démo. Une PR est
-  ouverte ; **c'est Flavien qui la fusionne**. Après cette fusion,
-  synchroniser `wip-demo-jouable` avec `main` (`git merge main` depuis
-  `wip-demo-jouable`) pour éviter un conflit sur ce fichier.
-- **`main`** : `9d4901f`, inchangé — rien n'y a été fusionné depuis
-  l'ouverture de la branche.
-- **Dernier chantier fermé** : `20a832e` — le protocole de reprise
-  (`REPRISE.md`, « Discipline des items parqués » dans `PRINCIPES.md`,
-  chantier 8 du plan de route, digue `deny` sur `main`).
 - **Chantier en cours** : la **démonstration jouable** — FORMAT v7 (règles
   F8/F9/F10), lecteur d'étapes et overlay desktop (`94ed14c`,
   `3171897`, `40cedca`). La branche attend la **validation à l'écran par
