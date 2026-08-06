@@ -60,6 +60,17 @@ décisions futures. À relire au début de chaque session.
   (un fichier par jour, append horodaté) et poussées, pour que
   Claude-conversation les lise DEPUIS LE DÉPÔT au lieu qu'elles soient
   copiées à la main (et tronquées). Voir `_sessions/README.md`.
+- Tout travail d'ORGANISATION destiné à servir de socle (protocole,
+  principes, plan de route, garde-fous) doit ATTERRIR SUR `main`, jamais
+  rester otage d'un chantier applicatif en attente de validation. `main`
+  est la branche par défaut : c'est elle qu'une reprise à froid lit en
+  premier. Un protocole de reprise dont le point d'entrée n'est pas sur
+  `main` n'existe pas pour qui débarque — il ne sert que ceux qui savent
+  déjà où regarder, c'est-à-dire personne. Corollaire pratique : dès
+  qu'un fichier d'organisation naît sur une branche de chantier, ouvrir
+  une branche séparée depuis `main` qui ne porte QUE lui, sans code
+  applicatif — son risque est nul, elle n'a pas à attendre une
+  validation à l'écran qui porte sur autre chose.
 
 ## Discipline des items parqués
 - Tout item repoussé à plus tard porte DEUX PORTES, jamais une seule :
