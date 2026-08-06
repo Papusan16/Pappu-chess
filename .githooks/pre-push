@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# pre-push — refuse tout push vers la branche main, quel que soit le
+# remote et quelle que soit la forme du push.
+#
+# Pourquoi ce hook alors que .claude/settings.json a déjà des règles
+# deny : les règles deny sont un garde-fou contre l'accident côté Claude
+# Code, pas une frontière. Elles ne voient pas un push lancé à la main,
+# depuis un script, un éditeur, ou une commande dont le motif n'a pas
+# été prévu. Ce hook, lui, est dans le chemin de git : rien ne le
+# contourne sans le savoir (voir la note d'échappement plus bas).
+#
+# Git passe en stdin une ligne par référence poussée :
+#   <ref locale> <sha local> <ref distante> <sha distant>
+# Une suppression (git push --delete) porte un sha local à zéro ; elle
+# est refusée comme le reste — effacer main est pire que l'écraser.
+#
+# Installation : ce fichier est VERSIONNÉ dans .githooks/. Il n'est actif
+# que si le dépôt pointe vers ce répertoire :
+#
+#     git config core.hooksPath .githooks
+#
+# Cette configuration est LOCALE (elle vit dans .git/config, qui n'est
+# jamais poussé). Après un re-clone, rejouer cette seule commande.
+
+remote_name="$1"
+bloque=""
+
+while read -r ref_locale sha_local ref_distante sha_distant; do
+	# Une ligne vide arrive quand rien n'est poussé.
+	[ -z "$ref_distante" ] && continue
+
+	case "$ref_distante" in
+	refs/heads/main)
+		bloque="oui"
+		if [ "$sha_local" = "0000000000000000000000000000000000000000" ]; then
+			geste="SUPPRESSION de main"
+		else
+			geste="push de $ref_locale vers main"
+		fi
+		;;
+	esac
+done
+
+if [ -n "$bloque" ]; then
+	cat >&2 <<-FIN
+
+		  ┌──────────────────────────────────────────────────────────┐
+		  │  PUSH VERS main REFUSÉ                                   │
+		  └──────────────────────────────────────────────────────────┘
+
+		  Geste refusé : $geste
+		  Remote       : $remote_name
+
+		  main ne se met à jour que par une pull request fusionnée sur
+		  GitHub par Flavien. Aucun push direct, aucune exception
+		  automatique.
+
+		  Marche à suivre :
+		    1. pousser la branche de travail  (git push -u origin <branche>)
+		    2. ouvrir une PR vers main        (gh pr create --base main)
+		    3. Flavien fusionne lui-même dans l'interface GitHub
+
+		  Ce hook est dans .githooks/pre-push, versionné et relisible.
+		  Il n'a pas d'option de contournement : le seul moyen de passer
+		  outre est --no-verify, et c'est un geste délibéré qui doit
+		  rester délibéré.
+
+	FIN
+	exit 1
+fi
+
+exit 0
