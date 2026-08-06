@@ -60,3 +60,18 @@ décisions futures. À relire au début de chaque session.
   (un fichier par jour, append horodaté) et poussées, pour que
   Claude-conversation les lise DEPUIS LE DÉPÔT au lieu qu'elles soient
   copiées à la main (et tronquées). Voir `_sessions/README.md`.
+
+## Discipline des items parqués
+- Tout item repoussé à plus tard porte DEUX PORTES, jamais une seule :
+  une condition de sommeil (« pas avant… ») ET un signal de réveil
+  (« dès que… ») accroché à un événement observable. Un « pas avant »
+  seul est une écriture morte : il dit quand ne pas commencer, jamais
+  quand commencer, et l'idée se perd en silence.
+- Le signal de réveil se pose AU SITE DU SIGNAL, pas seulement là où
+  dort l'item : un pointeur depuis la dépendance vers le dépendant, pour
+  qu'il tombe sous les yeux au moment où la condition se réalise, pas
+  dans un fichier qu'on n'aurait pas rouvert.
+- Exemple : l'accueil éditorialisé dort dans `RESTE_A_FAIRE.md` (« pas
+  avant que le rayon Histoire soit garni »), mais son réveil est planté
+  DANS le rayon Histoire (« ces fiches datées sont sa matière, le
+  réveiller »).
