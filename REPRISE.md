@@ -48,7 +48,15 @@ pas seulement en fin de session — c'est une routine de push, pas un geste
 de clôture. État constaté au 2026-08-06.*
 
 - **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré). **13 commits d'avance sur `main`**, aucun retard.
+  (upstream configuré). **14 commits d'avance sur `main`**, aucun retard.
+- **Branche `noyau-protocole`** : ouverte depuis `main`, elle porte les
+  seuls fichiers d'organisation (ce fichier, `PRINCIPES.md`,
+  `_fonds/RESTE_A_FAIRE.md`, `.claude/settings.json`, `.gitignore`) —
+  aucun code applicatif. Elle existe pour que le protocole atteigne
+  `main` sans attendre la validation écran de la démo. Une PR est
+  ouverte ; **c'est Flavien qui la fusionne**. Après cette fusion,
+  synchroniser `wip-demo-jouable` avec `main` (`git merge main` depuis
+  `wip-demo-jouable`) pour éviter un conflit sur ce fichier.
 - **`main`** : `9d4901f`, inchangé — rien n'y a été fusionné depuis
   l'ouverture de la branche.
 - **Dernier chantier fermé** : `20a832e` — le protocole de reprise
