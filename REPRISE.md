@@ -20,6 +20,12 @@ que faire dans les 30 premières secondes ?**
   avec ses **deux portes** (« pas avant… » / « dès que… », cf. PRINCIPES,
   « Discipline des items parqués »). Contexte de séance → le
   `_sessions/` du jour.
+  - **La consignation se fait AU FIL DE L'EAU**, au moment où la décision
+    naît, pas gardée en réserve pour la fin. La clôture de session n'est
+    qu'un **filet de rattrapage**, jamais le mécanisme principal : une
+    conversation peut mourir brutalement — limite atteinte, réponse qui
+    ne charge pas — sans clôture propre. Ce qui n'a pas été écrit à
+    l'instant où il est né est ce qu'on perd.
 
 ---
 
@@ -34,15 +40,20 @@ que faire dans les 30 premières secondes ?**
 
 ## 3. Où on en est
 
-*Section à tenir à jour à chaque session. État constaté au 2026-08-06.*
+> **En cas de divergence entre cette section et l'état git réel, GIT FAIT
+> FOI : cette section n'est qu'un pointeur de confort.**
+
+*Rafraîchie par Claude Code **à chaque push** sur la branche de travail,
+pas seulement en fin de session — c'est une routine de push, pas un geste
+de clôture. État constaté au 2026-08-06.*
 
 - **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré). **10 commits d'avance sur `main`**, aucun retard.
+  (upstream configuré). **12 commits d'avance sur `main`**, aucun retard.
 - **`main`** : `9d4901f`, inchangé — rien n'y a été fusionné depuis
   l'ouverture de la branche.
-- **Dernier chantier fermé** : `685928c` — `_fonds/RESTE_A_FAIRE.md`
-  réorganisé en feuille de route (huit chantiers, ordre de dépendance,
-  deux portes par item bloqué).
+- **Dernier chantier fermé** : `20a832e` — le protocole de reprise
+  (`REPRISE.md`, « Discipline des items parqués » dans `PRINCIPES.md`,
+  chantier 8 du plan de route, digue `deny` sur `main`).
 - **Chantier en cours** : la **démonstration jouable** — FORMAT v7 (règles
   F8/F9/F10), lecteur d'étapes et overlay desktop (`94ed14c`,
   `3171897`, `40cedca`). La branche attend la **validation à l'écran par
