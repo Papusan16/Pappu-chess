@@ -48,7 +48,7 @@ pas seulement en fin de session — c'est une routine de push, pas un geste
 de clôture. État constaté au 2026-08-06.*
 
 - **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré). **12 commits d'avance sur `main`**, aucun retard.
+  (upstream configuré). **13 commits d'avance sur `main`**, aucun retard.
 - **`main`** : `9d4901f`, inchangé — rien n'y a été fusionné depuis
   l'ouverture de la branche.
 - **Dernier chantier fermé** : `20a832e` — le protocole de reprise
