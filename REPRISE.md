@@ -48,7 +48,17 @@ pas seulement en fin de session — c'est une routine de push, pas un geste
 de clôture. État constaté au 2026-08-06.*
 
 - **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré). **14 commits d'avance sur `main`**, aucun retard.
+  (upstream configuré). **15 commits d'avance sur `main`**, aucun retard.
+- **Deux PR ouvertes, non fusionnées — ce sont les clics de Flavien**,
+  dans cet ordre : **PR #1** (`noyau-protocole`, cinq fichiers
+  d'organisation) puis **PR #2** (`digue-hook-pre-push`, le seul
+  `.githooks/pre-push`). Aucune des deux ne touche `Papu_Chess.html` ;
+  l'ordre tient à la cohérence de lecture, pas à un conflit.
+- **Hook `pre-push`** : refuse tout push vers `main`, y compris sa
+  suppression — là où les règles `deny` ne couvrent que Claude Code, lui
+  est dans le chemin de git. **`core.hooksPath` est une config LOCALE :
+  versionner le hook ne l'active pas.** Après tout clone, rejouer
+  `git config core.hooksPath .githooks` et `chmod +x .githooks/pre-push`.
 - **Branche `noyau-protocole`** : ouverte depuis `main`, elle porte les
   seuls fichiers d'organisation (ce fichier, `PRINCIPES.md`,
   `_fonds/RESTE_A_FAIRE.md`, `.claude/settings.json`, `.gitignore`) —
