@@ -98,6 +98,12 @@ liens:
 - **nom** : libellé affiché (« Défense Caro-Kann »).
 - **rayons** : un ou PLUSIEURS parmi Histoire / Théorie / Technique /
   Pratique / Méthode (un objet peut relever de deux rayons).
+  - **Rayon Histoire — FICHES DATÉES = matière de l'accueil éditorialisé
+    (cf. chantier « Horizon lointain » dans `_fonds/RESTE_A_FAIRE.md`) —
+    penser à réveiller ce chantier quand ces fiches s'accumulent.** Une
+    fiche de partie célèbre qui porte une date n'est pas seulement une
+    entrée d'encyclopédie : c'est la matière première de la citation du
+    jour, de la date-anniversaire et du mois à thème.
 - **phase** (optionnel, transversal) : ouverture / milieu / finale.
 - **alias** : liste de formes sous lesquelles l'utilisateur peut
   interroger l'entrée (« caro kann », « défense caro-kann »,

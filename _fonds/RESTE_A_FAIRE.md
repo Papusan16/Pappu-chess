@@ -35,6 +35,8 @@ classement.
 6. **Ergonomie & finitions d'affichage** — *prêt* (sauf le débordement
    des très longs commentaires, en attente que le cas se présente)
 7. **Pistes en réserve, non arbitrées** — *en attente de : un arbitrage*
+8. **Horizon lointain — accueil éditorialisé** — *en attente de : que le
+   rayon Histoire soit garni de fiches de parties célèbres datées*
 
 ---
 
@@ -269,3 +271,30 @@ classement.
   **[ouvert 2026-08-04] Vignette-photo au survol du nom d'un personnage**
   (idée en réserve, non arbitrée). Ni la source des images ni le
   comportement sur téléphone (où il n'y a pas de survol) ne sont tranchés.
+
+---
+
+## 8. Horizon lointain — accueil éditorialisé
+
+*En attente : le rayon Histoire n'est pas encore garni.*
+
+> **pas avant** — ne pas ouvrir tant que le rayon Histoire n'est pas
+> garni de fiches de parties célèbres datées.
+> **dès que** — le rayon Histoire porte des fiches de parties célèbres
+> avec dates : ces fiches sont la matière de l'accueil, réveiller alors
+> cette section.
+
+Le signal de réveil est planté au site du signal, pas seulement ici :
+`_fonds/encyclopedie/FORMAT.md`, définition du rayon Histoire (cf.
+`PRINCIPES.md`, « Discipline des items parqués »).
+
+- **Citation d'échecs du jour**, corrélée à une fiche historique — la
+  citation ne flotte pas seule, elle pointe vers le `.md` de l'entrée qui
+  la porte, résolu via `INDEX.json`.
+
+- **Date-anniversaire d'une partie célèbre** affichée à l'accueil : le
+  jour où une partie du rayon Histoire a été jouée, l'accueil le dit.
+
+- **Mois à thème** : éditorialisation sur plusieurs semaines (un motif,
+  un joueur, une époque), l'accueil suivant le fil au lieu de tirer au
+  hasard chaque jour.

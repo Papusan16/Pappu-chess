@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push *main*)",
+      "Bash(git push --all*)",
+      "Bash(git push --mirror*)",
+      "Bash(git merge *)",
+      "Bash(git rebase *main*)",
+      "Bash(git checkout main)",
+      "Bash(git checkout main *)",
+      "Bash(git switch main)",
+      "Bash(git switch main *)",
+      "Bash(git branch -f main*)",
+      "Bash(git branch --force main*)",
+      "Bash(git update-ref *main*)",
+      "Bash(gh pr merge *)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  }
+}
