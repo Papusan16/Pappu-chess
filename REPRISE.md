@@ -40,46 +40,37 @@ que faire dans les 30 premières secondes ?**
 
 ## 3. Où on en est
 
-> **En cas de divergence entre cette section et l'état git réel, GIT FAIT
-> FOI : cette section n'est qu'un pointeur de confort.**
+> **GIT FAIT FOI.** Cette section ne recopie donc **ni SHA, ni nombre de
+> commits, ni liste de branches** : recopiés à la main, ils périment en
+> silence et finissent par mentir. Pour l'état factuel, demander à git —
+> c'est plus court que de le lire ici, et c'est vrai :
+>
+> ```
+> git fetch && git log --oneline main..HEAD && git ls-remote origin refs/heads/main
+> ```
+>
+> (avance de la branche courante sur `main`, puis où en est `main` côté
+> serveur ; pour le retard, inverser : `git log --oneline HEAD..main`.)
 
-*Rafraîchie par Claude Code **à chaque push** sur la branche de travail,
-pas seulement en fin de session — c'est une routine de push, pas un geste
-de clôture. État constaté au 2026-08-07.*
+Ne reste ici que ce que git **ne dit pas** :
 
-- **`main`** : porte désormais **le noyau organisationnel en six
-  fichiers** — ce fichier, `PRINCIPES.md`, `_fonds/RESTE_A_FAIRE.md`,
-  `.claude/settings.json`, `.gitignore`, `.githooks/pre-push`. PR #1
-  (noyau) et #2 (hook) fusionnées par Flavien le 2026-08-06. Le
-  protocole est donc **lisible depuis la branche par défaut** : c'était
-  le défaut radical relevé par l'audit du noyau (cf. `_sessions/`).
-- **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré), **synchronisée avec `main`** — aucun retard.
-- **Hook `pre-push`** : refuse tout push vers `main`, y compris sa
-  suppression — là où les règles `deny` ne couvrent que Claude Code, lui
-  est dans le chemin de git. **`core.hooksPath` est une config LOCALE :
-  versionner le hook ne l'active pas.** Après tout clone, rejouer
-  `git config core.hooksPath .githooks` et `chmod +x .githooks/pre-push`.
-- **Chantier en cours** : la **démonstration jouable** — FORMAT v7 (règles
-  F8/F9/F10), lecteur d'étapes et overlay desktop (`94ed14c`,
-  `3171897`, `40cedca`). La branche attend la **validation à l'écran par
-  Flavien** avant toute fusion.
-- **En attente du geste de Flavien** : (1) le **ruleset GitHub
-  `protection-main`** — seul verrou côté serveur, marche à suivre en neuf
-  étapes dans `_sessions/2026-08-06.md`, avec ses deux pièges (Bypass
-  list vide, *Required approvals* à **0**) ; (2) la **validation à
-  l'écran** de la démonstration jouable.
-- **Branche `noyau-amorcage`** : ouverte à l'identique de `origin/main`,
-  **aucun commit, aucune trace de son intention** dans les fichiers du
-  dépôt. À nommer dans le plan de route ou à supprimer — repérée le
-  2026-08-07.
-- **Branches de reconnaissance dormantes**, non fusionnées :
-  `reco-protocole` (protocoles de reprise et mémoire d'agent),
-  `reco-lichess` (ce qu'on retient de Lichess pour l'École).
+- **Chantier en cours** : la **démonstration jouable** — FORMAT v7
+  (règles F8/F9/F10), lecteur d'étapes ramifié et overlay desktop, sur la
+  branche `wip-demo-jouable`.
+- **Ce qu'il attend** : la **validation à l'écran par Flavien**, avant
+  toute fusion. Un rendu piloté est une proposition ; son œil est la
+  validation.
+- **Autre geste en attente, côté Flavien** : le **ruleset GitHub
+  `protection-main`** — le seul verrou côté serveur, là où les règles
+  `deny` et le hook `pre-push` restent locaux et contournables. Marche à
+  suivre détaillée dans `_sessions/2026-08-06.md`.
 - **Décalage connu, non corrigé** : `RESTE_A_FAIRE.md` parle encore de
   « lecteur d'étapes à construire » et de migration « vers v3 », alors
-  que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible v5. À
-  trancher par Flavien.
+  que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible plus
+  avancée. À trancher par Flavien.
+- **Piège d'installation** : `core.hooksPath` est une config **locale** —
+  versionner `.githooks/pre-push` ne l'active pas. Après tout clone :
+  `git config core.hooksPath .githooks && chmod +x .githooks/pre-push`.
 
 ---
 
