@@ -40,36 +40,37 @@ que faire dans les 30 premières secondes ?**
 
 ## 3. Où on en est
 
-> **En cas de divergence entre cette section et l'état git réel, GIT FAIT
-> FOI : cette section n'est qu'un pointeur de confort.**
+> **GIT FAIT FOI.** Cette section ne recopie donc **ni SHA, ni nombre de
+> commits, ni liste de branches** : recopiés à la main, ils périment en
+> silence et finissent par mentir. Pour l'état factuel, demander à git —
+> c'est plus court que de le lire ici, et c'est vrai :
+>
+> ```
+> git fetch && git log --oneline main..HEAD && git ls-remote origin refs/heads/main
+> ```
+>
+> (avance de la branche courante sur `main`, puis où en est `main` côté
+> serveur ; pour le retard, inverser : `git log --oneline HEAD..main`.)
 
-*Rafraîchie par Claude Code **à chaque push** sur la branche de travail,
-pas seulement en fin de session — c'est une routine de push, pas un geste
-de clôture. État constaté au 2026-08-06.*
+Ne reste ici que ce que git **ne dit pas** :
 
-- **Branche active** : `wip-demo-jouable`, poussée sur `origin`
-  (upstream configuré). **13 commits d'avance sur `main`**, aucun retard.
-- **Branche `noyau-protocole`** : ouverte depuis `main`, elle porte les
-  seuls fichiers d'organisation (ce fichier, `PRINCIPES.md`,
-  `_fonds/RESTE_A_FAIRE.md`, `.claude/settings.json`, `.gitignore`) —
-  aucun code applicatif. Elle existe pour que le protocole atteigne
-  `main` sans attendre la validation écran de la démo. Une PR est
-  ouverte ; **c'est Flavien qui la fusionne**. Après cette fusion,
-  synchroniser `wip-demo-jouable` avec `main` (`git merge main` depuis
-  `wip-demo-jouable`) pour éviter un conflit sur ce fichier.
-- **`main`** : `9d4901f`, inchangé — rien n'y a été fusionné depuis
-  l'ouverture de la branche.
-- **Dernier chantier fermé** : `20a832e` — le protocole de reprise
-  (`REPRISE.md`, « Discipline des items parqués » dans `PRINCIPES.md`,
-  chantier 8 du plan de route, digue `deny` sur `main`).
-- **Chantier en cours** : la **démonstration jouable** — FORMAT v7 (règles
-  F8/F9/F10), lecteur d'étapes et overlay desktop (`94ed14c`,
-  `3171897`, `40cedca`). La branche attend la **validation à l'écran par
-  Flavien** avant toute fusion.
+- **Chantier en cours** : la **démonstration jouable** — FORMAT v7
+  (règles F8/F9/F10), lecteur d'étapes ramifié et overlay desktop, sur la
+  branche `wip-demo-jouable`.
+- **Ce qu'il attend** : la **validation à l'écran par Flavien**, avant
+  toute fusion. Un rendu piloté est une proposition ; son œil est la
+  validation.
+- **Autre geste en attente, côté Flavien** : le **ruleset GitHub
+  `protection-main`** — le seul verrou côté serveur, là où les règles
+  `deny` et le hook `pre-push` restent locaux et contournables. Marche à
+  suivre détaillée dans `_sessions/2026-08-06.md`.
 - **Décalage connu, non corrigé** : `RESTE_A_FAIRE.md` parle encore de
   « lecteur d'étapes à construire » et de migration « vers v3 », alors
-  que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible v5. À
-  trancher par Flavien.
+  que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible plus
+  avancée. À trancher par Flavien.
+- **Piège d'installation** : `core.hooksPath` est une config **locale** —
+  versionner `.githooks/pre-push` ne l'active pas. Après tout clone :
+  `git config core.hooksPath .githooks && chmod +x .githooks/pre-push`.
 
 ---
 
