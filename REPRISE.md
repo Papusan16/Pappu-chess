@@ -45,7 +45,7 @@ que faire dans les 30 premières secondes ?**
 
 *Rafraîchie par Claude Code **à chaque push** sur la branche de travail,
 pas seulement en fin de session — c'est une routine de push, pas un geste
-de clôture. État constaté au 2026-08-06.*
+de clôture. État constaté au 2026-08-07.*
 
 - **`main`** : porte désormais **le noyau organisationnel en six
   fichiers** — ce fichier, `PRINCIPES.md`, `_fonds/RESTE_A_FAIRE.md`,
@@ -64,6 +64,18 @@ de clôture. État constaté au 2026-08-06.*
   F8/F9/F10), lecteur d'étapes et overlay desktop (`94ed14c`,
   `3171897`, `40cedca`). La branche attend la **validation à l'écran par
   Flavien** avant toute fusion.
+- **En attente du geste de Flavien** : (1) le **ruleset GitHub
+  `protection-main`** — seul verrou côté serveur, marche à suivre en neuf
+  étapes dans `_sessions/2026-08-06.md`, avec ses deux pièges (Bypass
+  list vide, *Required approvals* à **0**) ; (2) la **validation à
+  l'écran** de la démonstration jouable.
+- **Branche `noyau-amorcage`** : ouverte à l'identique de `origin/main`,
+  **aucun commit, aucune trace de son intention** dans les fichiers du
+  dépôt. À nommer dans le plan de route ou à supprimer — repérée le
+  2026-08-07.
+- **Branches de reconnaissance dormantes**, non fusionnées :
+  `reco-protocole` (protocoles de reprise et mémoire d'agent),
+  `reco-lichess` (ce qu'on retient de Lichess pour l'École).
 - **Décalage connu, non corrigé** : `RESTE_A_FAIRE.md` parle encore de
   « lecteur d'étapes à construire » et de migration « vers v3 », alors
   que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible v5. À
