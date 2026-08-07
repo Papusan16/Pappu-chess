@@ -19,6 +19,14 @@ arbitrées les 3-4 août ; détail et raisons dans `_sessions/2026-08-04.md`
 — ici, le chantier seul. Rien n'a été supprimé ni reformulé par ce
 classement.
 
+**Ce fichier ne contient que des ACTIONS.** Les **constats de
+fonctionnement** — ce que l'application fait de surprenant sans être en
+panne — ont été sortis vers `_fonds/PROPRIETES_CONNUES.md` : ce ne sont
+pas des tâches, ils ne seraient jamais fermés, et mêlés à des chantiers
+ils se lisaient comme des bugs en attente. Quand une propriété appelle
+malgré tout une action, **l'action reste ici** avec ses deux portes, et
+renvoie à la propriété qui en porte la cause.
+
 ---
 
 ## Sommaire des chantiers
@@ -28,12 +36,14 @@ classement.
    phases 2 à 5 en attente en cascade)
 3. **École & « S'exercer » / Top mats** — *en attente de : des faits
    d'échiquier adressables depuis deux entrées*
-4. **Moteur du Fou & lecture de la position** — *prêt* (sauf le bug
-   latent `startFen`, en attente d'une démonstration sur FEN non
-   standard)
+4. **Moteur du Fou & lecture de la position** — *prêt* (sauf la
+   correction du rejeu depuis `startFen`, en attente d'une démonstration
+   sur FEN non standard — propriété 2)
 5. **Pipeline vidéo → PGN & normalisation** — *prêt*
-6. **Ergonomie & finitions d'affichage** — *prêt* (sauf le débordement
-   des très longs commentaires, en attente que le cas se présente)
+6. **Ergonomie & finitions d'affichage** — *prêt* (sauf deux items en
+   attente : le débordement des très longs commentaires, que le cas se
+   présente ; les flèches au coup 0, que la gêne soit jugée réelle —
+   propriété 3)
 7. **Pistes en réserve, non arbitrées** — *en attente de : un arbitrage*
 8. **Horizon lointain — accueil éditorialisé** — *en attente de : que le
    rayon Histoire soit garni de fiches de parties célèbres datées*
@@ -171,26 +181,17 @@ classement.
   Utile en jeu comme en analyse, et **indépendant de l'encyclopédie** —
   ce chantier ne dépend d'aucune phase de la feuille de route.
 
-- Détecteur de mauvais fou (et fouOutpostSquares/fouPassedPawns/fouHangingSquares) : ne
-  se déclenche JAMAIS sur une position FEN statique chargée sans le moindre coup — ces
-  fonctions rejouent `fullMoves[0..mi]` (rempli par `syncFull()`/`game.history()`), donc
-  avec `fullMoves` vide (0 coup importé), `mi` n'a pas de sens et la fonction retourne `[]`
-  ; le second point d'appel (panneau coach, ligne ~3670) est en plus gaté par
-  `cursor>0`, cursor valant aussi 0 sans coup. Il faut au moins UN coup à naviguer (PGN
-  avec historique, même minimal) pour voir un cercle structurel (avant-poste, pion passé,
-  mauvais fou) — une position posée seule (FEN nu ou PGN `[SetUp]/[FEN]` sans coup) reste
-  silencieuse par construction, ce n'est pas un bug isolé mais une propriété actuelle de
-  l'architecture (mi/cursor comme seule notion de "position courante").
-
 - *pas avant : (à compléter) ; dès que : l'analyse structurelle doit
   couvrir une démonstration posée sur FEN non standard.*
-  Bug latent (repéré en marge, non corrigé) : ces 4 fonctions rejouent TOUJOURS depuis
-  `new Chess()` (position de départ standard), jamais `new Chess(startFen)` — un PGN
-  importé avec en-tête `[SetUp "1"]/[FEN ...]` (position de départ non standard) fera
-  rejouer les mêmes `{from,to}` depuis la mauvaise position de base. Sans conséquence
-  tant que testé sur une partie normale (position de départ standard, ce que fait cette
-  note) ; à corriger le jour où l'analyse structurelle doit couvrir une démonstration
-  posée sur FEN non standard.
+  **Corriger le rejeu depuis `startFen`** dans les quatre détecteurs
+  structurels — cf. `_fonds/PROPRIETES_CONNUES.md`, propriété 2, qui en
+  porte la cause et le contournement. Seule l'action reste ici.
+
+*Le silence des cercles structurels sur une position posée sans coup
+n'est pas un item de ce fichier : c'est une propriété de l'architecture,
+décrite en `_fonds/PROPRIETES_CONNUES.md`, propriété 1. Elle n'appelle
+aucune action tant que `mi`/`cursor` restent la notion de « position
+courante ».*
 
 ---
 
@@ -210,13 +211,17 @@ classement.
 
 ## 6. Ergonomie & finitions d'affichage
 
-*Prêt, sauf le dernier item.*
+*Prêt, sauf les deux derniers items.*
 
 - Débordement sur très petites fenêtres (1024×600, préexistant), hors
   fourchette laptop standard.
 
-- Flèches de conseil du Fou présentes au coup 0 d'une partie importée
-  (négligeable ; à masquer un jour quand `pgnMode` actif au curseur 0).
+- *pas avant : (à compléter) ; dès que : la gêne est jugée réelle à
+  l'écran (elle est aujourd'hui tenue pour négligeable).*
+  **Masquer les flèches de conseil du Fou au coup 0** d'une partie
+  importée, en gatant `pgnMode` sur `curseur > 0` — cf.
+  `_fonds/PROPRIETES_CONNUES.md`, propriété 3, qui en porte la cause et le
+  contournement. Seule l'action reste ici.
 
 - *pas avant : (à compléter) ; dès que : le cas se présente avec un
   commentaire réel du Fou.*
