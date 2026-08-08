@@ -54,9 +54,42 @@ renvoie à la propriété qui en porte la cause.
 
 *Prêt.*
 
-- Lecteur d'étapes des démonstrations à construire (avancer/reculer dans
-  une démo à étapes cumulatives, cf. `_fonds/demonstrations/
-  nataf_decouverte.pgn`).
+### Où en est la démo — au 2026-08-08
+
+Deux choses distinctes, à ne pas confondre dans un même « c'est bon » :
+
+- **Le lecteur d'étapes (le mécanisme) — VALIDÉ À L'ÉCRAN.** Construit,
+  ramifié, et ses deux bugs de navigation corrigés puis **vérifiés à
+  l'écran** sur `wip-demo-jouable`, cache vidé, desktop 1707px :
+  `isBranchEnd` sépare désormais la mise en scène (« l'échiquier redevient
+  nu », au fil de la ligne) de la fin de branche (« reviens à
+  l'embranchement ») — le Fou n'annonce plus un embranchement en pleine
+  ligne principale ; et le `.md` d'une entrée comme `INDEX.json` sont
+  chargés `no-store`, ce qui ferme les « clics perdus » (5 rafales de 6
+  clics rapides, rechargement entre chaque, 5/5 exactes, zéro clic perdu,
+  zéro erreur console). Détail et mesures : `_sessions/2026-08-08.md`.
+
+- **La démonstration Nataf dans son ensemble (le contenu) — déjà vue et
+  conforme** au premier passage : contenu, chapeau, viseur, fin. Elle
+  n'est pas rouverte par les corrections ci-dessus, qui n'ont pas touché
+  le fonds — seul le lecteur a changé.
+
+**Non traité, sans cause établie** : le « saut d'étape 6 » du diagnostic
+du 2026-08-08 — jamais reproduit, ni avant ni après correction, y compris
+sous les 30 clics de stress. Rien à corriger tant qu'on ne sait pas le
+provoquer.
+
+> **dès que** — il réapparaît de façon **reproductible** : rouvrir, avec
+> le geste exact qui le provoque.
+
+### Items
+
+- ~~Lecteur d'étapes des démonstrations à construire~~ — **fait et
+  validé à l'écran le 2026-08-08** (voir ci-dessus). L'item décrivait
+  encore une construction à venir, et `_fonds/demonstrations/
+  nataf_decouverte.pgn` comme sa source : ce `.pgn` (mise en place seule,
+  5 étapes, sans branches) **n'est ouvert par aucun code** — la source
+  réellement lue est `_fonds/encyclopedie/echec-a-la-decouverte.md`.
 
 - **[ouvert 2026-08-04] Lecteur — deux corrections d'ergonomie** :
   mettre les **flèches de navigation cliquables en surbrillance** (rien
