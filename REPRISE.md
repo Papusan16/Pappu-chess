@@ -57,17 +57,26 @@ Ne reste ici que ce que git **ne dit pas** :
 - **Chantier en cours** : la **démonstration jouable** — FORMAT v7
   (règles F8/F9/F10), lecteur d'étapes ramifié et overlay desktop, sur la
   branche `wip-demo-jouable`.
-- **Ce qu'il attend** : la **validation à l'écran par Flavien**, avant
-  toute fusion. Un rendu piloté est une proposition ; son œil est la
-  validation.
+- **Le LECTEUR est validé** (le mécanisme : navigation, `isBranchEnd`,
+  `no-store`) — vérifié à l'écran par l'instance Claude du navigateur, y
+  compris sous clics en rafale. Mesures : `_sessions/2026-08-08.md`.
+- **Ce qu'il attend, et que Claude ne peut pas donner** : la validation
+  de la **démonstration Nataf dans son ENSEMBLE** — contenu, chapeau,
+  viseur, rythme, fin — **par l'œil de Flavien**, avant toute fusion. Une
+  instance de Claude peut certifier qu'un mécanisme fonctionne ; le
+  jugement de goût sur la démonstration est **la part de Flavien,
+  irremplaçable** (cf. `PRINCIPES.md`). **Ne pas déclarer cette
+  validation faite tant que Flavien ne l'a pas dite lui-même** — un
+  mécanisme vérifié n'est pas une démonstration jugée.
 - **Autre geste en attente, côté Flavien** : le **ruleset GitHub
   `protection-main`** — le seul verrou côté serveur, là où les règles
   `deny` et le hook `pre-push` restent locaux et contournables. Marche à
   suivre détaillée dans `_sessions/2026-08-06.md`.
-- **Décalage connu, non corrigé** : `RESTE_A_FAIRE.md` parle encore de
-  « lecteur d'étapes à construire » et de migration « vers v3 », alors
-  que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible plus
-  avancée. À trancher par Flavien.
+- **Décalage résiduel, mineur** : l'item `mauvais-fou.md` de
+  `RESTE_A_FAIRE.md` vise encore « le format v3 », alors que FORMAT est à
+  v7. Le chantier reste réel (ses 5 démonstrations ne se jouent pas), seul
+  le numéro de cible est périmé. L'autre moitié de ce décalage — « lecteur
+  d'étapes à construire » — est **fermée** depuis le 2026-08-08.
 - **Piège d'installation** : `core.hooksPath` est une config **locale** —
   versionner `.githooks/pre-push` ne l'active pas. Après tout clone :
   `git config core.hooksPath .githooks && chmod +x .githooks/pre-push`.
