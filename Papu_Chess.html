@@ -4341,7 +4341,12 @@ function encOpenEntry(id){
   encEntryId=id;
   if(encEntryCache[id]){ encEntryShown=encEntryCache[id]; encView='entry'; renderEnc(); return; }
   encEntryShown=null; encView='entry'; renderEnc();
-  fetch(ENCY_DIR+id+'.md').then(function(r){
+  // `no-store` plutôt qu'un paramètre horodaté : l'URL du fonds reste l'URL du fonds,
+  // partageable et lisible, et aucune entrée morte ne s'accumule dans le cache. Le fonds
+  // est réécrit en place (une entrée peut être renumérotée deux fois dans la même heure) :
+  // servie tantôt fraîche tantôt périmée, la même démonstration ne se joue pas pareil.
+  // La mémoire de session reste assurée par encEntryCache, au-dessus de ce fetch.
+  fetch(ENCY_DIR+id+'.md',{cache:'no-store'}).then(function(r){
     if(!r.ok) throw new Error('HTTP '+r.status);
     return r.text();
   }).then(function(txt){
