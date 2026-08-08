@@ -5500,6 +5500,17 @@ function encyGoto(avance){
   render(!!(avance && step.from));
   fitBoardSoon();
 }
+// [v7] `réinitialisation` porte DEUX gestes que le seul `isReset` confondait :
+//  · effacer les annotations au fil de la ligne — mise en scène, on continue ;
+//  · clore une branche et rendre la main à l'embranchement — on s'arrête.
+// Le second ne se déduit pas du texte de l'étape mais de sa PLACE : dernière étape
+// atteignable d'un nœud de branche sans descendance. Une réinitialisation au milieu
+// de la ligne principale n'est donc plus annoncée comme une fin de branche.
+function encyIsBranchEnd(node, i){
+  return !!(node.steps[i] && node.steps[i].isReset
+            && encyPath.length && !node.children.length
+            && i===encyLastReachable(node));
+}
 function encyIdentify(sp, animate){
   var node=encyCurrentNode(), step=node.steps[encyStep];
   fouArrows=step.anno.arrows.slice();
@@ -5515,7 +5526,8 @@ function encyIdentify(sp, animate){
   // [[id]] y devient un lien ou une amorce. md() ne faisait que le gras et aurait laissé
   // les crochets à l'écran.
   if(step.fouText) html+='<div class="stext" style="font-size:.86rem;line-height:1.5">'+encInline(step.fouText,{selfId:(encyEntry&&encyEntry.id)||null,vus:{}})+'</div>';
-  else if(step.isReset) html+='<div class="stext" style="font-style:italic">Fin de cette branche — reviens à l\'embranchement pour explorer la sœur.</div>';
+  else if(encyIsBranchEnd(node, encyStep)) html+='<div class="stext" style="font-style:italic">Fin de cette branche — reviens à l\'embranchement pour explorer la sœur.</div>';
+  else if(step.isReset) html+='<div class="stext" style="font-style:italic">L\'échiquier redevient nu : les annotations sont effacées, la ligne continue.</div>';
   sp.innerHTML=html;
 }
 // Les branches ne vivent PAS dans le panneau : elles s'affichent dans leur emplacement
