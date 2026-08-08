@@ -4068,7 +4068,11 @@ function encIndexBuild(list){
 function encLoadIndex(){
   if(encIndexState!=='vierge') return Promise.resolve();
   encIndexState='tente';
-  return fetch(ENCY_DIR+'INDEX.json').then(function(r){
+  // `no-store`, comme pour le `.md` d'une entrée : le manifeste est du fonds réécrit en
+  // place, et servi périmé il fait mentir l'index sur ce qui existe — une entrée neuve
+  // reste invisible, une entrée renommée garde son ancien nom. La mémoire de session est
+  // déjà tenue par encIndexState, au-dessus de ce fetch.
+  return fetch(ENCY_DIR+'INDEX.json',{cache:'no-store'}).then(function(r){
     if(!r.ok) throw new Error('HTTP '+r.status);
     return r.json();
   }).then(function(list){ encIndexBuild(list); }).catch(function(){
