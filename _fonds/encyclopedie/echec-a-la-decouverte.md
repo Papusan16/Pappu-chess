@@ -236,7 +236,7 @@ reprenant celles de l'étape précédente.
 coup: —
 [%csl Rd8][%cal Yh4d8]
 Le Fou : « Le fou tient déjà le roi dans son viseur ; mais le cavalier
-planté devant lui bouche la ligne — il ne le voit pas encore. »
+planté devant lui bouche la ligne de mire — il ne le voit pas encore. »
 
 ÉTAPE 2
 coup: —
