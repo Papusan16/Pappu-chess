@@ -1831,6 +1831,12 @@ if (typeof define !== 'undefined')
 
   --check-rgb:226,59,59;
 
+  /* --- fonds de case pilotés par le Fou : faits d'échiquier (comme --check-rgb),
+     fixes à travers les thèmes clair/sombre — cf. _fonds/GRAMMAIRE_COULEURS.md --- */
+  --bg-menacee-rgb:224,108,58;  /* orangé coral — case menacée */
+  --bg-libre-rgb:16,150,110;    /* vert doux, teinte distincte du vert de sélection (--case-selection) */
+  --bg-designe-rgb:59,130,246;  /* bleu doux — roi désigné */
+
   --arrow-main:#2e9b5b;--arrow-main-dark:#227a46;--arrow-alt:#3a6ea5;--arrow-alt-a:#3a6ea560;--amber:#c9882e;
 
   --success:#1a6e3a;--warn-text:#c98a2e;--warn-bg:#fff4e0;--warn-border:#e0a23d;
@@ -1943,6 +1949,11 @@ textarea{width:100%;height:64px;background:var(--surface-1);border:1px solid var
 .sq{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;cursor:pointer}
 .sq.in-check{animation:checkPulse 1s ease-in-out infinite;border-radius:2px;z-index:2}
 @keyframes checkPulse{0%,100%{box-shadow:inset 0 0 0 3px rgba(var(--check-rgb),.85)}50%{box-shadow:inset 0 0 0 4px rgba(var(--check-rgb),1),0 0 14px 3px rgba(var(--check-rgb),.6)}}
+/* fonds pilotés par le Fou (%bg) : teinter, pas repeindre — la case reste lisible dessous.
+   L'échec (.in-check ci-dessus) reste prioritaire ; jamais posé sur la même case (cf. render()). */
+.sq.bg-menacee{box-shadow:inset 0 0 0 100px rgba(var(--bg-menacee-rgb),.34);transition:box-shadow .15s ease}
+.sq.bg-libre{box-shadow:inset 0 0 0 100px rgba(var(--bg-libre-rgb),.32);transition:box-shadow .15s ease}
+.sq.bg-designe{box-shadow:inset 0 0 0 100px rgba(var(--bg-designe-rgb),.34);transition:box-shadow .15s ease}
 .light{background:linear-gradient(135deg,var(--sq-light-1),var(--sq-light-2))}.dark{background:linear-gradient(135deg,var(--sq-dark-1),var(--sq-dark-2))}
 .pc{font-size:calc(var(--board-size, 320px) * 0.088);line-height:1;position:relative;z-index:2;filter:drop-shadow(0 2px 3px var(--ombre-piece));pointer-events:none;transition:transform .25s}
 /* Pièces BLANCHES : glyphe blanche + contour noir épais (lisible sur toute case) */
@@ -2655,9 +2666,10 @@ let game=new Chess(),flipped=false,sel=null,legal=[],lastFrom=null,lastTo=null,o
 let fullMoves=[],cursor=0,moveComments=[],pgnMode=false;
 let moveAnnotations=[]; // annotations visuelles (%cal/%csl) par coup, pour dessiner les cercles/flèches de Marc
 let startFen=null; // position de départ imposée par un PGN ([SetUp "1"]/[FEN ...]) ; null = position standard
-let initialComment='', initialAnno={arrows:[],circles:[]}; // commentaire/annotations attachés à la position de départ, avant le premier coup
+let initialComment='', initialAnno={arrows:[],circles:[],backgrounds:[]}; // commentaire/annotations attachés à la position de départ, avant le premier coup
 let fouArrows=[]; // coups dont le Fou parle → flèches violettes en pointillé (sa signature)
 let fouCircles=[]; // cases que le Fou entoure → cercles violets pointillés (pièce en prise, avant-poste…)
+let fouBackgrounds=[]; // fonds de case (%bg) : l'état de la case, pas la voix du Fou — cf. _fonds/GRAMMAIRE_COULEURS.md
 // ===== Lecteur d'étapes ramifié (encyclopédie, phase 3) =====
 let encyMode=false;      // une démonstration d'encyclopédie est chargée et affichée
 let encyEntry=null;      // entrée parsée (front-matter + liste de démonstrations)
@@ -3282,8 +3294,21 @@ function render(animate){
     }
     if(legal.includes(sq.dataset.sq)){const d=document.createElement('div');d.className='dot';sq.appendChild(d);}});
   document.getElementById('turnInd').textContent='Trait aux '+(game.turn()==='w'?'Blancs':'Noirs');
-  updateMoves();identify(animate);drawArrows();refreshEval();
+  updateMoves();identify(animate);applyFouBackgrounds();drawArrows();refreshEval();
   if(typeof updatePlayerPlates==='function') updatePlayerPlates(); // captures + score matériel : toujours au diapason du curseur affiché
+}
+function applyFouBackgrounds(){
+  // Pose les fonds de case (%bg) — un FAIT d'échiquier, cf. _fonds/GRAMMAIRE_COULEURS.md — sur les
+  // <div class="sq"> correspondantes. Appelé APRÈS identify() dans render() (ligne ci-dessus) : c'est
+  // identify()/encyIdentify() qui vient de recalculer fouBackgrounds pour l'étape courante. Le halo
+  // d'échec (.in-check), lui, a déjà été posé plus haut dans render() et reste seul maître de la case :
+  // jamais de fond dessous, comme prévu par la grammaire (l'échec s'affiche seul, sans être doublé).
+  if(!fouBackgrounds || !fouBackgrounds.length) return;
+  fouBackgrounds.forEach(function(o){
+    if(!o || !o.s || !o.cls) return;
+    var sq=q(o.s);
+    if(sq && !sq.classList.contains('in-check')) sq.classList.add(o.cls);
+  });
 }
 function syncFull(){ // reconstruit fullMoves depuis game et place le curseur à la fin
   fullMoves=game.history({verbose:true}); cursor=fullMoves.length;
@@ -3654,7 +3679,7 @@ function commentAnalyzedMove(mi){
   fouArrows = (fouMode!=='off' && r.best) ? [{m:r.best}] : []; // le Fou pointe le coup qu'il recommande
   // Cercle du Fou : sur une faute, entourer une pièce laissée en prise (réflexe M1, scan Captures)
   // Éteint (fouMode==='off') coupe AUSSI les cercles en analyse (journal, point 2).
-  fouCircles=[]; var circMsg='';
+  fouCircles=[]; fouBackgrounds=[]; var circMsg='';
   var isMistake = (fouMode!=='off') && (r.cls.label==='Gaffe' || r.cls.label==='Erreur' || r.cls.label==='Imprécision');
   var hang = (isMistake && typeof fouHangingSquares==='function') ? fouHangingSquares(mi) : [];
   if(fouMode!=='off' && hang.length){
@@ -3707,7 +3732,7 @@ function undo(){
     render(false);
   }
 }
-function reset(){game=new Chess();fullMoves=[];cursor=0;moveComments=[];moveAnnotations=[];pgnMode=false;startFen=null;initialComment='';initialAnno={arrows:[],circles:[]};lastFrom=lastTo=null;sel=null;legal=[];render(false);}
+function reset(){game=new Chess();fullMoves=[];cursor=0;moveComments=[];moveAnnotations=[];pgnMode=false;startFen=null;initialComment='';initialAnno={arrows:[],circles:[],backgrounds:[]};lastFrom=lastTo=null;sel=null;legal=[];render(false);}
 function setFouMode(m,btn){
   fouMode=m;
   var row=document.getElementById('foumodeRow');
@@ -3811,6 +3836,7 @@ function identify(animate){
   const seq=getUciSeq();const sp=document.getElementById('speech');openDetail=null;
   fouArrows=[]; // par défaut le Fou ne pointe rien ; chaque branche pose sa flèche si besoin
   fouCircles=[]; // idem pour les cercles
+  fouBackgrounds=[]; // idem pour les fonds (%bg) — un fait, pas une voix, mais réinitialisé pareil à chaque étape
   if(typeof updatePlayerPlates==='function') updatePlayerPlates();
   // MODE ÉTEINT : le Fou ne dit rien du tout
   if(fouMode==='off'){ return; }
@@ -3822,9 +3848,10 @@ function identify(animate){
   // (ouverture/ECO, accueil, coach de partie) — c'est une consultation explicite de l'utilisateur.
   if(encyMode && encyDemo){ encyIdentify(sp, animate); return; }
   // MODE PGN COMMENTÉ, position de départ (avant le premier coup) : commentaire/annotations attachés au FEN importé
-  if(pgnMode && cursor===0 && (initialComment || initialAnno.arrows.length || initialAnno.circles.length)){
+  if(pgnMode && cursor===0 && (initialComment || initialAnno.arrows.length || initialAnno.circles.length || initialAnno.backgrounds.length)){
     fouArrows = initialAnno.arrows.slice();
     fouCircles = initialAnno.circles.slice();
+    fouBackgrounds = initialAnno.backgrounds.slice();
     let html='<div class="stitle">🎭 Position de départ</div>';
     var cm0 = initialComment ? glyphExpand(initialComment) : '';
     if(cm0){
@@ -3840,9 +3867,10 @@ function identify(animate){
     return;
   }
   // MODE PGN COMMENTÉ : le Fou lit le commentaire du coup courant + dessine ses annotations visuelles
-  if(pgnMode && cursor>0 && (moveComments[cursor-1] || (moveAnnotations[cursor-1] && (moveAnnotations[cursor-1].arrows.length||moveAnnotations[cursor-1].circles.length)))){
-    var an = moveAnnotations[cursor-1] || {arrows:[],circles:[]};
+  if(pgnMode && cursor>0 && (moveComments[cursor-1] || (moveAnnotations[cursor-1] && (moveAnnotations[cursor-1].arrows.length||moveAnnotations[cursor-1].circles.length||moveAnnotations[cursor-1].backgrounds.length)))){
+    var an = moveAnnotations[cursor-1] || {arrows:[],circles:[],backgrounds:[]};
     // annotations visuelles (%cal/%csl, ex. celles de Marc) prioritaires ; sinon on pointe le coup joué
+    fouBackgrounds = an.backgrounds.slice(); // fait de la case, indépendant de la voix (cf. ci-dessous)
     if(an.arrows.length || an.circles.length){
       fouArrows = an.arrows.slice();
       fouCircles = an.circles.slice();
@@ -4515,13 +4543,16 @@ function parsePgnHeaders(txt){
   return h;
 }
 function extractVisuals(cm){
-  // Lit les annotations visuelles standard des PGN : %cal (flèches) et %csl (cercles).
-  // Format : [%cal Gd4e5,Rf1c4]  /  [%csl Re5,Gd4]  (G=vert, R=rouge, B=bleu, Y=or).
-  var arrows=[], circles=[];
+  // Lit les annotations visuelles standard des PGN : %cal (flèches) et %csl (cercles) —
+  // la VOIX du Fou. Format : [%cal Gd4e5,Rf1c4]  /  [%csl Re5,Gd4]  (G=vert, R=rouge, B=bleu, Y=or).
+  // Plus [%bg ...] — le FOND de case, un FAIT d'échiquier, lettres dédiées distinctes de R/G/B/Y
+  // pour ne jamais se confondre avec les cercles (cf. _fonds/GRAMMAIRE_COULEURS.md) :
+  // O=menacée, V=libre utile, D=roi désigné. Format : [%bg De4,Oe5,Vd4].
+  var arrows=[], circles=[], backgrounds=[];
   var colMap={G:'var(--arrow-main)', R:'var(--annot-red)', B:'var(--annot-blue)', Y:'var(--annot-yellow)'};
-  // dernier [%cal ...]/[%csl ...] du texte : un commentaire "position de départ" peut concaténer
-  // plusieurs étapes d'une démonstration (cf. nataf_decouverte.pgn) — sans lecteur d'étapes, on
-  // affiche l'état cumulatif final, donc la DERNIÈRE occurrence, pas la première.
+  // dernier [%cal ...]/[%csl ...]/[%bg ...] du texte : un commentaire "position de départ" peut
+  // concaténer plusieurs étapes d'une démonstration (cf. nataf_decouverte.pgn) — sans lecteur
+  // d'étapes, on affiche l'état cumulatif final, donc la DERNIÈRE occurrence, pas la première.
   var allCal=cm.match(/\[%cal\s+([^\]]+)\]/gi);
   var mCal=allCal && allCal.length ? allCal[allCal.length-1].match(/\[%cal\s+([^\]]+)\]/i) : null;
   if(mCal){ mCal[1].split(',').forEach(function(e){ var m=e.trim().match(/^([GRYB])([a-h][1-8])([a-h][1-8])/i);
@@ -4530,9 +4561,21 @@ function extractVisuals(cm){
   var mCsl=allCsl && allCsl.length ? allCsl[allCsl.length-1].match(/\[%csl\s+([^\]]+)\]/i) : null;
   if(mCsl){ mCsl[1].split(',').forEach(function(e){ var m=e.trim().match(/^([GRYB])([a-h][1-8])/i);
     if(m) circles.push({s:m[2].toLowerCase(), col:colMap[m[1].toUpperCase()]||'var(--fou)'}); }); }
-  return {arrows:arrows, circles:circles};
+  var bgMap={O:'bg-menacee', V:'bg-libre', D:'bg-designe'};
+  // priorité d'arbitrage si deux %bg visent la même case dans le même tag (cf. grammaire :
+  // l'échec l'emporte toujours ailleurs — ici, entre les trois fonds eux-mêmes) : menace > libre > désigné.
+  var bgPriority={'bg-menacee':1, 'bg-libre':2, 'bg-designe':3};
+  var allBg=cm.match(/\[%bg\s+([^\]]+)\]/gi);
+  var mBg=allBg && allBg.length ? allBg[allBg.length-1].match(/\[%bg\s+([^\]]+)\]/i) : null;
+  if(mBg){ var bgBySquare={};
+    mBg[1].split(',').forEach(function(e){ var m=e.trim().match(/^([OVD])([a-h][1-8])/i);
+      if(!m) return;
+      var cls=bgMap[m[1].toUpperCase()], sq=m[2].toLowerCase();
+      if(!bgBySquare[sq] || bgPriority[cls]<bgPriority[bgBySquare[sq]]) bgBySquare[sq]=cls; });
+    Object.keys(bgBySquare).forEach(function(sq){ backgrounds.push({s:sq, cls:bgBySquare[sq]}); }); }
+  return {arrows:arrows, circles:circles, backgrounds:backgrounds};
 }
-function stripVisuals(cm){ return cm.replace(/\[%(cal|csl|clk|eval)\s+[^\]]*\]/gi,'').replace(/\s+/g,' ').trim(); }
+function stripVisuals(cm){ return cm.replace(/\[%(cal|csl|bg|clk|eval)\s+[^\]]*\]/gi,'').replace(/\s+/g,' ').trim(); }
 function glyphExpand(cm){
   if(!cm) return cm;
   var t=cm.trim();
@@ -4600,9 +4643,9 @@ function parsePgnWithComments(txt,headers){
     }
   }
   var strippedComments = comments.map(function(c){ return c ? stripVisuals(c) : c; });
-  var annos = comments.map(function(c){ return c ? extractVisuals(c) : {arrows:[],circles:[]}; });
+  var annos = comments.map(function(c){ return c ? extractVisuals(c) : {arrows:[],circles:[],backgrounds:[]}; });
   var initComment = leadingComment ? stripVisuals(leadingComment) : '';
-  var initAnno = leadingComment ? extractVisuals(leadingComment) : {arrows:[],circles:[]};
+  var initAnno = leadingComment ? extractVisuals(leadingComment) : {arrows:[],circles:[],backgrounds:[]};
   return {game:g,comments:strippedComments,annos:annos,count:moves.length,
     startFen:setupFen||null,initialComment:initComment,initialAnno:initAnno};
 }
@@ -4619,7 +4662,7 @@ function loadPgn(){
     moveComments=parsed.comments;
     moveAnnotations=parsed.annos||[];
     initialComment=parsed.initialComment||'';
-    initialAnno=parsed.initialAnno||{arrows:[],circles:[]};
+    initialAnno=parsed.initialAnno||{arrows:[],circles:[],backgrounds:[]};
     pgnMode = moveComments.some(function(c){return c && c.length;}) || !!initialComment || initialAnno.arrows.length>0 || initialAnno.circles.length>0;
     lastFrom=lastTo=null;sel=null;legal=[];
     switchTab('play');
@@ -4628,7 +4671,7 @@ function loadPgn(){
     return;
   }
   // repli : ancienne méthode simple
-  startFen=null;initialComment='';initialAnno={arrows:[],circles:[]};
+  startFen=null;initialComment='';initialAnno={arrows:[],circles:[],backgrounds:[]};
   const g=new Chess();let ok=g.load_pgn(txt);
   if(!ok){const c=txt.replace(/\d+\./g,' ').replace(/[+#]/g,'').split(/\s+/).filter(Boolean);const g2=new Chess();for(const mv of c)g2.move(mv);if(g2.history().length){game=g2;ok=true;}}else game=g;
   if(ok){syncFull();moveComments=[];pgnMode=false;lastFrom=lastTo=null;sel=null;legal=[];switchTab('play');rebuildTo(0);announceImportedGame();}
@@ -5229,13 +5272,13 @@ function encyParseStep(paragraph){
   var cloture=null;
   if(rest[idx] && /^cloture:/i.test(rest[idx])){ cloture=rest[idx].replace(/^cloture:\s*/i,'').trim(); idx++; }
   if(!isReset && rest[idx] && /^coup:/i.test(rest[idx])){ coupRaw=rest[idx].replace(/^coup:\s*/i,'').trim(); idx++; }
-  if(rest[idx] && /^\[%(csl|cal)/i.test(rest[idx])){ annoLine=rest[idx]; idx++; }
+  if(rest[idx] && /^\[%(csl|cal|bg)/i.test(rest[idx])){ annoLine=rest[idx]; idx++; }
   for(; idx<rest.length; idx++){
     fouLines.push(rest[idx].replace(/^Le Fou\s*:\s*«\s*/,'').replace(/»\s*$/,''));
   }
   return {
     id:id, label:label, isReset:isReset, nature:nature, cloture:cloture,
-    coupRaw:coupRaw, anno: annoLine ? extractVisuals(annoLine) : {arrows:[],circles:[]},
+    coupRaw:coupRaw, anno: annoLine ? extractVisuals(annoLine) : {arrows:[],circles:[],backgrounds:[]},
     fouText: fouLines.join(' ').replace(/\s+/g,' ').trim()
   };
 }
@@ -5402,6 +5445,7 @@ function encyIdentify(sp, animate){
   var node=encyCurrentNode(), step=node.steps[encyStep];
   fouArrows=step.anno.arrows.slice();
   fouCircles=step.anno.circles.slice();
+  fouBackgrounds=step.anno.backgrounds.slice();
   setMood(step.isMate?'wow':(step.giveCheck?'joy':'happy'), animate);
   var html='<div class="stitle">📖 '+(encyDemo.title||'Démonstration')+'</div>';
   html+='<div class="fam">'+(step.label?step.label:('Étape '+step.id))+'</div>';

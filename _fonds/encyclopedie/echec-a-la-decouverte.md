@@ -234,7 +234,7 @@ reprenant celles de l'étape précédente.
 ```
 ÉTAPE 1
 coup: —
-[%csl Rd8][%cal Yh4d8]
+[%csl Rd8][%cal Yh4d8][%bg De4,Oe5,Vd4]
 Le Fou : « Le roi noir est en d8, sur la diagonale du fou h4 — mais il
 ne le voit pas encore : le cavalier blanc, posé en f6, bouche la
 ligne. »
