@@ -91,3 +91,33 @@ Ne reste ici que ce que git **ne dit pas** :
 - **Division du travail** : conversation = raisonnement, pédagogie,
   arbitrage ; Code = fichiers, git, outils locaux ; Flavien = validation
   visuelle et mots d'amorce (« poussé », « reprise », « consigne »).
+
+- **Le dépôt est PRIVÉ depuis le 2026-08-09.** Décision de Flavien,
+  assumée et réversible : `gh repo edit Papusan16/Pappu-chess
+  --visibility public --accept-visibility-change-consequences` (le flag
+  est exigé dès qu'on touche `--visibility` ; il n'existe qu'à partir des
+  `gh` récents — le paquet Ubuntu 2.45 ne le connaît pas). **GitHub Pages
+  est désactivé** tant que le dépôt est privé — Pages sur dépôt privé
+  demande un compte Pro. `papusan16.github.io/Pappu-chess/` répond 404, et
+  ne redémarrera pas tout seul au retour au public : il faudra le
+  réactiver dans Settings.
+
+- **La conversation Claude ne lit plus le dépôt en direct.** C'était le
+  canal monté pour que le journal lui parvienne sans troncature ; le
+  passage en privé le ferme. **Sa source de vérité est désormais Claude
+  Code**, selon un partage à tenir :
+  - **Réponse longue** (rapport, diagnostic, reconnaissance, diff
+    commenté) → **consignée dans `_rapports/AAAA-MM-JJ-sujet.txt`**, que
+    Flavien joint au fil. Le fichier porte la réponse ENTIÈRE, non
+    résumée : c'est tout l'intérêt du montage.
+  - **Vérification courte** (un hash, un `diff --stat`, une visibilité)
+    → **le terminal suffit**, ça se copie sans se tronquer.
+  - **Validation à l'écran** → l'**instance Chromium** exécute et
+    constate. Elle certifie qu'un mécanisme fonctionne ; elle ne remplace
+    pas **le jugement de goût, qui reste la part de Flavien** (cf. la
+    convention ci-dessus, et `_sessions/2026-08-08.md`).
+
+  **`_rapports/` n'est PAS versionné** (cf. `.gitignore`) : ce sont des
+  transcriptions jetables. Ce qui doit survivre à la séance va dans
+  `_sessions/`, qui l'est. Les deux ne se remplacent pas — un rapport est
+  un moyen de transport, une entrée de `_sessions/` est de la mémoire.

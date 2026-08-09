@@ -1,3 +1,9 @@
 .claude/*
 !.claude/settings.json
 __pycache__/
+
+# Rapports-fichiers : transcriptions de travail que Flavien joint à la
+# conversation Claude depuis que le dépôt est privé. Jetables par nature —
+# ce qui doit survivre va dans _sessions/, qui est versionné.
+_rapports/*
+!_rapports/.gitkeep
