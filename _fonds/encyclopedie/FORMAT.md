@@ -441,7 +441,7 @@ construction. Deux limites voulues :
 
 - il ne porte que sur les **flèches**, pas sur les cercles. Un cercle sur
   case vide est parfaitement légitime — c'est ainsi qu'on marque une case
-  de fuite (`Gc8`, `Ge7` à l'étape 7) ou une case faible ;
+  de fuite (`Gc8`, `Ge7` à l'étape 6) ou une case faible ;
 - le **roque** en est exclu : la case du roi est bien vidée, mais une
   flèche qui en part garde un sens (montrer le trajet du roi).
 
@@ -536,7 +536,7 @@ s'arrête là, DANS CETTE ENTRÉE**. Le lecteur ne propose alors aucune
 branche, même si l'étape est un embranchement.
 
 ```
-ÉTAPE 7 — À toi de jouer
+ÉTAPE 6 — À toi de jouer
 cloture: pause
 coup: —
 [%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
@@ -570,7 +570,7 @@ insuffisant, et l'insuffisance était invisible. Formulation qui fait foi :
 > close se rejoue.
 
 Pourquoi ce durcissement. Dans `echec-a-la-decouverte`, l'arrêt observé à
-l'étape 7 **marchait par coïncidence** : la flèche « suivant » était
+l'étape 6 **marchait par coïncidence** : la flèche « suivant » était
 grisée non pas parce que l'étape porte `cloture: pause`, mais parce
 qu'elle est la **dernière étape de son nœud**, et que le lecteur bloque
 toujours en fin de nœud. Une clôture posée ailleurs qu'en dernière
