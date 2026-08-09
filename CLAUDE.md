@@ -1,8 +1,8 @@
 # Papu Chess
 
-Application d'échecs **mono-fichier HTML autonome**, sans build ni
-dépendance : `Papu_Chess.html` s'ouvre tel quel. Le **fonds pédagogique**
-(`_fonds/`) est de la **donnée** séparée du code — encyclopédie, PGN.
+Application d'échecs **mono-fichier HTML autonome**, sans build :
+`Papu_Chess.html` s'ouvre tel quel. Le **fonds pédagogique** (`_fonds/`)
+est de la **donnée** séparée du code — encyclopédie, démonstrations, PGN.
 
 ## Au démarrage — ordre de lecture
 
@@ -14,9 +14,6 @@ dépendance : `Papu_Chess.html` s'ouvre tel quel. Le **fonds pédagogique**
    branche de travail et `origin/main`. Les fichiers décrivent une
    intention ; git décrit un fait. **La confrontation révèle ce que les
    fichiers taisent** — branche orpheline, PR fusionnée, chiffre périmé.
-
-*(Chemins en backticks, à lire au besoin — pas en `@import`, qui
-chargerait chaque fichier en entier à chaque session.)*
 
 ## Non-négociables
 
@@ -30,8 +27,7 @@ chargerait chaque fichier en entier à chaque session.)*
 - **Toute réponse substantielle se consigne dans `_sessions/AAAA-MM-JJ.md`
   AU FIL DE L'EAU** — au moment où elle est donnée, non gardée pour la
   clôture : une conversation peut mourir sans clôture propre.
-- **Dépôt PRIVÉ depuis le 2026-08-09** (réversible : `gh repo edit
-  --visibility public`). GitHub Pages est désactivé tant qu'il l'est.
+- **Dépôt PRIVÉ depuis le 2026-08-09**, Pages désactivé ; réversible.
 
 ## Les deux mots d'amorce
 
@@ -46,10 +42,8 @@ chargerait chaque fichier en entier à chaque session.)*
 
 Conversation = raisonnement et arbitrage ; Code = fichiers, git, outils
 locaux ; Chromium = exécution et constat à l'écran ; **Flavien = le
-jugement**, irremplaçable — un mécanisme certifié n'est pas une
-démonstration jugée.
+jugement** — un mécanisme certifié n'est pas une démonstration jugée.
 
-**Le dépôt étant privé, la conversation ne le lit plus en direct : Code est
-sa source de vérité.** Réponse longue → `_rapports/AAAA-MM-JJ-sujet.txt`
-(ENTIÈRE, non résumée, non versionnée), que Flavien joint au fil ; vérif
-courte → le terminal. `_sessions/` reste la mémoire. Cf. `REPRISE.md` § 4.
+**Dépôt privé : la conversation ne le lit plus, Code est sa source de
+vérité.** Réponse longue → `_rapports/AAAA-MM-JJ-sujet.txt` (ENTIÈRE, non
+versionnée) joint au fil ; vérif courte → le terminal. Cf. `REPRISE.md` § 4.
