@@ -1736,6 +1736,19 @@ var Chess = function(fen) {
       return null
     },
 
+    /* chess.js étendu le 2026-08-09 (Papu Chess) : la fonction interne
+     * attacked(color, square) existait déjà (utilisée par in_check() et
+     * le roque) mais n'était pas exposée. Ajoutée ici SANS toucher au
+     * calcul lui-même, pour la détection automatique de case menacée
+     * (fonds de case pilotés, cf. _fonds/GRAMMAIRE_COULEURS.md). */
+    attacked: function(color, square) {
+      if (square in SQUARES) {
+        return attacked(color, SQUARES[square])
+      }
+
+      return false
+    },
+
     history: function(options) {
       var reversed_history = []
       var move_history = []
