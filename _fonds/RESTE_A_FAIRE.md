@@ -47,6 +47,8 @@ renvoie à la propriété qui en porte la cause.
 7. **Pistes en réserve, non arbitrées** — *en attente de : un arbitrage*
 8. **Horizon lointain — accueil éditorialisé** — *en attente de : que le
    rayon Histoire soit garni de fiches de parties célèbres datées*
+9. **Doctrine — l'étreinte à retardement (mauvais fou)** — *en attente
+   de : fusion de wip-fonds-couleurs*
 
 ---
 
@@ -303,3 +305,55 @@ Le signal de réveil est planté au site du signal, pas seulement ici :
 - **Mois à thème** : éditorialisation sur plusieurs semaines (un motif,
   un joueur, une époque), l'accueil suivant le fil au lieu de tirer au
   hasard chaque jour.
+
+---
+
+## 9. Doctrine — l'étreinte à retardement (mauvais fou)
+
+> **pas avant** — ne pas ouvrir tant que le chantier couleurs
+> (`wip-fonds-couleurs`) n'est pas clos et fusionné sur `main` — pour ne
+> pas faire travailler deux branches sur les mêmes fichiers du fonds en
+> même temps.
+> **dès que** — `wip-fonds-couleurs` est fusionnée sur `main`, ce
+> chantier peut démarrer sur sa PROPRE branche dédiée (ex.
+> `wip-doctrine-etreinte`).
+
+Chantier né dans une autre conversation, à partir de la partie
+**LuisJabierr vs Papu_san, 2026-08-11**, et de sa reconnaissance. Parqué
+ici tel quel — la doctrine elle-même n'est pas rédigée, seule sa matière
+et son contrat de format le sont.
+
+- **La nuance de doctrine à écrire : « l'étreinte à retardement ».** Un
+  clouage contre un roi non roqué porte un compte à rebours lié aux
+  droits de roque de l'adversaire — le bind se desserre dès que
+  l'adversaire parvient à roquer. À relier au principe du **jumeau de
+  couleur** : le grip de cases noires par les pions et le mauvais fou de
+  la même couleur sont la même doctrine des couleurs (Quenehen), vue
+  sous deux angles — la pièce ADVERSE clouée d'un côté, sa PROPRE pièce
+  emmurée de l'autre. Matière de départ déjà déposée dans le fonds, sur
+  la branche `wip-capitalisation-partie` (pas encore fusionnée ici) :
+  réflexe **M5** de `_fonds/reflexes_methode.md`, entrée
+  `_fonds/parties_test/luisjabierr-papu_san-2026-08-11.md`.
+
+- **Garde-fou moteur à implémenter avec ce chantier.** Le Fou ne doit
+  JAMAIS nommer un coup — le sien ou celui de l'adversaire — sans le
+  passer par `chess.moves()` d'abord. Les pièces clouées ou emmurées
+  créent des ressources fantômes : cas réel rencontré dans cette même
+  partie, `Nb3` illégal (cavalier d2 cloué par la dame a5 sur le roi
+  e1), `Ba3` impossible (fou c1 emmuré par son propre cavalier et sa
+  propre dame). Les deux contrôles sont déjà vérifiés par chess.js
+  0.10.3 embarqué (cf. la note d'analyse de la partie, section « Faits
+  vérifiés », sur `wip-capitalisation-partie`) ; il reste à en faire une
+  règle du moteur, pas seulement un contrôle ponctuel.
+
+- **Le contrat de format existe déjà, pas à refaire.** Pour rédiger la
+  nuance en entrée d'encyclopédie et sa démonstration : cf.
+  `_rapports/rapport_2026-08-11-recon-format-v3.txt` — `FORMAT.md` v5
+  (en-tête YAML, natures de sources `heritee`/`externe`/`elaboree`,
+  convention de démonstration à étapes, couleurs R/Y/G, rejeu obligatoire
+  avant toute consignation).
+
+- **Partie source à verser dans `_fonds/parties_test/`** le moment venu,
+  au nommage `<blanc>-<noir>-AAAA-MM-JJ.pgn` (convention de
+  `_fonds/parties_test/README.md`) : la partie LuisJabierr–Papu_san du
+  2026-08-11.
