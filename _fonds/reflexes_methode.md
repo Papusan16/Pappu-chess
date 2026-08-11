@@ -55,3 +55,21 @@ d'arbitrage. Brouillon de travail, pas encore inséré dans
 - **Réflexe** : le Fou rappelle de vérifier ce que la pièce défendait,
   pour ne pas laisser en prise ce qu'elle protégeait.
 - **Source** : « Mieux calculer aux échecs 🔍 »
+
+## M5. L'étreinte à retardement
+
+- **Thème** : exploiter le roi non roqué
+- **Déclencheur** : le camp au trait tient une étreinte sur l'adversaire
+  (blocage, colonne ouverte, pièce adverse clouée) et le roi adverse n'a
+  pas encore roqué
+- **Réflexe** : le Fou rappelle qu'une étreinte fondée sur un clouage
+  contre un roi non roqué porte un compte à rebours — le roque adverse.
+  Le clouage et l'immobilité de la pièce clouée se vérifient dans les
+  coups légaux ; le roque, lui, reste la porte de sortie tant qu'il est
+  encore légal. D'où la règle : on presse avant que l'adversaire roque,
+  ou on ne presse pas. Le Fou signale aussi son jumeau couleur : une
+  étreinte de cases faite de pions emmure le fou de sa propre couleur —
+  l'étreinte de pièces et le mauvais fou sont une seule pièce de monnaie
+  retournée.
+- **Source** : arbitrage (Flavien), partie
+  `luisjabierr-papu_san-2026-08-11`
