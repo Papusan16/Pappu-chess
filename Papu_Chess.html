@@ -5592,6 +5592,29 @@ function encyStartDemo(entry, i, returnTo){
   encyGoto();
   return true;
 }
+// [socle, pas encore accroché à un bouton] Enchaîner directement vers la démonstration
+// D'UNE AUTRE entrée (ex. futur bouton de fin de démo « → voir le mat », quand l'entrée
+// du mat de Nataf existera). Réutilise encEntryCache comme encOpenEntry() : un seul fetch
+// par entrée et par session. `returnTo` est transmis tel quel à encyStartDemo() — c'est
+// LUI qui décide où encyClose() ramènera le joueur à la fin de CETTE démo (typiquement
+// {sec:curSec, entry:<id de l'entrée cible>} pour revenir sur l'article cible, pas sur
+// celui de départ). Le point d'accroche futur : un bouton dans encyRenderPanel() (à côté
+// de « ✕ Fermer la démonstration », ligne ~5525) appellerait
+// encyChainTo('<id-cible>', 0, {sec:curSec, entry:'<id-cible>'}).
+function encyChainTo(entryId, demoIndex, returnTo){
+  function lance(e){ if(encyStartDemo(e, demoIndex||0, returnTo)) closeEnc(); }
+  if(encEntryCache[entryId]){ lance(encEntryCache[entryId]); return; }
+  fetch(ENCY_DIR+entryId+'.md').then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(txt){
+    var e=encyResolveEntry(txt);
+    encEntryCache[entryId]=e;
+    lance(e);
+  }).catch(function(err){
+    encMsg='« '+entryId+' » : entrée cible indisponible ('+err.message+').';
+  });
+}
 // Chargement direct depuis du texte Markdown (chargeur de rédaction) : résout puis joue.
 function encyLoadEntry(mdText, returnTo){
   var st=document.getElementById('encyImportStatus');
