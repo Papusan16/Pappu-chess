@@ -4449,7 +4449,9 @@ function renderEnc(){
       const it=document.createElement('div');it.className='enc-item';it.id='enc-'+o.id;
       let d='<div class="blk blk-idea"><b>Idée.</b> '+o.idea+'</div><div class="blk blk-reply"><b>Comment réagir.</b> '+o.reply+'</div>';
       if(o.trap)d+='<div class="blk blk-trap"><b>À savoir.</b> '+o.trap+'</div>';
-      if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();curSec=\'history\';focusId=\''+o.person+'\';buildSecTabs();renderEnc();">📜 Voir : '+PEOPLE[o.person].name+'</span>';
+      // Passe par encGoTo() : entrée riche d'abord (comme les liens « Ça rejoint »/[[id]]),
+      // fiche en dur sinon — au lieu de forcer la liste même quand l'article riche existe.
+      if(o.person&&PEOPLE[o.person])d+='<span class="person-link" onclick="event.stopPropagation();encGoTo(\''+o.person+'\')">📜 Voir : '+PEOPLE[o.person].name+'</span>';
       it.innerHTML='<div class="eh"><span class="en">'+o.name+'</span>'+freqLabel(o.freq)+'</div><div class="emoves" style="margin-top:3px">'+o.moves+'</div><div class="eshort">'+o.short+'</div><span class="ecaret">▾ Détails</span><div class="edetail">'+d+'</div>';
       it.onclick=()=>it.classList.toggle('open');list.appendChild(it);
       encFocus(it,o.id);
