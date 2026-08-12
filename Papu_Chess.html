@@ -4041,6 +4041,7 @@ let encEntryCache={};     // id → entrée résolue (un seul fetch par entrée 
 let encEntryShown=null;   // entrée affichée dans l'état « entrée »
 let encEntryId=null;      // son id (connu avant même que le fetch réponde)
 let encMsg='';            // message discret en tête de liste (dégradation)
+let encHistory=[];        // pile des id d'articles quittés par un saut article→article ([[id]]/« Ça rejoint »)
 
 function encIndexBuild(list){
   encIndex=Array.isArray(list)?list:[];
@@ -4281,6 +4282,7 @@ function encRenderEntry(){
   if(!e){ list.innerHTML='<button class="ent-back" onclick="encBackToList()">← Retour à la liste</button>'+
     '<div class="ent-card"><div class="ent-prose">Chargement de l\'entrée…</div></div>'; return; }
   var h='<button class="ent-back" onclick="encBackToList()">← Retour à la liste</button>';
+  if(encHistory.length) h+='<button class="ent-back" onclick="encBack()">← précédent</button>';
   h+='<div class="ent-card">';
   h+='<div class="ent-name">'+encEsc(e.nom||e.id||'')+'</div>';
   var chips=[];
@@ -4323,7 +4325,11 @@ function encPlayDemo(i){
   // retour : la fermeture de la démonstration rouvrira l'overlay SUR cette entrée
   if(encyStartDemo(encEntryShown, i, {sec:curSec, entry:encEntryId})) closeEnc();
 }
-function encOpenEntry(id){
+function encOpenEntry(id, opts){
+  // Un saut article→article (lien « Ça rejoint », [[id]]) empile l'article qu'on quitte,
+  // pour le bouton « ← précédent ». Ouvrir depuis la liste, ou revenir via encBack() lui-même
+  // (opts.noHistory), n'empile rien — sinon la pile grossirait à chaque retour.
+  if(!(opts && opts.noHistory) && encView==='entry' && encEntryId && encEntryId!==id) encHistory.push(encEntryId);
   encEntryId=id;
   if(encEntryCache[id]){ encEntryShown=encEntryCache[id]; encView='entry'; renderEnc(); return; }
   encEntryShown=null; encView='entry'; renderEnc();
@@ -4341,7 +4347,13 @@ function encOpenEntry(id){
     encBackToList();
   });
 }
-function encBackToList(){ encView='list'; encEntryShown=null; encEntryId=null; renderEnc(); }
+// Dépile le dernier article quitté et le rouvre, sans le ré-empiler (pas de boucle).
+function encBack(){
+  if(!encHistory.length) return;
+  var id=encHistory.pop();
+  encOpenEntry(id, {noHistory:true});
+}
+function encBackToList(){ encView='list'; encEntryShown=null; encEntryId=null; encHistory=[]; renderEnc(); }
 function encChrome(){
   var liste=(encView==='list');
   var t=document.getElementById('secTabs'), s=document.getElementById('encSearchWrap'), l=document.getElementById('encLoader');
@@ -4469,14 +4481,14 @@ function renderEnc(){
 }
 function openEnc(sec,focus){
   if(sec)curSec=sec; if(focus)focusId=focus;
-  encView='list'; encEntryShown=null; encEntryId=null;
+  encView='list'; encEntryShown=null; encEntryId=null; encHistory=[];
   document.getElementById('encSearch').value='';
   buildSecTabs();renderEnc();
   document.getElementById('overlay').classList.add('show');
   // Le manifeste arrive après coup : la liste se redessine quand il est là (ou pas).
   encLoadIndex().then(function(){ if(document.getElementById('overlay').classList.contains('show') && encView==='list') renderEnc(); });
 }
-function closeEnc(){document.getElementById('overlay').classList.remove('show');focusId=null;encMsg='';}
+function closeEnc(){document.getElementById('overlay').classList.remove('show');focusId=null;encMsg='';encHistory=[];}
 function fitBoardSoon(){ setTimeout(fitBoard,60); }
 function togglePasteArea(){
   var pa=document.getElementById('pasteArea');
