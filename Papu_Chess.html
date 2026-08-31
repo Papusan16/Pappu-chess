@@ -3589,10 +3589,22 @@ function fouBadBishopSquares(mi){
       var net = canRecap ? (attackerVal-pieceVal) : (-pieceVal);
       return net>=0;
     }
+    // Force artificiellement le trait dans une FEN, pour interroger un camp hors de son tour.
+    // Le champ en-passant DOIT être neutralisé en même temps : chess.js refuse une FEN dont
+    // l'e.p. contredit le trait (case en 3e rangée avec trait aux Blancs, ou en 6e avec trait
+    // aux Noirs — validate_fen, erreur 11 « Illegal en-passant square »). Or `new Chess(fen)`
+    // ne LÈVE PAS d'erreur sur une FEN invalide : il rend un échiquier VIDE. Sans cette
+    // neutralisation, toute position suivant une poussée double rendait muets les critères
+    // du détecteur (0 coup légal partout) au lieu de signaler le problème.
+    function forceTurn(fen, color){
+      var parts=fen.split(' ');
+      parts[1]=color; // force le trait pour interroger CE camp
+      parts[3]='-';   // et l'e.p. devient caduc : le camp au trait n'est plus celui qui vient de pousser
+      return parts.join(' ');
+    }
     // Nombre de coups légaux du fou (depuis `sq`, sur la position `fenAt`) qui sont SÛRS.
     function safeMobility(fenAt, sq, color){
-      var parts=fenAt.split(' '); parts[1]=color; // force le trait pour interroger CE fou
-      var forced=parts.join(' ');
+      var forced=forceTurn(fenAt, color);
       var moves=new Chess(forced).moves({square:sq, verbose:true});
       var n=0;
       moves.forEach(function(m){ if(isSafeDestination(forced, sq, m.to, VAL.b)) n++; });
@@ -3637,15 +3649,13 @@ function fouBadBishopSquares(mi){
       var bestDev=0;
       blockers.filter(function(pw){ return pw.dist===1; }).forEach(function(pw){
         var blockerSq=files[pw.f]+pw.rank;
-        var parts1=fenNow.split(' '); parts1[1]=color;
-        var gPush=new Chess(parts1.join(' '));
+        var gPush=new Chess(forceTurn(fenNow, color));
         var pushMoves=gPush.moves({square:blockerSq, verbose:true}).filter(function(m){return !m.captured;});
         pushMoves.forEach(function(pm){
           var g3=new Chess(gPush.fen());
           g3.move({from:pm.from, to:pm.to});
           bestDev=Math.max(bestDev, safeMobility(g3.fen(), sq, color)); // motif extension
-          var parts3=g3.fen().split(' '); parts3[1]=color;
-          var g4=new Chess(parts3.join(' '));
+          var g4=new Chess(forceTurn(g3.fen(), color)); // g3 peut porter un e.p. si le pion gêneur a poussé de deux cases
           if(g4.moves({square:sq, verbose:true}).some(function(m){return m.to===blockerSq;})){
             g4.move({from:sq, to:blockerSq});
             bestDev=Math.max(bestDev, safeMobility(g4.fen(), blockerSq, color)); // motif fianchetto

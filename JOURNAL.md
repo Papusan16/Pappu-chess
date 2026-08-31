@@ -277,6 +277,37 @@ Reste ouvert :
   consignée, et la position de la démonstration n'est rattachée à aucune
   partie identifiée.
 
+## 2026-08-31 — Mauvais fou : le trait forcé neutralise l'en-passant
+
+**Geste.** Correction d'un bug silencieux dans le détecteur de mauvais
+fou (`fouBadBishopSquares`, `Papu_Chess.html`).
+
+**Ce qui était cassé.** Le détecteur interroge un fou *hors du tour de
+son camp* : il réécrit le champ « trait » de la FEN (`parts[1]=color`).
+Le champ **en-passant restait en place**. Or chess.js 0.10.3 refuse une
+FEN dont l'e.p. contredit le trait (`validate_fen`, erreur 11 « Illegal
+en-passant square »), et `new Chess(fen)` **ne lève pas d'erreur** : il
+rend un **échiquier vide**. Résultat : après toute poussée double, les
+fous du camp qui vient de pousser étaient analysés sur un plateau vide —
+0 coup légal partout, critères A et D rendus muets. Trois sites étaient
+touchés : `safeMobility`, le poussage du pion gêneur (critère D) et le
+motif fianchetto — ce dernier doublement, puisque pousser un pion gêneur
+de deux cases crée l'e.p. qui casse l'étape suivante.
+
+**Correction.** Une fonction `forceTurn(fen, color)` unique, qui pose le
+trait *et* remet l'e.p. à `-`. Les trois sites passent par elle : le
+motif ne peut plus être ré-écrit à moitié ailleurs.
+
+**Résultat.** Test ciblé ajouté :
+`_fonds/test_mauvais_fou_en_passant.js` (`node` depuis la racine, aucune
+dépendance), qui charge le vrai code du fichier via `vm`. Il reproduit le
+cas — fou g7 est-indien après `...c7-c5` : mobilité sûre lue **0 au lieu
+de 1** — et vérifie la non-régression sur la position de référence c8
+(`safe:0, gene:2, colorCount:3, dev:1`, inchangée ; `dev` retombait à 0
+avant correction). Les deux parties réelles de `_fonds/parties_test/` ont
+été rescannées intégralement, 150 positions dont 9 avec e.p. actif :
+**0 faux positif avant comme après**, verdicts identiques.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
