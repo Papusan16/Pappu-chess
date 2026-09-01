@@ -277,6 +277,18 @@ Reste ouvert :
   consignée, et la position de la démonstration n'est rattachée à aucune
   partie identifiée.
 
+## 2026-09-01 — `wip-demo-jouable` resynchronisée sur `main`
+
+**Geste** : `main` local était lui aussi en retard des trois commits du
+noyau privé (def245c, 416d4ef, fec7ee1) — avance rapide sur `origin/main`,
+puis fusion `main` → `wip-demo-jouable` en `--no-ff`.
+
+**Résultat** : aucun conflit. Quatre fichiers entrent dans la branche
+(`.gitignore`, `CLAUDE.md`, `REPRISE.md`, `_rapports/.gitkeep`) ; aucun
+fichier du chantier « démonstration jouable » n'est touché. La branche ne
+porte plus aucun retard sur `main` : ce qui est validé à l'écran est
+exactement ce qui atterrira sur `main`. **Aucune fusion vers `main`.**
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
