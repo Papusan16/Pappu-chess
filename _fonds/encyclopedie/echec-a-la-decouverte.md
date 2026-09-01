@@ -274,11 +274,10 @@ cloture: pause
 coup: —
 [%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
 Le Fou : « Les Noirs n'ont plus que trois coups dans toute la position.
-Ou la dame vient s'interposer en e7 ou en f6, ce qui a peu d'intérêt et
-n'en a même pas pour la démonstration, ou le roi fuit en c8. Que ferais-tu
-dans cette situation. Tu peux découvrir ce qu'a fait l'adversaire du grand
-maître international [[nataf|Nataf]] et la réponse de ce dernier
-[[top-mats-nataf|ici]] »
+Ou la dame vient s'interposer en e7 ou en f6, ce qui ne mène nulle part,
+ou le roi fuit en c8. Que ferais-tu dans cette situation ? Tu peux
+découvrir ce qu'a fait l'adversaire du grand maître international
+[[nataf|Nataf]] et la réponse de ce dernier [[top-mats-nataf|ici]] »
 ```
 
 > **La démonstration s'arrête ici dans cette entrée** (`cloture: pause`) :
@@ -580,8 +579,10 @@ n'était pas dans le moteur, il était dans une règle de langue jamais
   dépasser.
 
 Ce que ça dit du format, au-delà de cette entrée : les seize contrôles de
-rejeu vérifiaient la légalité, l'échec, le mat, les FEN de branche et la
-complétude d'un embranchement — **jamais que les mots décrivent la
-position**. Une démonstration peut être mécaniquement irréprochable et
-mentir d'une étape. C'est la classe d'erreur la plus coûteuse, parce
-qu'elle ne casse rien : elle enseigne.
+rejeu d'alors vérifiaient la légalité, l'échec, le mat, les FEN de branche
+et la complétude d'un embranchement — **jamais que les mots décrivent la
+position**. (Ils sont vingt-trois depuis : F8 en ajoute un par étape
+jouée, soit sept ici. Le bandeau de vérification affiche ce compte
+courant, pas celui d'avant la règle.) Une démonstration peut être
+mécaniquement irréprochable et mentir d'une étape. C'est la classe
+d'erreur la plus coûteuse, parce qu'elle ne casse rien : elle enseigne.

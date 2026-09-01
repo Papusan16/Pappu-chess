@@ -289,6 +289,54 @@ fichier du chantier « démonstration jouable » n'est touché. La branche ne
 porte plus aucun retard sur `main` : ce qui est validé à l'écran est
 exactement ce qui atterrira sur `main`. **Aucune fusion vers `main`.**
 
+## 2026-09-01 (2) — Validation visuelle du tronc : conforme, trois défauts de rendu isolés
+
+**Verdict de Flavien à l'écran** : le tronc de « la découverte de Nataf »
+est **conforme**, F8/F9/F10 comprises. L'arrêt à l'étape 6 et l'inertie du
+lien « ici » sont conformes à la conception (`cloture: pause`, amorce vers
+`top-mats-nataf` non écrite) — ce ne sont pas des défauts.
+
+**Geste** : deux scories de rédaction corrigées à l'étape 6 (tournure
+« peu d'intérêt / pas pour la démonstration », redondance supprimée ;
+point d'interrogation manquant après « Que ferais-tu dans cette situation »),
+sans toucher aux clés ni aux annotations. Et le compte de contrôles remis
+d'aplomb : le texte disait « les seize contrôles », l'application affiche
+23. **Les deux sont vrais, mais pas à la même date** — 16 est le compte
+d'AVANT v7, 23 celui d'aujourd'hui, F8 ajoutant un contrôle par étape
+jouée (sept ici : 16 + 7 = 23). La phrase, à l'imparfait, décrivait le
+passé sans le dire ; c'est le TEXTE qui a été corrigé, pas le compte.
+
+**Diagnostic, sans correction** — trois défauts de rendu relevés à
+l'écran, **tous les trois PRÉEXISTANTS**, aucun n'est une régression de
+`wip-demo-jouable` :
+
+- **Citation multi-lignes éclatée en blocs empilés** — `encProse`
+  (`Papu_Chess.html:4226`) émet un `<blockquote>` par ligne source, sans
+  jamais accumuler les lignes `>` consécutives. Fonction identique au
+  caractère près entre `main` et `HEAD` ; introduite au commit `3fdd600`
+  (2026-08-03).
+- **Tableau Markdown en texte brut** — `encProse` n'a aucune branche pour
+  les tableaux : une ligne `| … |` tombe dans le cas par défaut
+  (`para.push`) et finit dans un `<p>`, barres comprises. Même fonction,
+  même commit, même constat d'identité.
+- **Débordement horizontal + colonne des captures coupée** —
+  `.player-plate .pp-side{min-width:max-content}` (`:2243`) interdit à
+  chaque côté de la plaque de descendre sous sa largeur naturelle. La
+  plaque ne peut donc plus se comprimer, elle élargit la piste `auto` de
+  la grille desktop (`:2292`), et la page déborde. La règle est
+  intentionnelle — son commentaire dit « le bloc de captures ne doit
+  jamais se réduire à 0 » — mais elle empêche toute compression, pas
+  seulement la compression à zéro. Introduite au commit `0b388ff`
+  (2026-07-22). Toutes les lignes de mise en page concernées sont
+  identiques entre `main` et `HEAD`.
+
+**Note d'outillage** : Chromium headless n'a pas pu être piloté dans cette
+séance (il ne rend jamais la main, y compris contre un serveur
+multi-thread de contrôle). Le diagnostic ci-dessus est établi par
+lecture du code et comparaison `main`/`HEAD`, pas par mesure dans le navigateur.
+
+**Aucune fusion vers `main`.**
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
