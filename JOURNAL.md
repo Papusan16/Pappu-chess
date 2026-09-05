@@ -277,6 +277,26 @@ Reste ouvert :
   consignée, et la position de la démonstration n'est rattachée à aucune
   partie identifiée.
 
+## 2026-09-05 — Consignation de la capture premium Chess.com du 04/09
+
+**Sauvegarde des données premium du compte « Papu_san » avant expiration
+de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
+
+- Deux blobs de données, **gitignorés** (backup via Google Drive) :
+  `papu_san_chesscom_data.json` (~176 Ko) et
+  `papu_san_chesscom_data.csv` (~61 Ko). Contenu : profil Diamant,
+  classements et records, stats avancées par thème, et l'historique
+  rating partie par partie — **577 parties Rapide + 27 En différé**.
+  Les PGN des parties avaient déjà été exportés par ailleurs.
+- **Versionnés** : le rapport détaillé
+  `_rapports/rapport_2026-09-04-donnees-premium-chesscom.txt` et le
+  manifeste `_sauvegardes/chesscom/MANIFESTE.md`, qui dit ce qui existe,
+  où et de quand ça date.
+- **Point ouvert** : le bilan En différé (5 V / 0 N / 9 D = 14 parties)
+  ne colle pas aux 27 parties de l'historique. Écart de 13, probablement
+  des parties en cours / non classées / abandonnées. À confirmer avant de
+  figer le bilan.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
