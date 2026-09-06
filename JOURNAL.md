@@ -309,11 +309,16 @@ de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
   par un `git add -f` contre le `.gitignore` : l'exception est levée,
   `_rapports/` retrouve son statut de **transport jetable**, `_sessions/`
   reste la mémoire. Le manifeste pointe désormais vers `_sessions/`.
-- **Branche parasite supprimée** : `claude/chesscom-premium-backup-va8zki`,
-  créée par le harnais distant, était un doublon exact de
-  `wip-sauvegarde-chesscom` au même SHA. La branche canonique est
-  `wip-sauvegarde-chesscom`, seule conforme à la convention `wip-` du
-  dépôt.
+- **Branche parasite : supprimée en local seulement.**
+  `claude/chesscom-premium-backup-va8zki`, créée par le harnais distant,
+  est un doublon exact de `wip-sauvegarde-chesscom`. La copie locale est
+  supprimée ; **côté GitHub elle existe toujours**, à `7346e84` : le proxy
+  git du conteneur distant refuse les suppressions de ref (HTTP 403), sur
+  les deux syntaxes. Geste à faire depuis une machine ayant les droits :
+  `git push origin --delete claude/chesscom-premium-backup-va8zki`, ou la
+  corbeille dans l'interface GitHub. *dès que : une session tourne hors du
+  conteneur distant.* La branche canonique reste `wip-sauvegarde-chesscom`,
+  seule conforme à la convention `wip-` du dépôt.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
