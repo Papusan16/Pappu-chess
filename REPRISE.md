@@ -64,16 +64,6 @@ Ne reste ici que ce que git **ne dit pas** :
   `protection-main`** — le seul verrou côté serveur, là où les règles
   `deny` et le hook `pre-push` restent locaux et contournables. Marche à
   suivre détaillée dans `_sessions/2026-08-06.md`.
-- **Geste en attente, côté machine locale** : les deux blobs premium
-  Chess.com (`papu_san_chesscom_data.json`, `.csv`, capture du
-  2026-09-04) sont **sauvegardés sur Drive mais pas encore copiés sous
-  `_sauvegardes/chesscom/`**. La session qui les a consignés tournait dans
-  un conteneur distant, sans accès au Drive : elle a pu écrire le rapport
-  et le manifeste, pas déplacer les fichiers. *pas avant : rien — c'est
-  faisable tout de suite ; dès que : une session Code tourne sur la
-  machine de Flavien, avec le Drive monté.* Les tailles ~176 Ko / ~61 Ko
-  inscrites au manifeste sont **annoncées, non mesurées** : les vérifier
-  au passage. Commandes et contexte dans `_sessions/2026-09-05.md`.
 - **Décalage connu, non corrigé** : `RESTE_A_FAIRE.md` parle encore de
   « lecteur d'étapes à construire » et de migration « vers v3 », alors
   que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible plus

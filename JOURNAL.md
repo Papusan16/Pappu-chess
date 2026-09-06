@@ -309,16 +309,31 @@ de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
   par un `git add -f` contre le `.gitignore` : l'exception est levée,
   `_rapports/` retrouve son statut de **transport jetable**, `_sessions/`
   reste la mémoire. Le manifeste pointe désormais vers `_sessions/`.
-- **Branche parasite : supprimée en local seulement.**
+- **Branche parasite : supprimée côté serveur le 2026-09-06.**
   `claude/chesscom-premium-backup-va8zki`, créée par le harnais distant,
-  est un doublon exact de `wip-sauvegarde-chesscom`. La copie locale est
-  supprimée ; **côté GitHub elle existe toujours**, à `7346e84` : le proxy
-  git du conteneur distant refuse les suppressions de ref (HTTP 403), sur
-  les deux syntaxes. Geste à faire depuis une machine ayant les droits :
-  `git push origin --delete claude/chesscom-premium-backup-va8zki`, ou la
-  corbeille dans l'interface GitHub. *dès que : une session tourne hors du
-  conteneur distant.* La branche canonique reste `wip-sauvegarde-chesscom`,
-  seule conforme à la convention `wip-` du dépôt.
+  est un doublon exact de `wip-sauvegarde-chesscom`. Elle est supprimée
+  sur GitHub depuis une session locale :
+  `git push origin --delete claude/chesscom-premium-backup-va8zki` a
+  renvoyé `[deleted]` et le code 0, et elle est absente de
+  `git ls-remote`. Le refus HTTP 403 noté la veille venait du proxy git du
+  conteneur distant, pas des droits sur le dépôt. Le SHA `7346e84` reste
+  conservé par GitHub tant que l'objet vit, donc la branche est recréable
+  si besoin : `git push origin 7346e84:refs/heads/<nom>`. La branche
+  canonique reste `wip-sauvegarde-chesscom`, seule conforme à la
+  convention `wip-` du dépôt.
+- **Chantier `sauvegarde-chesscom` clos.** Deux exports du 4 septembre
+  coexistaient dans `~/Téléchargements` ; le diagnostic a tranché pour
+  celui de **13:03**, qui porte une partie en différé de plus — 604 parties
+  dont 27 en différé, contre 603 dont 26 pour l'export de 07:25 — et une
+  clé `note` disant qu'il inclut les parties du jour. Les deux n'ont pas le
+  même schéma : `manualStats` pour l'ancien, `summary` + `detailedStats`
+  pour le retenu. Ce dernier est archivé sous `_sauvegardes/chesscom/`
+  (gitignoré, sauvegardé par bisync Drive). Le manifeste est corrigé aux
+  **octets exacts** — 179 920 et 63 015, là où il annonçait « ~176 Ko /
+  ~61 Ko » sans les avoir mesurés — et documente désormais le schéma pour
+  les scripts à venir. Le décompte « 577 Rapide + 27 En différé » qu'il
+  portait déjà était celui de ce jeu-ci, pas de l'autre. Reste à la main de
+  Flavien : **la fusion vers `main`**.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
