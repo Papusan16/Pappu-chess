@@ -289,14 +289,31 @@ de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
   rating partie par partie — **577 parties Rapide + 27 En différé, dont
   14 classées** (bilan officiel 5 V / 0 N / 9 D) et 13 amicales.
   Les PGN des parties avaient déjà été exportés par ailleurs.
-- **Versionnés** : le rapport détaillé
-  `_rapports/rapport_2026-09-04-donnees-premium-chesscom.txt` et le
-  manifeste `_sauvegardes/chesscom/MANIFESTE.md`, qui dit ce qui existe,
-  où et de quand ça date.
+- **Versionnés** : le détail chiffré — d'abord écrit dans `_rapports/`,
+  migré le 2026-09-06 vers `_sessions/2026-09-05.md` (§ « Archive
+  intégrale ») — et le manifeste `_sauvegardes/chesscom/MANIFESTE.md`,
+  qui dit ce qui existe, où et de quand ça date.
 - **Point clos** : l'écart apparent En différé (14 au bilan contre 27 à
   l'historique) n'en était pas un — deux périmètres qui coexistent,
   14 classées + 13 non classées. Le Rapide, lui, est classé à 100 %
   (268 + 44 + 265 = 577). Aucun écart réel.
+
+## 2026-09-06 — Le détail premium rentre dans le rang : `_rapports/` redevient transient
+
+**Correction de doctrine, pas de contenu** — pas un chiffre n'a bougé.
+
+- Le détail chiffré de la capture premium sort de
+  `_rapports/rapport_2026-09-04-donnees-premium-chesscom.txt` (fichier
+  supprimé) et rejoint **`_sessions/2026-09-05.md`, section « Archive
+  intégrale »**, repris tel quel. La veille il n'était entré dans git que
+  par un `git add -f` contre le `.gitignore` : l'exception est levée,
+  `_rapports/` retrouve son statut de **transport jetable**, `_sessions/`
+  reste la mémoire. Le manifeste pointe désormais vers `_sessions/`.
+- **Branche parasite supprimée** : `claude/chesscom-premium-backup-va8zki`,
+  créée par le harnais distant, était un doublon exact de
+  `wip-sauvegarde-chesscom` au même SHA. La branche canonique est
+  `wip-sauvegarde-chesscom`, seule conforme à la convention `wip-` du
+  dépôt.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
