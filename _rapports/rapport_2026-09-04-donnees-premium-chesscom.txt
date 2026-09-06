@@ -14,7 +14,7 @@ Membre Diamant. France. Ligue Elite. Inscrit le 29 mai 2026. Club « La Communau
 
 CLASSEMENTS ET RECORDS (au 4 septembre 2026)
 - Rapide : 304 (plus haut 552) ; bilan 268 V / 44 N / 265 D sur 577 parties ; meilleure victoire contre miguel-r4 (462) ; meilleure série 9.
-- En différé : 641 (plus haut 752) ; bilan 5 V / 0 N / 9 D sur 27 parties.
+- En différé : 641 (plus haut 752) ; bilan 5 V / 0 N / 9 D sur 14 parties classées.
 - Puzzle Rush : meilleur score 14/17.
 - Problèmes tactiques : 1204 (plus bas 201).
 
@@ -23,7 +23,7 @@ STATS AVANCÉES PAR THÈME (Rapide)
 - Top ouvertures : Queen's Pawn (76 parties, 49 % V) ; King's Pawn (42, 56 %) ; Scandinavian (17, 65 %) ; French (15, 60 %).
 
 HISTORIQUE COMPLET
-Rating partie par partie extrait via l'API pour les 577 parties Rapide et les 27 parties En différé : date, rating, résultat, couleur, adversaire, lien. Les deux fichiers contiennent l'intégralité de ces données pour archivage permanent.
+Rating partie par partie extrait via l'API : 577 parties Rapide et 27 parties En différé (date, rating, résultat, couleur, adversaire, lien). Les deux fichiers contiennent l'intégralité de ces données pour archivage permanent.
 
-NOTE DE VÉRIFICATION (à trancher avant de figer le bilan)
-Le bilan En différé 5 V / 0 N / 9 D fait 14 parties, alors que 27 parties sont listées dans l'historique. Écart de 13 — probablement des parties en cours / non classées / abandonnées non comptées dans le bilan. À confirmer.
+NOTE SUR LES PÉRIMÈTRES (En différé)
+Deux périmètres coexistent sans contradiction : 14 parties classées (bilan officiel 5 V / 0 N / 9 D) + 13 parties non classées (amicales) = 27 au total dans l'historique. Détail des 27 par résultat brut : 16 win, 7 resigned, 3 checkmated, 1 stalemate ; les « win » incluent des victoires en amicales, d'où la différence avec les 5 victoires classées. Rapide : 268 + 44 + 265 = 577, cohérent entre bilan et historique (100 % classé). Aucun écart réel.

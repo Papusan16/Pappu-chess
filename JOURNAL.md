@@ -286,16 +286,17 @@ de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
   `papu_san_chesscom_data.json` (~176 Ko) et
   `papu_san_chesscom_data.csv` (~61 Ko). Contenu : profil Diamant,
   classements et records, stats avancées par thème, et l'historique
-  rating partie par partie — **577 parties Rapide + 27 En différé**.
+  rating partie par partie — **577 parties Rapide + 27 En différé, dont
+  14 classées** (bilan officiel 5 V / 0 N / 9 D) et 13 amicales.
   Les PGN des parties avaient déjà été exportés par ailleurs.
 - **Versionnés** : le rapport détaillé
   `_rapports/rapport_2026-09-04-donnees-premium-chesscom.txt` et le
   manifeste `_sauvegardes/chesscom/MANIFESTE.md`, qui dit ce qui existe,
   où et de quand ça date.
-- **Point ouvert** : le bilan En différé (5 V / 0 N / 9 D = 14 parties)
-  ne colle pas aux 27 parties de l'historique. Écart de 13, probablement
-  des parties en cours / non classées / abandonnées. À confirmer avant de
-  figer le bilan.
+- **Point clos** : l'écart apparent En différé (14 au bilan contre 27 à
+  l'historique) n'en était pas un — deux périmètres qui coexistent,
+  14 classées + 13 non classées. Le Rapide, lui, est classé à 100 %
+  (268 + 44 + 265 = 577). Aucun écart réel.
 
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
