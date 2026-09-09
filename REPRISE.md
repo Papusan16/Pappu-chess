@@ -64,6 +64,8 @@ Ne reste ici que ce que git **ne dit pas** :
   `protection-main`** — le seul verrou côté serveur, là où les règles
   `deny` et le hook `pre-push` restent locaux et contournables. Marche à
   suivre détaillée dans `_sessions/2026-08-06.md`.
+- **Chantier `sauvegarde-chesscom`** : clos (cf. `JOURNAL.md` 2026-09-06),
+  fusion vers `main` en attente du clic de Flavien.
 - **Décalage connu, non corrigé** : `RESTE_A_FAIRE.md` parle encore de
   « lecteur d'étapes à construire » et de migration « vers v3 », alors
   que `JOURNAL.md` acte le lecteur ramifié fusionné et une cible plus
