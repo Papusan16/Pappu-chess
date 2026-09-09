@@ -277,6 +277,64 @@ Reste ouvert :
   consignée, et la position de la démonstration n'est rattachée à aucune
   partie identifiée.
 
+## 2026-09-05 — Consignation de la capture premium Chess.com du 04/09
+
+**Sauvegarde des données premium du compte « Papu_san » avant expiration
+de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
+
+- Deux blobs de données, **gitignorés** (backup via Google Drive) :
+  `papu_san_chesscom_data.json` (~176 Ko) et
+  `papu_san_chesscom_data.csv` (~61 Ko). Contenu : profil Diamant,
+  classements et records, stats avancées par thème, et l'historique
+  rating partie par partie — **577 parties Rapide + 27 En différé, dont
+  14 classées** (bilan officiel 5 V / 0 N / 9 D) et 13 amicales.
+  Les PGN des parties avaient déjà été exportés par ailleurs.
+- **Versionnés** : le détail chiffré — d'abord écrit dans `_rapports/`,
+  migré le 2026-09-06 vers `_sessions/2026-09-05.md` (§ « Archive
+  intégrale ») — et le manifeste `_sauvegardes/chesscom/MANIFESTE.md`,
+  qui dit ce qui existe, où et de quand ça date.
+- **Point clos** : l'écart apparent En différé (14 au bilan contre 27 à
+  l'historique) n'en était pas un — deux périmètres qui coexistent,
+  14 classées + 13 non classées. Le Rapide, lui, est classé à 100 %
+  (268 + 44 + 265 = 577). Aucun écart réel.
+
+## 2026-09-06 — Le détail premium rentre dans le rang : `_rapports/` redevient transient
+
+**Correction de doctrine, pas de contenu** — pas un chiffre n'a bougé.
+
+- Le détail chiffré de la capture premium sort de
+  `_rapports/rapport_2026-09-04-donnees-premium-chesscom.txt` (fichier
+  supprimé) et rejoint **`_sessions/2026-09-05.md`, section « Archive
+  intégrale »**, repris tel quel. La veille il n'était entré dans git que
+  par un `git add -f` contre le `.gitignore` : l'exception est levée,
+  `_rapports/` retrouve son statut de **transport jetable**, `_sessions/`
+  reste la mémoire. Le manifeste pointe désormais vers `_sessions/`.
+- **Branche parasite : supprimée côté serveur le 2026-09-06.**
+  `claude/chesscom-premium-backup-va8zki`, créée par le harnais distant,
+  est un doublon exact de `wip-sauvegarde-chesscom`. Elle est supprimée
+  sur GitHub depuis une session locale :
+  `git push origin --delete claude/chesscom-premium-backup-va8zki` a
+  renvoyé `[deleted]` et le code 0, et elle est absente de
+  `git ls-remote`. Le refus HTTP 403 noté la veille venait du proxy git du
+  conteneur distant, pas des droits sur le dépôt. Le SHA `7346e84` reste
+  conservé par GitHub tant que l'objet vit, donc la branche est recréable
+  si besoin : `git push origin 7346e84:refs/heads/<nom>`. La branche
+  canonique reste `wip-sauvegarde-chesscom`, seule conforme à la
+  convention `wip-` du dépôt.
+- **Chantier `sauvegarde-chesscom` clos.** Deux exports du 4 septembre
+  coexistaient dans `~/Téléchargements` ; le diagnostic a tranché pour
+  celui de **13:03**, qui porte une partie en différé de plus — 604 parties
+  dont 27 en différé, contre 603 dont 26 pour l'export de 07:25 — et une
+  clé `note` disant qu'il inclut les parties du jour. Les deux n'ont pas le
+  même schéma : `manualStats` pour l'ancien, `summary` + `detailedStats`
+  pour le retenu. Ce dernier est archivé sous `_sauvegardes/chesscom/`
+  (gitignoré, sauvegardé par bisync Drive). Le manifeste est corrigé aux
+  **octets exacts** — 179 920 et 63 015, là où il annonçait « ~176 Ko /
+  ~61 Ko » sans les avoir mesurés — et documente désormais le schéma pour
+  les scripts à venir. Le décompte « 577 Rapide + 27 En différé » qu'il
+  portait déjà était celui de ce jeu-ci, pas de l'autre. Reste à la main de
+  Flavien : **la fusion vers `main`**.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
