@@ -434,6 +434,33 @@ Détail dans `_sessions/2026-09-15.md`.
   échecs, à trier par Flavien ; `~/Documents` est hors périmètre
   synchronisé.
 
+## 2026-09-15 (3) — Passphrase réparée et reliquats effacés ; armement SUSPENDU
+
+Détail dans `_sessions/2026-09-15.md` (entrée de 17:25).
+
+- **RECTIFICATIF : `gdrive-sync check` ne prouve rien.** Il teste que le
+  trousseau est lisible, pas que sa valeur déchiffre `rclone.conf` — il
+  répondait « lisible ✓ » alors que le moteur était cassé. Le geste a
+  deux moitiés (`rclone config` puis `set-password`) qui s'étaient
+  désolidarisées le 15/09 ; seules `rclone listremotes` et le mtime de
+  `rclone.conf` font foi. Passphrase changée depuis par la voie non
+  interactive (`rclone config encryption set --password-command`, appelé
+  deux fois dont une avec `RCLONE_PASSWORD_CHANGE=1`), vérifiée dans les
+  deux sens, tailles des comptes conformes (10,7 / 6,7 Gio). Ancienne
+  valeur effacée partout : sauvegarde `shred`ée, 19 lignes retirées de
+  `.bash_history`, ligne 2 des deux scripts neutralisée, **balayage final
+  à 0 fichier**.
+- **ARMEMENT SUSPENDU.** Le run de contrôle `gdrive2` est pourtant passé
+  (133,1 s, `Bisync successful`, aucune suppression malgré huit jours de
+  dérive) — mais son unique transfert était `GSYNC_MDP.txt`, déposé à la
+  racine de `~/GoogleDrive2`, **donc dans le périmètre synchronisé**, et
+  contenant la passphrase neuve. Il est désormais en clair sur Google
+  Drive. Timers laissés `disabled`, run `gdrive` non lancé : armer
+  re-propagerait ce fichier à chaque passage.
+- **À trancher par Flavien** : sortir le fichier du périmètre, supprimer
+  la copie Drive et vider la corbeille, considérer la passphrase neuve
+  comme exposée et la changer une troisième fois — puis seulement armer.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
