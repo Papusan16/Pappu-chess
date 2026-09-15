@@ -393,6 +393,47 @@ l'append reste dans le fichier du 10/09, comme demandé).
   retrouver une synchronisation automatique **avec** les garde-fous que le
   cron n'avait pas.
 
+## 2026-09-15 (2) — Unités natives posées mais non armées ; le `.git` de 20 Mo purgé du Drive
+
+Détail dans `_sessions/2026-09-15.md`.
+
+- **PRÉALABLE NON REMPLI, signalé.** Le prompt supposait la passphrase
+  rclone déjà changée. Elle ne l'est pas : la valeur du trousseau est
+  identique à celle qui traîne en clair dans les deux scripts désactivés
+  et dans `~/.bash_history`. `gdrive-sync check` répond « passphrase
+  lisible ✓ » précisément parce que rien n'a bougé. Le travail a donc été
+  fait **sans rien activer**. **Ne pas armer les timers avant le
+  changement.**
+- **`gdrive-sync install-units` exécuté** : `gdrive-sync@.service`,
+  `gdrive-sync@.timer` et deux drop-ins d'intervalle (30 min pour
+  `gdrive2`, 1 h pour `gdrive` — les valeurs de `config.toml`).
+  `Persistent=true` et `RandomizedDelaySec` (2 min au gabarit, 300 s /
+  600 s aux drop-ins) sont bien présents. **Rien n'est activé** ;
+  `Linger=no`, signalé sans y toucher. Effet de bord noté :
+  `~/.config/autostart/gdrive-sync-tray.desktop` a été créé — l'icône ne
+  déclenche aucune synchro d'elle-même, vérifié dans son code.
+- **`~/.local/bin/gdrive-status` écrit** (non lancé) : cinq lignes —
+  dernier succès et âge par destination, échecs depuis, retard du clone
+  GoogleDrive2 sur `origin/main`, taille des archives, ligne ALERTE.
+  Seuils par variables d'environnement.
+- **Rétention des archives : le moteur n'en a aucune.** `prune_logs` ne
+  couvre que les logs (`log_keep_days = 30`) ; `.gdrive-sync-archive`
+  n'est jamais purgé. Aujourd'hui négligeable (un seul dossier,
+  `20260907-063855`, rien en local). Commande de purge proposée, **N = 30
+  recommandé, à valider par Flavien**. Rien n'a été purgé.
+- **`gdrive2:Echecs/Papu-Chess/.git` PURGÉ — 20 181 832 octets, 844
+  objets.** Confirmé inerte avant suppression : ses treize refs figées
+  existent toutes dans le dépôt vivant et sont toutes joignables depuis
+  une ref de `origin` ; son `HEAD` pointait sur `wip-fonds-couleurs`
+  quand le clone est sur `wip-sauvegarde-chesscom`. C'était un miroir
+  Drive périmé, figé au 12/08 par l'exclusion `**/.git/**`. Le `.git`
+  local du clone est intact, le reste du dossier Drive aussi.
+- **Les quatre fichiers de `pre-resync-backup/` déplacés**, pas
+  supprimés, vers `~/Documents/recuperes-gdrive-sync/` (2,1 Mo,
+  horodatages préservés). Documents personnels sans rapport avec les
+  échecs, à trier par Flavien ; `~/Documents` est hors périmètre
+  synchronisé.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
