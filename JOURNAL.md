@@ -335,6 +335,64 @@ de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
   portait déjà était celui de ce jeu-ci, pas de l'autre. Reste à la main de
   Flavien : **la fusion vers `main`**.
 
+## 2026-09-10 — Audit de véracité des assertions de reprise (lecture seule)
+
+Toutes les assertions de la reprise de 07:35 passées au crible, verdict
+explicite et sortie brute à l'appui ; aucun fichier touché hors
+`_sessions/2026-09-10.md` et celui-ci. Détail complet dans
+`_sessions/2026-09-10.md` (entrée de 07:55).
+
+- **3 verdicts FAUX sur 10**, tous du côté `gdrive-sync`, aucun sur
+  Papu-Chess : deux crons vestigiaux (`~/rclone_sync_bidirectionnel*.sh`)
+  tournent toutes les 10 min sans aucun garde-fou du moteur et **échouent
+  silencieusement depuis le 31/08 et le 01/09** ; le `client_secret_*.json`
+  n'est plus dans le périmètre synchronisé (item à fermer) ; `gdrive-sync`
+  n'a pas tourné le 09/09 — son journal s'arrête au 08/09 10:21.
+- **Conséquence pour ce dépôt** : le manifeste de `_sauvegardes/chesscom/`
+  annonce un « backup via Google Drive » que plus rien n'assure depuis le
+  08/09. Les octets des deux blobs sont exacts (179 920 / 63 015), leur
+  poussée vers Drive ne l'est pas.
+- **Tenue du journal** : aucune entrée fausse, aucune date fausse — mais
+  la mémoire est **dispersée sur quatre branches**. `main` ne porte que 6
+  des 15 fichiers `_sessions/`, la fusion de la PR #6 (09/09) n'est
+  journalisée nulle part, et `REPRISE.md` renvoie depuis `main` à
+  `_sessions/2026-08-06.md`, absent de `main`.
+
+## 2026-09-15 — Cron vestigial neutralisé ; RECTIFICATIF : la sauvegarde Drive était bien prouvée
+
+Détail complet dans `_sessions/2026-09-10.md` (entrée du 15/09, 07:20 —
+l'append reste dans le fichier du 10/09, comme demandé).
+
+- **Neutralisation faite.** Les deux lignes `*/10 * * * *` appelant
+  `rclone_sync_bidirectionnel*.sh` sont retirées du crontab (sauvegardé
+  avant dans `~/.local/state/gdrive-sync/crontab-avant-2026-09-10.txt` —
+  il ne contenait rien d'autre) ; les deux scripts sont renommés
+  `.sh.desactive-2026-09-10`, contenu intact. Le cron n'a **pas** été
+  réparé et aucun `--resync` n'a été lancé : sa panne était protectrice.
+  Plus aucun déclencheur automatique ne subsiste (crontab vide, aucun
+  timer utilisateur, `/etc/cron.d/` sans rapport, `~/.config/autostart/`
+  vide).
+- **Passphrase rclone : à changer, geste de Flavien.** Elle apparaît dans
+  trois fichiers — les deux scripts désactivés (ligne 2, mode 700) et
+  `~/.bash_history` (19 occurrences, mode 600). **Aucun sur Drive, aucun
+  suivi par git.** Marche à suivre (`rclone config` → `s` → `c`, puis
+  `gdrive-sync set-password`) dans le fichier de session. Rien n'a été
+  changé par Claude Code.
+- **RECTIFICATIF de l'entrée du 2026-09-10.** L'audit concluait que « la
+  sauvegarde annoncée n'est pas prouvée ». **C'était faux.**
+  `history.jsonl` porte bien un run `gdrive2` réussi le **07/09 à
+  06:48:40**, dont le log `20260907-063855.log` montre les deux blobs
+  `Copied (new)` à 06:47:37-38 — et dont le `run_stamp` est exactement le
+  dossier `.gdrive-sync-archive/20260907-063855` vu sur le Drive. Un
+  `rclone lsl` sur la destination confirme les trois fichiers aux octets
+  exacts. Le « 01/09 » de l'audit venait du journal du **cron**
+  (`~/.cache/rclone/bisync.log`), pas de celui du moteur : deux sources
+  distinctes, conclusion abusive. **Le manifeste de
+  `_sauvegardes/chesscom/` disait vrai.**
+- Reste : changer la passphrase, puis `gdrive-sync install-units` pour
+  retrouver une synchronisation automatique **avec** les garde-fous que le
+  cron n'avait pas.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
