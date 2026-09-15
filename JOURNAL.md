@@ -461,6 +461,32 @@ Détail dans `_sessions/2026-09-15.md` (entrée de 17:25).
   la copie Drive et vider la corbeille, considérer la passphrase neuve
   comme exposée et la changer une troisième fois — puis seulement armer.
 
+## 2026-09-15 (4) — Rotation n°3 : l'incident `GSYNC_MDP.txt` et sa leçon
+
+Détail dans `_sessions/2026-09-15.md` (entrée de 17:32).
+
+- **L'incident.** La passphrase de la rotation n°2 avait été déposée dans
+  `~/GoogleDrive2/GSYNC_MDP.txt`, **à la racine d'un dossier
+  synchronisé** : le run de contrôle de 17:20 l'a téléversée en clair sur
+  Drive. Rotation n°3 faite dans la foulée — nouvelle valeur générée et
+  posée au trousseau **avant** toute destruction, donc sans fenêtre sans
+  passphrase valide. Vérifiée dans les deux sens (le trousseau déchiffre,
+  l'ancienne ne déchiffre plus, mtime réécrit, comptes à 10,721 / 6,721
+  Gio). Elle n'existe qu'au trousseau, affichée nulle part.
+- **Exposée détruite** : fichier local `shred`é, copie Drive supprimée
+  définitivement (`--drive-use-trash=false`, pas de passage par la
+  corbeille — plutôt que `rclone cleanup`, qui aurait vidé toute la
+  corbeille du compte), et une copie inattendue trouvée puis `shred`ée
+  dans `~/.config/libreoffice/4/user/backup/`. **Balayage final à 0
+  fichier** sur toute la machine. Timers laissés `disabled`.
+- **La leçon — un secret ne se dépose jamais dans un dossier
+  synchronisé.** Troisième occurrence du même motif sur ce chantier après
+  le `client_secret_*.json` et la passphrase des scripts cron.
+  **Interdits : `/home/lui/GoogleDrive` et `/home/lui/GoogleDrive2`, tous
+  sous-dossiers compris** — rien n'y est à l'abri, l'exclusion ne couvre
+  que `.git`, les archives et quelques temporaires. Se méfier aussi des
+  sauvegardes d'éditeur, qui recopient ailleurs sans le dire.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
