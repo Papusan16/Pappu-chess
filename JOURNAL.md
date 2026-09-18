@@ -515,6 +515,14 @@ Détail complet : `_sessions/2026-09-18.md`, bloc 08:15–08:32.
 - **Pas encore tranché** : l'architecture des deux clones. Mémoire,
   `CLAUDE.md` et exclusions de gdrive-sync sont intacts.
 
+- **Suite de la séance (08:45–09:10)** : commande `sync?` (une phrase,
+  d'après le verrou), et progression dans l'applet grâce à `rclone --rc`
+  **sur socket Unix**, car un port TCP sans authentification est
+  atteignable par n'importe quelle page web. L'applet affiche une barre et
+  un pourcentage quand le total est connu, « analyse en cours… » sinon, et
+  l'heure du dernier passage réussi au repos. Testé sur des passages
+  réels. systemd-inhibit reste en attente de l'arbitrage de Flavien.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
