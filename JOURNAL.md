@@ -531,6 +531,10 @@ Détail complet : `_sessions/2026-09-18.md`, bloc 08:15–08:32.
   pas bloqué. **Incident réseau à 09:24** : `gdrive2` exige une
   resynchronisation, décision à Flavien.
 
+- **`gdrive2` resynchronisé (09:41–10:07)** : `rclone check` préalable à
+  écart nul (4479 fichiers identiques, aucun présent d'un seul côté) ;
+  resync à 0 transfert et 0 suppression ; passage normal de nouveau vert.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
