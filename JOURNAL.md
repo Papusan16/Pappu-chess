@@ -487,6 +487,34 @@ Détail dans `_sessions/2026-09-15.md` (entrée de 17:32).
   que `.git`, les archives et quelques temporaires. Se méfier aussi des
   sauvegardes d'éditeur, qui recopient ailleurs sans le dire.
 
+## 2026-09-18 — Les archives Drive descendent en local au lieu d'être détruites ; inventaire non versionné de GoogleDrive2/Echecs
+
+Détail complet : `_sessions/2026-09-18.md`, bloc 08:15–08:32.
+
+- **`gdrive-archives-prune` ne détruit plus rien** : un dossier distant
+  de plus de N jours est descendu dans `~/Archives-gdrive-sync/<remote>/`
+  (`rclone move --drive-use-trash=false`), puis le script contrôle le
+  nombre de fichiers, les octets et l'absence sur le Drive. **La purge
+  locale est retirée.** La destination est vérifiée hors périmètre
+  synchronisé à chaque lancement. Timer quotidien maintenu et descriptions
+  reformulées. Nom plus juste proposé, non appliqué :
+  `gdrive-archives-rapatrier`.
+- **`gdrive2:.gdrive-sync-archive/20260902-181732` descendu** : 9
+  fichiers, 1005,1 Kio, absent du Drive, rien dans la corbeille.
+  `20260907-063855` reste sur Drive comme copie hors site et descendra
+  seul vers le 08/10. Une commande interrompue avait en fait déjà agi :
+  **constater avant d'affirmer « rien n'a bougé »**.
+- **Inventaire de `~/GoogleDrive2/Echecs`** (rien déplacé) : 142 Mio hors
+  dépôt, surtout les médias et transcriptions de Marc Quenehen (92 Mio),
+  plus les blobs chesscom et `_rapports/`, ignorés par git dans le dépôt.
+  « Analyse » (espace finale) est entièrement contenu dans `Analyse`. Le
+  `.mp3` de `_meta/` est un doublon exact de celui de Marc Quenehen.
+- **JOURNAL.md et REPRISE.md : Téléchargements fait foi.** La branche de
+  GD2 (`wip-sauvegarde-chesscom`) est un ancêtre de
+  `wip-reprise-2026-09-10`, avec 9 commits de retard et 0 ligne propre.
+- **Pas encore tranché** : l'architecture des deux clones. Mémoire,
+  `CLAUDE.md` et exclusions de gdrive-sync sont intacts.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
