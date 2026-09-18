@@ -523,6 +523,14 @@ Détail complet : `_sessions/2026-09-18.md`, bloc 08:15–08:32.
   l'heure du dernier passage réussi au repos. Testé sur des passages
   réels. systemd-inhibit reste en attente de l'arbitrage de Flavien.
 
+- **Extinction bloquée pendant une synchro (09:15–09:28)** : service
+  enveloppé dans `systemd-inhibit --mode=block --what=shutdown`, et
+  vérifié sur un passage réel : verrou pris puis relâché, refus en
+  terminal avec son motif. **Limite** : logind ignore les verrous du même
+  utilisateur, donc le bouton Éteindre de XFCE n'est très probablement
+  pas bloqué. **Incident réseau à 09:24** : `gdrive2` exige une
+  resynchronisation, décision à Flavien.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
