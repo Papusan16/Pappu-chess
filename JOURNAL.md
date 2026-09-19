@@ -366,6 +366,39 @@ de l'abonnement Diamant** (capture faite le 4 septembre, consignée le 5).
   portait déjà était celui de ce jeu-ci, pas de l'autre. Reste à la main de
   Flavien : **la fusion vers `main`**.
 
+## 2026-09-19 — `wip-fonds-couleurs` resynchronisée sur `main` (PR #6) : aucun code applicatif touché
+
+**Geste.** Dans le clone `~/GoogleDrive2/Echecs/Papu-Chess`, bascule de
+`wip-sauvegarde-chesscom` vers `wip-fonds-couleurs` (copie propre avant),
+puis `git merge --no-ff origin/main`. Commit `0784ca4`, parents `332c70f`
+(branche) et `5e66b79` (`origin/main`, fusion de la PR #6). Poussé.
+Raisonné sur `origin/main` ; le `main` local accusait 9 commits de
+retard (et non 12).
+
+- **Vérification critique** : `git diff HEAD@{1} HEAD -- Papu_Chess.html`
+  est **vide** (0 octet). Le merge n'apporte que de la documentation et
+  des données : `.gitignore` (+7), `JOURNAL.md` (+58), `REPRISE.md` (+2),
+  `_sauvegardes/chesscom/MANIFESTE.md` (+13), `_sessions/2026-09-05.md`
+  (+131). **211 lignes ajoutées, 0 retirée.** Le retard sur `origin/main`
+  est à 0.
+- **Conflit sur `JOURNAL.md`, purement additif** : les deux branches
+  ajoutaient chacune leurs entrées datées au même endroit (31/08 d'un
+  côté, 05/09 et 06/09 de l'autre). Résolu en gardant les deux dans
+  l'ordre chronologique, sans rien réécrire : 0 ligne retirée par rapport
+  à chacun des deux parents. La mention « Reste à la main de Flavien : la
+  fusion vers `main` » de l'entrée du 06/09 est depuis périmée : la PR #6
+  est fusionnée.
+- **Drive** : bascule et merge faits **sous le verrou global de
+  gdrive-sync**, pour qu'aucun passage ne capture un état intermédiaire.
+  Au net, le passage suivant ne voit que quelques fichiers de cette
+  branche : pas de transfert massif, pas de perte. Entre les deux, les
+  blobs chesscom (`.csv`, `.json`) sont apparus non suivis, parce que
+  cette branche précédait leur règle `.gitignore` ; `origin/main` la
+  rétablit.
+- **Serveur local** : `python3 serveur_echecs.py` depuis le dépôt,
+  Stockfish détecté (`/usr/games/stockfish`), http://localhost:8000 sert
+  le `Papu_Chess.html` du disque (md5 identique).
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.
