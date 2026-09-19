@@ -153,7 +153,7 @@ Le Fou : « On essaie de l'aérer par b6 ; mais c5 tient la case, et même
 Fb7 ne lui rend que deux cases. Pas d'échappatoire — le verrou tient. »
 
 **ÉTAPE 5 — réinitialisation** (aucune annotation ; l'échiquier redevient
-nu, comme l'étape 6 de la démo Nataf).
+nu, comme les réinitialisations de fin de branche de la démo Nataf).
 
 ### Démonstration 2 — La source de Marc : le fou g7 fianchetto — À_COMPLÉTER
 

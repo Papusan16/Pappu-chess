@@ -399,6 +399,19 @@ retard (et non 12).
   Stockfish détecté (`/usr/games/stockfish`), http://localhost:8000 sert
   le `Papu_Chess.html` du disque (md5 identique).
 
+## 2026-09-19 — Démonstration Nataf : l'échec montré, plus raconté
+
+Après validation à l'écran, Flavien relève un **défaut de construction**
+dans `echec-a-la-decouverte` : l'échec était raconté à l'étape 3 et
+joué seulement à l'étape 6. **Refonte en quatre étapes** : l'étape 3
+joue désormais `1. Ce4+`. La réinitialisation d'aperçu disparaît,
+« À toi de jouer » passe de l'étape 7 à l'étape 5, et l'étape 1 dit
+« obstrue sa ligne de mire ». Tous les renvois sont renumérotés, y
+compris celui de `mauvais-fou.md`, déjà faux. Rejeu conforme : les 4
+FEN de branche sont inchangés, F8 est respectée. F9 : une nuance est
+signalée à l'étape 2 (« on découvre »). Détail dans
+`_sessions/2026-09-19.md`.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.

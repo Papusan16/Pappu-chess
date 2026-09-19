@@ -226,18 +226,20 @@ FORMAT v3 : **R** rouge = cible, **Y** jaune = ligne d'attaque, **G**
 vert = case ou coup **à l'étude, quel qu'en soit le camp** — y compris
 une réponse noire.
 
-### Mise en place — position fixe, annotations cumulatives
+### La découverte montrée, puis jouée
 
-Aucun coup n'est joué : seules les annotations changent, chacune
-reprenant celles de l'étape précédente.
+Les étapes 1 et 2 ne jouent rien : elles posent le roi, la ligne du fou
+et la pièce qui la masque. L'étape 3 joue 1. Ce4+ — l'échec apparaît sur
+l'échiquier au lieu d'être raconté —, et les étapes suivantes partent de
+la position qu'il a produite.
 
 ```
 ÉTAPE 1
 coup: —
 [%csl Rd8][%cal Yh4d8]
 Le Fou : « Le roi noir est en d8, sur la diagonale du fou h4 — mais il
-ne le voit pas encore : le cavalier blanc, posé en f6, bouche la
-ligne. »
+ne le voit pas encore : le cavalier blanc, posé en f6, obstrue sa ligne
+de mire. »
 
 ÉTAPE 2
 coup: —
@@ -246,33 +248,20 @@ Le Fou : « Toute la finesse tient là : cette pièce qui masque l'attaque
 est blanche. En la déplaçant, on découvre l'échec sans rien risquer. »
 
 ÉTAPE 3
-coup: —
-[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « En plaçant son cavalier en e4 (e8 fonctionnait aussi pour ce
-qui est de sa destination, la dame c6 le protégeant), Nataf ouvre la
-diagonale au fou et, par là même, met le roi noir en échec. »
+coup: 1. Ce4+
+[%csl Rd8][%cal Yh4d8]
+Le Fou : « Regarde : le cavalier s'écarte, et l'échec part du fou, qui
+n'a pas bougé. Nataf l'a posé en e4 — e8 convenait aussi, la dame c6 le
+protégeant. »
 
 ÉTAPE 4
 coup: —
-[%csl Rd8,Gf6][%cal Yh4d8,Gf6e4,Gf6e8]
-Le Fou : « Et comme l'adversaire doit d'abord parer cet échec, il n'a
-pas le temps de s'occuper du cavalier : la découverte vient d'offrir un
-coup gratuit. »
-
-ÉTAPE 5 — réinitialisation : aucune annotation, l'échiquier redevient nu.
-```
-
-### Le coup
-
-```
-ÉTAPE 6
-coup: 1. Ce4+
 [%csl Rd8][%cal Yh4d8]
-Le Fou : « Le cavalier s'écarte, et l'échec part du fou, qui n'a pas
-bougé. La dame blanche est toujours en prise en c6 — et alors ? Les
-Noirs doivent d'abord répondre à l'échec. »
+Le Fou : « Et la dame blanche est toujours en prise en c6 — et alors ?
+Les Noirs doivent d'abord parer l'échec : ils n'ont pas le temps de
+s'occuper du cavalier. La découverte vient d'offrir un coup gratuit. »
 
-ÉTAPE 7 — À toi de jouer
+ÉTAPE 5 — À toi de jouer
 cloture: pause
 coup: —
 [%csl Rd8,Gc8,Ge7,Gf6][%cal Yh4d8]
@@ -289,7 +278,7 @@ maître international [[nataf|Nataf]] et la réponse de ce dernier
 > suit reste de la MATIÈRE — lue, vérifiée et rejouable par le lecteur,
 > mais non proposée sur l'échiquier ici. Elle resservira telle quelle,
 > en miroir, dans la séquence « Top mats » (`top-mats-nataf`), vers
-> laquelle renvoie le « ici » de l'étape 7 — amorce inerte tant que
+> laquelle renvoie le « ici » de l'étape 5 — amorce inerte tant que
 > cette entrée n'est pas écrite.
 >
 > Chaque branche part de la position après 1. Ce4+, redonnée en FEN pour
@@ -410,7 +399,7 @@ est encore pire que la première. »
 `nature: heritee` sur toute la branche — c'est celle que Marc déroule
 en entier, mat et anatomie du mat compris.
 Position de branche : `1r1k3r/pbp2q2/1pQ5/3Pp2p/3PN2B/P7/1PP5/1K1R4 b - - 1 1`
-(même position que la branche A : les deux sœurs repartent de l'étape 7,
+(même position que la branche A : les deux sœurs repartent de l'étape 5,
 et n'héritent rien l'une de l'autre.)
 
 C'est la branche que Marc suit (1:48–2:13), et celle qui finit en mat.
@@ -509,10 +498,12 @@ profondeur. D'où la règle : toute démonstration est rejouée avant
 consignation, et porte ses invariants. Ceux de cette démonstration sont
 en tête de la section « Démonstration ».
 
-**2 → v3 clé `coup:`.** Les étapes 1 à 5 ne jouent aucun coup (position
-fixe, annotations cumulatives) ; les étapes 6 et suivantes jouent des
-coups. Sans marque, un lecteur qui rejoue rejouerait la position à
-chaque annotation. Chaque étape porte désormais `coup:` (`—` si aucun).
+**2 → v3 clé `coup:`.** À l'écriture, les étapes 1 à 5 ne jouaient aucun
+coup (position fixe, annotations cumulatives) et les étapes 6 et
+suivantes en jouaient ; depuis la refonte du 2026-09-19, les étapes 1,
+2, 4 et 5 n'en jouent aucun et l'étape 3 joue 1. Ce4+. Sans marque, un
+lecteur qui rejoue rejouerait la position à chaque annotation. Chaque
+étape porte désormais `coup:` (`—` si aucun).
 
 **3 → v3 règle de cumul à l'embranchement.** « Chaque étape reprend les
 `%cal/%csl` de la précédente » est clair en ligne droite, muet à
@@ -520,7 +511,7 @@ l'embranchement. Entériné : une branche repart des annotations de
 l'étape qui l'a ouverte ; **deux branches sœurs n'héritent jamais l'une
 de l'autre** ; chaque branche se termine par une réinitialisation. Ici :
 A.1 et A.2 repartent toutes deux de l'étape A1, et A et B toutes deux de
-l'étape 7.
+l'étape 5 (l'étape 7 avant la refonte du 2026-09-19).
 
 **4 → v3 FEN d'entrée de branche.** Chaque branche porte son FEN, en
 plus d'être dérivable par rejeu. Redondance voulue : sans elle, une
@@ -529,7 +520,7 @@ branche mal recopiée diverge en silence et la démonstration continue de
 été contrôlés identiques au FEN dérivé après 1. Ce4+.
 
 **5 → v3 : trois couleurs, G redéfini.** R = cible, Y = ligne, G = case
-ou coup **à l'étude**. Pas de quatrième couleur : à l'étape 7, les trois
+ou coup **à l'étude**. Pas de quatrième couleur : à l'étape 5, les trois
 réponses NOIRES sont en vert, et c'est correct — G ne désigne pas le
 camp qui joue, il désigne ce qu'on regarde.
 
