@@ -7,3 +7,10 @@ __pycache__/
 # ce qui doit survivre va dans _sessions/, qui est versionné.
 _rapports/*
 !_rapports/.gitkeep
+
+# Sauvegardes Chess.com : blobs de données non versionnés (backup via
+# Google Drive). Seul _sauvegardes/chesscom/MANIFESTE.md entre dans git.
+_sauvegardes/chesscom/parties/
+_sauvegardes/chesscom/*.pgn
+_sauvegardes/chesscom/*.json
+_sauvegardes/chesscom/*.csv
