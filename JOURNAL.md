@@ -412,6 +412,17 @@ FEN de branche sont inchangés, F8 est respectée. F9 : une nuance est
 signalée à l'étape 2 (« on découvre »). Détail dans
 `_sessions/2026-09-19.md`.
 
+## 2026-09-19 — Démo Nataf : plus de cercle rouge permanent sur le roi
+
+Flavien demandait un fond rouge sur la case du roi, seulement en échec.
+Constat : le halo pulsé `.in-check` le fait déjà automatiquement, et
+`GRAMMAIRE_COULEURS.md` interdit d'y ajouter un fond (« le doubler
+affaiblirait les deux signaux »). Un fond `box-shadow` aurait d'ailleurs
+été masqué par l'animation du halo. Arbitrage de Flavien : **retirer
+`Rd8` des étapes 1 à 4, sans code**. Vérifié avec le vrai code : pas de
+halo aux étapes 1 et 2, le halo apparaît sur d8 à l'étape 3 (`Ce4+`) et
+reste à l'étape 4. L'étape 5 garde son `Rd8`, décision en attente.
+
 ## Prochains chantiers (ordre indicatif)
 - Schéma de données d'un EXERCICE (position FEN, type, consigne,
   réponses, explication, source). À figer avant de peupler.

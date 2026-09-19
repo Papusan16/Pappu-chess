@@ -236,27 +236,27 @@ la position qu'il a produite.
 ```
 ÉTAPE 1
 coup: —
-[%csl Rd8][%cal Yh4d8]
+[%cal Yh4d8]
 Le Fou : « Le roi noir est en d8, sur la diagonale du fou h4 — mais il
 ne le voit pas encore : le cavalier blanc, posé en f6, obstrue sa ligne
 de mire. »
 
 ÉTAPE 2
 coup: —
-[%csl Rd8,Gf6][%cal Yh4d8]
+[%csl Gf6][%cal Yh4d8]
 Le Fou : « Toute la finesse tient là : cette pièce qui masque l'attaque
 est blanche. En la déplaçant, on découvre l'échec sans rien risquer. »
 
 ÉTAPE 3
 coup: 1. Ce4+
-[%csl Rd8][%cal Yh4d8]
+[%cal Yh4d8]
 Le Fou : « Regarde : le cavalier s'écarte, et l'échec part du fou, qui
 n'a pas bougé. Nataf l'a posé en e4 — e8 convenait aussi, la dame c6 le
 protégeant. »
 
 ÉTAPE 4
 coup: —
-[%csl Rd8][%cal Yh4d8]
+[%cal Yh4d8]
 Le Fou : « Et la dame blanche est toujours en prise en c6 — et alors ?
 Les Noirs doivent d'abord parer l'échec : ils n'ont pas le temps de
 s'occuper du cavalier. La découverte vient d'offrir un coup gratuit. »
